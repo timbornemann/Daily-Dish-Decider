@@ -1,0 +1,7 @@
+{
+  "name": "Daily Dish Decider",
+  "description": "A Tinder-style food decision app with smart pantry management and recipe generation.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
