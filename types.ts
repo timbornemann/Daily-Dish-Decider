@@ -36,6 +36,7 @@ export interface ShoppingItem {
 
 export enum AppView {
   SWIPE = 'swipe',
+  COOKBOOK = 'cookbook', // New view
   PANTRY = 'pantry',
   SHOPPING = 'shopping',
   FAVORITES = 'favorites',

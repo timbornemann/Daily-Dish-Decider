@@ -3,6 +3,7 @@ export const en = {
   // Navigation
   nav_pantry: "Pantry",
   nav_discover: "Discover",
+  nav_cookbook: "Cookbook",
   nav_favorites: "Favorites",
   nav_shopping: "Shopping",
   nav_settings: "Settings",
@@ -59,6 +60,13 @@ export const en = {
   generate_ai_button: "Generate AI Recipes",
   no_matches: "No matching recipes found.",
   or_create: "Or create your own",
+
+  // Cookbook
+  cookbook_title: "Recipe Book",
+  search_placeholder: "Search recipes or ingredients...",
+  filter_all: "All",
+  filter_user: "My Recipes",
+  filter_local: "Local",
 
   // Recipe Source
   source_user: "My Recipe",

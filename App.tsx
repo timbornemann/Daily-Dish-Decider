@@ -11,6 +11,7 @@ import { SuddenDeath } from './components/SuddenDeath';
 import { RecipeDetail } from './components/RecipeDetail';
 import { Settings } from './components/Settings';
 import { RecipeCreator } from './components/RecipeCreator';
+import { RecipeBook } from './components/RecipeBook';
 
 const App: React.FC = () => {
   // State
@@ -89,6 +90,15 @@ const App: React.FC = () => {
 
   const handleDislike = (recipe: Recipe) => {
     console.log("Disliked", recipe.title);
+  };
+
+  const handleToggleLike = (recipe: Recipe) => {
+    const exists = likedRecipes.find(r => r.id === recipe.id);
+    if (exists) {
+      updateLikedRecipes(likedRecipes.filter(r => r.id !== recipe.id));
+    } else {
+      updateLikedRecipes([...likedRecipes, recipe]);
+    }
   };
 
   const handleMoveToPantry = (newPantryItems: Ingredient[]) => {
@@ -174,6 +184,16 @@ const App: React.FC = () => {
                 onAddToShopping={handleAddMissingToShopping}
                 lang={currentLang} 
             />
+        );
+      case AppView.COOKBOOK:
+        return (
+          <RecipeBook 
+            userRecipes={userRecipes}
+            likedRecipes={likedRecipes}
+            onToggleLike={handleToggleLike}
+            onViewDetail={(r) => setSelectedRecipe(r)}
+            lang={currentLang}
+          />
         );
       case AppView.SHOPPING:
         return <ShoppingList items={shoppingList} onUpdate={updateShoppingList} onMoveToPantry={handleMoveToPantry} lang={currentLang} />;

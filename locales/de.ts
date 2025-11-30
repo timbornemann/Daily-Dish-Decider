@@ -3,6 +3,7 @@ export const de = {
   // Navigation
   nav_pantry: "Vorrat",
   nav_discover: "Entdecken",
+  nav_cookbook: "Kochbuch",
   nav_favorites: "Favoriten",
   nav_shopping: "Einkauf",
   nav_settings: "Einst.",
@@ -58,6 +59,13 @@ export const de = {
   generate_ai_button: "KI Rezepte generieren",
   no_matches: "Keine passenden Rezepte gefunden.",
   or_create: "Oder erstelle dein eigenes",
+
+  // Cookbook
+  cookbook_title: "Rezeptbuch",
+  search_placeholder: "Rezepte oder Zutaten suchen...",
+  filter_all: "Alle",
+  filter_user: "Eigene",
+  filter_local: "Sammlung",
 
   // Recipe Source
   source_user: "Mein Rezept",
