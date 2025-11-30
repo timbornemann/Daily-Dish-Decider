@@ -24,7 +24,7 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelec
   if (recipes.length === 0) {
     return (
         <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-            <p className="text-gray-500 mb-4">{t.no_liked_recipes}</p>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">{t.no_liked_recipes}</p>
             <button onClick={onRestart} className="text-brand-500 font-bold">{t.start_swiping}</button>
         </div>
     );
@@ -126,7 +126,7 @@ const Choice = ({ recipe, position, onClick, t }: { recipe: Recipe, position: 'A
 }
 
 const WinnerView = ({ recipe, onAction, t }: { recipe: Recipe, onAction: () => void, t: any }) => (
-    <div className="h-full flex flex-col items-center justify-center bg-gray-50 p-6 text-center">
+    <div className="h-full flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-6 text-center transition-colors">
         <motion.div 
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -135,7 +135,7 @@ const WinnerView = ({ recipe, onAction, t }: { recipe: Recipe, onAction: () => v
             <Trophy size={64} />
         </motion.div>
         <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">{t.winner_is}</h2>
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">{recipe.title}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">{recipe.title}</h1>
         
         <button 
             onClick={onAction}

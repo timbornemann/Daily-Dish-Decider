@@ -82,10 +82,10 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
             
             {/* Appearance */}
             <section className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">{t.appearance}</h3>
+              <h3 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">{t.appearance}</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-full ${preferences.theme === 'dark' ? 'bg-indigo-100 text-indigo-600' : 'bg-orange-100 text-orange-600'}`}>
+                  <div className={`p-2 rounded-full ${preferences.theme === 'dark' ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400' : 'bg-orange-100 text-orange-600'}`}>
                     {preferences.theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
                   </div>
                   <div>
@@ -96,7 +96,7 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                 <button 
                   onClick={toggleTheme}
                   className={`w-12 h-6 rounded-full p-1 transition-colors ${
-                    preferences.theme === 'dark' ? 'bg-brand-500' : 'bg-gray-300'
+                    preferences.theme === 'dark' ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-600'
                   }`}
                 >
                   <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform ${
@@ -108,9 +108,9 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
 
             {/* Language */}
             <section className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">{t.language}</h3>
+              <h3 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">{t.language}</h3>
               <div className="flex items-center gap-3 mb-3">
-                 <div className="p-2 bg-blue-100 text-blue-600 rounded-full">
+                 <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
                     <Globe size={20} />
                  </div>
                  <p className="font-medium text-gray-900 dark:text-white">{t.app_language}</p>
@@ -121,7 +121,7 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                     className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                         preferences.language === 'en' 
                         ? 'bg-brand-50 border-brand-500 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300' 
-                        : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300'
+                        : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                 >
                     English
@@ -131,7 +131,7 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                     className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                         preferences.language === 'de' 
                         ? 'bg-brand-50 border-brand-500 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300' 
-                        : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300'
+                        : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                 >
                     Deutsch
@@ -141,10 +141,10 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
 
              {/* Units */}
              <section className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">{t.units}</h3>
+              <h3 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">{t.units}</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-100 text-green-600 rounded-full">
+                  <div className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full">
                     <Scale size={20} />
                   </div>
                   <div>
@@ -193,7 +193,7 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all border flex items-center gap-2 ${
                                     isSelected 
                                     ? 'bg-brand-500 border-brand-500 text-white shadow-md' 
-                                    : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-brand-300'
+                                    : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-brand-300 dark:hover:border-brand-400'
                                 }`}
                             >
                                 {isSelected && <Check size={14} />}
@@ -210,10 +210,10 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
         {activeTab === 'data' && (
           <div className="space-y-6">
             <section className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">{t.notifications}</h3>
+                <h3 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">{t.notifications}</h3>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-yellow-100 text-yellow-600 rounded-full">
+                        <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-full">
                             <Bell size={20} />
                         </div>
                         <div>
@@ -235,18 +235,18 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
             </section>
 
             <section className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 border border-red-100 dark:border-red-900/50">
-                <h3 className="text-sm font-bold text-red-500 uppercase tracking-widest mb-4">{t.danger_zone}</h3>
+                <h3 className="text-sm font-bold text-red-500 dark:text-red-400 uppercase tracking-widest mb-4">{t.danger_zone}</h3>
                 
                 {!showClearConfirm ? (
                     <button 
                         onClick={() => setShowClearConfirm(true)}
-                        className="w-full py-3 bg-white dark:bg-gray-800 text-red-500 border border-red-200 dark:border-red-800 font-bold rounded-lg flex items-center justify-center gap-2 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
+                        className="w-full py-3 bg-white dark:bg-gray-800 text-red-500 dark:text-red-400 border border-red-200 dark:border-red-800 font-bold rounded-lg flex items-center justify-center gap-2 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
                     >
                         <Trash2 size={18} /> {t.clear_data}
                     </button>
                 ) : (
                     <div className="text-center animate-in fade-in zoom-in duration-200">
-                        <div className="flex items-center justify-center text-red-500 mb-2">
+                        <div className="flex items-center justify-center text-red-500 dark:text-red-400 mb-2">
                             <AlertTriangle size={32} />
                         </div>
                         <p className="text-gray-800 dark:text-gray-200 font-medium mb-1">{t.are_you_sure}</p>
@@ -254,7 +254,7 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                         <div className="flex gap-2">
                             <button 
                                 onClick={() => setShowClearConfirm(false)}
-                                className="flex-1 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg font-medium"
+                                className="flex-1 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                             >
                                 {t.cancel}
                             </button>
@@ -263,7 +263,7 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                                     onClearData();
                                     setShowClearConfirm(false);
                                 }}
-                                className="flex-1 py-2 bg-red-500 text-white rounded-lg font-bold shadow-lg shadow-red-500/30"
+                                className="flex-1 py-2 bg-red-500 text-white rounded-lg font-bold shadow-lg shadow-red-500/30 hover:bg-red-600 transition-colors"
                             >
                                 {t.yes_delete}
                             </button>

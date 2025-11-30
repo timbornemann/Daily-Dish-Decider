@@ -55,9 +55,9 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 p-4 pb-24 overflow-y-auto no-scrollbar">
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 p-4 pb-24 overflow-y-auto no-scrollbar transition-colors duration-200">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">{t.shopping_title}</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t.shopping_title}</h2>
         {items.filter(i => i.checked).length > 0 && (
           <button 
             onClick={handleCheckout}
@@ -68,25 +68,25 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
         )}
       </div>
 
-      <div className="bg-white p-2 rounded-xl shadow-sm mb-6 flex gap-2">
+      <div className="bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm mb-6 flex gap-2 border border-transparent dark:border-gray-700 transition-colors">
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
           placeholder={t.add_item_placeholder}
-          className="flex-1 px-4 py-2 focus:outline-none"
+          className="flex-1 px-4 py-2 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none"
         />
         <button 
           onClick={handleAddItem}
-          className="bg-gray-900 text-white p-2 rounded-lg"
+          className="bg-gray-900 dark:bg-gray-700 text-white p-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
         >
           <Plus size={20} />
         </button>
       </div>
 
       {items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+        <div className="flex flex-col items-center justify-center h-64 text-gray-400 dark:text-gray-600">
           <ShoppingBag size={48} className="mb-2 opacity-50" />
           <p>{t.empty_shopping_msg}</p>
         </div>
@@ -97,8 +97,8 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
               key={item.id} 
               className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
                 item.checked 
-                  ? 'bg-gray-100 border-gray-200 opacity-60' 
-                  : 'bg-white border-gray-100 shadow-sm'
+                  ? 'bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800 opacity-60' 
+                  : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 shadow-sm'
               }`}
             >
               <div className="flex items-center gap-3 overflow-hidden">
@@ -107,18 +107,18 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
                   className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
                     item.checked 
                       ? 'bg-brand-500 border-brand-500 text-white' 
-                      : 'border-gray-300 hover:border-brand-400'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-brand-400 dark:hover:border-brand-400'
                   }`}
                 >
                   {item.checked && <Check size={14} />}
                 </button>
-                <span className={`truncate ${item.checked ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                <span className={`truncate ${item.checked ? 'line-through text-gray-500 dark:text-gray-500' : 'text-gray-800 dark:text-gray-100'}`}>
                   {item.name}
                 </span>
               </div>
               <button 
                 onClick={() => deleteItem(item.id)}
-                className="text-gray-400 hover:text-red-500 p-1"
+                className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 p-1"
               >
                 <Trash2 size={16} />
               </button>

@@ -84,7 +84,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
 
   // Helper to determine expiry status color
   const getExpiryStatus = (dateStr?: string) => {
-    if (!dateStr) return { color: 'text-gray-400', label: null, bg: 'bg-gray-100' };
+    if (!dateStr) return { color: 'text-gray-400 dark:text-gray-500', label: null, bg: 'bg-gray-100 dark:bg-gray-700' };
     
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -92,11 +92,11 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
     const diffTime = expiry.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 0) return { color: 'text-red-600', label: t.expired, bg: 'bg-red-100' };
-    if (diffDays <= 3) return { color: 'text-red-500', label: `${diffDays} ${t.days_left}`, bg: 'bg-red-50' };
-    if (diffDays <= 7) return { color: 'text-yellow-600', label: t.expiring_soon, bg: 'bg-yellow-50' };
+    if (diffDays < 0) return { color: 'text-red-600 dark:text-red-400', label: t.expired, bg: 'bg-red-100 dark:bg-red-900/30' };
+    if (diffDays <= 3) return { color: 'text-red-500 dark:text-red-300', label: `${diffDays} ${t.days_left}`, bg: 'bg-red-50 dark:bg-red-900/20' };
+    if (diffDays <= 7) return { color: 'text-yellow-600 dark:text-yellow-400', label: t.expiring_soon, bg: 'bg-yellow-50 dark:bg-yellow-900/20' };
     
-    return { color: 'text-green-600', label: null, bg: 'bg-green-50' };
+    return { color: 'text-green-600 dark:text-green-400', label: null, bg: 'bg-green-50 dark:bg-green-900/20' };
   };
 
   // Group items by category
@@ -116,11 +116,11 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 p-4 pb-24 overflow-y-auto no-scrollbar">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">{t.pantry_title}</h2>
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 p-4 pb-24 overflow-y-auto no-scrollbar transition-colors duration-200">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">{t.pantry_title}</h2>
 
       {/* Custom Add Form */}
-      <div className="bg-white p-4 rounded-xl shadow-sm mb-6 border border-gray-100">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700 transition-colors">
         <div className="flex flex-col gap-3">
             <div className="flex gap-2">
                 <input
@@ -128,7 +128,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
                     value={newItemName}
                     onChange={(e) => setNewItemName(e.target.value)}
                     placeholder={t.custom_item_placeholder}
-                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                    className="flex-1 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-colors"
                 />
                 <div className="relative w-1/3">
                     <input
@@ -136,7 +136,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
                         value={newItemQuantity}
                         onChange={(e) => setNewItemQuantity(e.target.value)}
                         placeholder={t.qty_placeholder}
-                        className="w-full border border-gray-200 rounded-lg pl-8 pr-2 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                        className="w-full border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-lg pl-8 pr-2 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-colors"
                     />
                     <Scale size={14} className="absolute left-2.5 top-3 text-gray-400" />
                 </div>
@@ -148,7 +148,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
                         type="date" 
                         value={newItemExpiry}
                         onChange={(e) => setNewItemExpiry(e.target.value)}
-                        className="w-full border border-gray-200 rounded-lg pl-8 pr-2 py-2 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        className="w-full border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg pl-8 pr-2 py-2 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                     />
                     <Clock size={14} className="absolute left-2.5 top-3 text-gray-400" />
                 </div>
@@ -170,8 +170,8 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
                       onClick={() => setNewItemCategory(c)}
                       className={`text-xs px-3 py-1.5 rounded-full whitespace-nowrap transition-colors border ${
                           newItemCategory === c 
-                          ? 'bg-brand-50 text-brand-600 border-brand-200 font-medium' 
-                          : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'
+                          ? 'bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300 border-brand-200 dark:border-brand-800 font-medium' 
+                          : 'bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
                       }`}
                     >
                       {catLabel}
@@ -192,9 +192,9 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
 
            return (
             <div key={category} className="mb-2">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1 flex items-center gap-2">
+                <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3 ml-1 flex items-center gap-2">
                   {catLabel} 
-                  <span className="bg-gray-200 text-gray-600 rounded-full px-1.5 py-0.5 text-[10px]">{catItems.length}</span>
+                  <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full px-1.5 py-0.5 text-[10px]">{catItems.length}</span>
                 </h3>
                 
                 <div className="space-y-3">
@@ -202,12 +202,12 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
                     {catItems.map(item => {
                         const expiryStatus = getExpiryStatus(item.expiryDate);
                         return (
-                        <div key={item.id} className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                        <div key={item.id} className="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
                             <div className="flex items-center justify-between mb-2">
-                                <p className="font-semibold text-gray-800 truncate flex-1">{item.name}</p>
+                                <p className="font-semibold text-gray-800 dark:text-gray-100 truncate flex-1">{item.name}</p>
                                 <button 
                                     onClick={() => handleRemove(item.id)}
-                                    className="text-gray-300 hover:text-red-500 p-1 transition-colors"
+                                    className="text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 p-1 transition-colors"
                                 >
                                     <Trash2 size={16} />
                                 </button>
@@ -215,17 +215,17 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
                             
                             <div className="flex items-center justify-between">
                                 {/* Quantity Stepper */}
-                                <div className="flex items-center bg-gray-50 rounded-lg border border-gray-200 h-8">
+                                <div className="flex items-center bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 h-8">
                                     <button 
                                         onClick={() => updateQuantity(item.id, -1)}
-                                        className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-red-500 rounded-l-lg transition-colors"
+                                        className="w-8 h-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-red-500 rounded-l-lg transition-colors"
                                     >
                                         <Minus size={14} />
                                     </button>
-                                    <span className="w-8 text-center text-sm font-bold text-gray-800">{item.quantity}</span>
+                                    <span className="w-8 text-center text-sm font-bold text-gray-800 dark:text-gray-100">{item.quantity}</span>
                                     <button 
                                         onClick={() => updateQuantity(item.id, 1)}
-                                        className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-green-600 rounded-r-lg transition-colors"
+                                        className="w-8 h-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-green-600 rounded-r-lg transition-colors"
                                     >
                                         <Plus size={14} />
                                     </button>
@@ -244,7 +244,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
                                     {!item.expiryDate && !item.openedDate && (
                                          <button 
                                             onClick={() => handleOpenProduct(item.id)}
-                                            className="text-gray-400 hover:text-brand-500 flex items-center gap-1 transition-colors bg-gray-50 px-2 py-1 rounded-md"
+                                            className="text-gray-400 dark:text-gray-500 hover:text-brand-500 dark:hover:text-brand-400 flex items-center gap-1 transition-colors bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md"
                                           >
                                             <Calendar size={10} /> {t.open_action}
                                           </button>
@@ -258,13 +258,13 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
                     {/* Quick Add Buttons for Missing Standards */}
                     {missingStandard.length > 0 && (
                         <div className="pt-1">
-                            <p className="text-[10px] font-bold text-gray-400 mb-2 uppercase ml-1">{t.quick_add}</p>
+                            <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 mb-2 uppercase ml-1">{t.quick_add}</p>
                             <div className="flex flex-wrap gap-2">
                                 {missingStandard.map((name: string) => (
                                     <button
                                         key={name}
                                         onClick={() => handleQuickAdd(name, category)}
-                                        className="text-xs bg-white border border-gray-200 text-gray-500 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1"
+                                        className="text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-300 hover:border-brand-200 dark:hover:border-brand-800 hover:bg-brand-50 dark:hover:bg-brand-900/30 px-3 py-1.5 rounded-full transition-all flex items-center gap-1"
                                     >
                                         <Plus size={12} /> {name}
                                     </button>
@@ -280,10 +280,10 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
       
       {items.length === 0 && (
          <div className="mt-8 text-center px-6">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 text-gray-400 mb-3">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 mb-3">
                 <ShoppingBag size={24} />
             </div>
-            <p className="text-gray-500 text-sm">{t.empty_pantry_msg}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{t.empty_pantry_msg}</p>
          </div>
       )}
     </div>

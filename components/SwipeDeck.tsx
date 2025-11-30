@@ -66,22 +66,22 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
 
   if (pantryItems.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-6 text-center text-gray-500">
-        <div className="bg-gray-100 p-6 rounded-full mb-4">
-          <ChefHat size={48} className="text-gray-400" />
+      <div className="flex flex-col items-center justify-center h-full p-6 text-center text-gray-500 dark:text-gray-400">
+        <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full mb-4">
+          <ChefHat size={48} className="text-gray-400 dark:text-gray-500" />
         </div>
-        <h3 className="text-xl font-bold text-gray-800 mb-2">{t.pantry_empty_title}</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t.pantry_empty_title}</h3>
         <p>{t.pantry_empty_desc}</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-full relative overflow-hidden bg-gray-100">
+    <div className="flex flex-col items-center justify-center h-full relative overflow-hidden bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
       {loading && recipes.length === 0 && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-50 bg-white/80 backdrop-blur-sm">
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
           <RefreshCw className="animate-spin text-brand-500 mb-4" size={40} />
-          <p className="text-brand-900 font-medium animate-pulse">{t.loading_chef}</p>
+          <p className="text-brand-900 dark:text-brand-400 font-medium animate-pulse">{t.loading_chef}</p>
         </div>
       )}
 
@@ -111,7 +111,7 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
           <div className="absolute inset-0 flex items-center justify-center">
             <button 
               onClick={fetchRecipes}
-              className="bg-white px-6 py-3 rounded-full shadow-lg text-brand-500 font-bold flex items-center gap-2 hover:bg-gray-50"
+              className="bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg text-brand-500 font-bold flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <RefreshCw size={20} /> {t.load_more}
             </button>
@@ -123,7 +123,7 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
         <div className="flex gap-6 mt-8 z-10">
           <button 
             onClick={() => handleSwipe('left', recipes[0])}
-            className="w-16 h-16 bg-white text-gray-400 rounded-full shadow-lg flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors border border-gray-100 active:scale-95 duration-200"
+            className="w-16 h-16 bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-full shadow-lg flex items-center justify-center hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400 transition-colors border border-gray-100 dark:border-gray-700 active:scale-95 duration-200"
           >
             <X size={32} />
           </button>
@@ -195,7 +195,7 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.6}
       onDragEnd={onDragEnd}
-      className="absolute inset-0 bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 select-none active:cursor-grabbing"
+      className="absolute inset-0 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700 select-none active:cursor-grabbing transition-colors"
     >
       {/* Overlay Indicators */}
       {isTop && (
@@ -210,7 +210,7 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
       )}
 
       {/* Image Placeholder */}
-      <div className="h-1/2 bg-gray-200 relative">
+      <div className="h-1/2 bg-gray-200 dark:bg-gray-700 relative">
         <img 
           src={`https://picsum.photos/seed/${recipe.id}/600/800`} 
           alt={recipe.title}
@@ -231,12 +231,12 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
         <div>
            <div className="flex flex-wrap gap-2 mb-4">
             {recipe.tags?.slice(0, 3).map(tag => (
-              <span key={tag} className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+              <span key={tag} className="text-xs font-semibold px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
                 {tag}
               </span>
             ))}
           </div>
-          <p className="text-gray-600 line-clamp-4 text-sm leading-relaxed mb-4">
+          <p className="text-gray-600 dark:text-gray-300 line-clamp-4 text-sm leading-relaxed mb-4">
             {recipe.description || t.default_desc}
           </p>
         </div>
@@ -246,7 +246,7 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
             e.stopPropagation(); // Prevent drag interference
             onViewDetail();
           }}
-          className="w-full py-3 border-2 border-brand-100 text-brand-600 font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-brand-50 transition-colors"
+          className="w-full py-3 border-2 border-brand-100 dark:border-brand-900 text-brand-600 dark:text-brand-400 font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-colors"
         >
           <Info size={18} /> {t.view_details}
         </button>

@@ -39,7 +39,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
   const missingItems = getMissingIngredients();
 
   return (
-    <div className="fixed inset-0 bg-white z-50 overflow-y-auto animate-in slide-in-from-bottom duration-300">
+    <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 overflow-y-auto animate-in slide-in-from-bottom duration-300 transition-colors">
       <div className="relative h-72">
         <img 
           src={`https://picsum.photos/seed/${recipe.id}/800/600`} 
@@ -66,22 +66,22 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
 
       <div className="p-6 pb-24 max-w-2xl mx-auto">
         {/* Portion Control */}
-        <div className="flex items-center justify-between mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100">
-          <div className="flex items-center gap-2 text-gray-700 font-medium">
+        <div className="flex items-center justify-between mb-8 bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 transition-colors">
+          <div className="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
             <Users size={20} className="text-brand-500" />
             <span>{t.servings}</span>
           </div>
-          <div className="flex items-center gap-4 bg-white rounded-lg shadow-sm border border-gray-200 px-2 py-1">
+          <div className="flex items-center gap-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 px-2 py-1">
             <button 
               onClick={() => setPortions(Math.max(1, portions - 1))}
-              className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-brand-600 text-xl font-bold"
+              className="w-8 h-8 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 text-xl font-bold"
             >
               -
             </button>
-            <span className="text-lg font-bold w-6 text-center">{portions}</span>
+            <span className="text-lg font-bold w-6 text-center text-gray-900 dark:text-white">{portions}</span>
             <button 
               onClick={() => setPortions(portions + 1)}
-              className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-brand-600 text-xl font-bold"
+              className="w-8 h-8 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 text-xl font-bold"
             >
               +
             </button>
@@ -90,16 +90,16 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
 
         {/* Missing Ingredients Warning */}
         {missingItems.length > 0 && (
-          <div className="mb-8 p-4 bg-orange-50 border border-orange-100 rounded-xl">
-             <h3 className="text-orange-800 font-bold mb-2 flex items-center gap-2">
+          <div className="mb-8 p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/50 rounded-xl transition-colors">
+             <h3 className="text-orange-800 dark:text-orange-300 font-bold mb-2 flex items-center gap-2">
                 <ShoppingBag size={18} /> {t.missing_ingredients}
              </h3>
-             <ul className="list-disc list-inside text-sm text-orange-700 mb-3 ml-1">
+             <ul className="list-disc list-inside text-sm text-orange-700 dark:text-orange-400 mb-3 ml-1">
                 {missingItems.map(m => <li key={m}>{m}</li>)}
              </ul>
              <button 
                 onClick={() => onAddToShoppingList(missingItems)}
-                className="text-xs font-bold bg-orange-200 text-orange-800 px-3 py-2 rounded-lg hover:bg-orange-300 w-full"
+                className="text-xs font-bold bg-orange-200 dark:bg-orange-800 dark:text-orange-100 text-orange-800 px-3 py-2 rounded-lg hover:bg-orange-300 dark:hover:bg-orange-700 w-full transition-colors"
              >
                 {t.add_missing_shopping}
              </button>
@@ -108,12 +108,12 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
 
         <div className="grid md:grid-cols-2 gap-8">
             <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{t.ingredients_title}</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t.ingredients_title}</h3>
                 <ul className="space-y-3">
                 {recipe.ingredients.map((ing, idx) => (
-                    <li key={idx} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
-                    <span className="text-gray-700">{ing.name}</span>
-                    <span className="font-semibold text-gray-900 bg-gray-100 px-2 py-1 rounded text-sm">
+                    <li key={idx} className="flex justify-between items-center py-2 border-b border-gray-50 dark:border-gray-800 last:border-0">
+                    <span className="text-gray-700 dark:text-gray-300">{ing.name}</span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm">
                         {scale(ing.amount)}
                     </span>
                     </li>
@@ -122,14 +122,14 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
             </div>
 
             <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{t.instructions_title}</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t.instructions_title}</h3>
                 <div className="space-y-6">
                 {recipe.steps.map((step, idx) => (
                     <div key={idx} className="flex gap-4">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-100 text-brand-600 font-bold flex items-center justify-center text-sm">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-600 dark:text-brand-300 font-bold flex items-center justify-center text-sm">
                         {idx + 1}
                     </div>
-                    <p className="text-gray-600 leading-relaxed mt-1">{step}</p>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed mt-1">{step}</p>
                     </div>
                 ))}
                 </div>
