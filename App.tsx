@@ -203,6 +203,7 @@ const App: React.FC = () => {
             onToggleLike={handleToggleLike}
             onViewDetail={(r) => setSelectedRecipe(r)}
             onDeleteRecipe={handleDeleteRecipe}
+            onCreateRecipe={() => setIsCreatingRecipe(true)}
             lang={currentLang}
           />
         );

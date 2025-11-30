@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Search, Heart, User, BookOpen, Bot, Clock, BarChart, Trash2, Filter, X } from 'lucide-react';
+import { Search, Heart, User, BookOpen, Bot, Clock, BarChart, Trash2, Filter, X, Plus } from 'lucide-react';
 import { Recipe } from '../types';
 import { translations, Language } from '../translations';
 import { getLocalRecipes } from '../services/localRecipes';
@@ -11,6 +11,7 @@ interface RecipeBookProps {
   onToggleLike: (recipe: Recipe) => void;
   onViewDetail: (recipe: Recipe) => void;
   onDeleteRecipe?: (recipe: Recipe) => void;
+  onCreateRecipe: () => void;
   lang: Language;
 }
 
@@ -23,6 +24,7 @@ export const RecipeBook: React.FC<RecipeBookProps> = ({
   onToggleLike, 
   onViewDetail, 
   onDeleteRecipe,
+  onCreateRecipe,
   lang 
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -91,7 +93,17 @@ export const RecipeBook: React.FC<RecipeBookProps> = ({
       
       {/* Header & Search */}
       <div className="bg-white dark:bg-gray-800 p-4 shadow-sm z-20 sticky top-0 border-b border-gray-100 dark:border-gray-700 shrink-0">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">{t.cookbook_title}</h2>
+        <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t.cookbook_title}</h2>
+            <button 
+                onClick={onCreateRecipe}
+                className="bg-brand-500 text-white p-2 rounded-full shadow-sm hover:bg-brand-600 transition-colors flex items-center justify-center"
+                title={(t as any).create_own_button || "Create Recipe"}
+            >
+                <Plus size={20} />
+            </button>
+        </div>
+
         <div className="space-y-3">
           <div className="relative">
             <Search className="absolute left-3 top-3 text-gray-400" size={18} />
