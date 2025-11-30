@@ -34,6 +34,7 @@ export const translations = {
     quick_add: "Quick Add",
     empty_pantry_msg: "Start adding items from the Quick Add sections or type your own above!",
     set_expiry: "Set Expiry",
+    moved_to_shopping: "Moved to shopping list",
     
     // Shopping List
     shopping_title: "Shopping List",
@@ -50,6 +51,32 @@ export const translations = {
     nope: "NOPE",
     view_details: "View Recipe Details",
     default_desc: "A delicious meal you can make with your pantry ingredients.",
+    create_own_button: "Create Manual Recipe",
+    generate_ai_button: "Generate AI Recipes",
+    no_matches: "No matching recipes found.",
+    or_create: "Or create your own",
+
+    // Recipe Source
+    source_user: "My Recipe",
+    source_ai: "AI Chef",
+    source_local: "Collection",
+
+    // Recipe Creator
+    creator_title: "Create New Recipe",
+    creator_title_placeholder: "e.g. Grandma's Apple Pie",
+    creator_desc: "Description",
+    creator_desc_placeholder: "Short description...",
+    creator_prep: "Prep Time",
+    creator_prep_placeholder: "e.g. 30 mins",
+    creator_portions: "Portions",
+    creator_ingredients: "Ingredients",
+    creator_ing_name: "Name (e.g. Flour)",
+    creator_ing_amount: "Amount",
+    creator_steps: "Steps",
+    creator_step_placeholder: "Describe step...",
+    creator_add_step: "Add Next Step",
+    creator_save_error: "Please fill in title, at least one ingredient and valid steps.",
+    creator_no_ing: "No ingredients added yet.",
 
     // Recipe Detail
     servings: "Servings",
@@ -151,6 +178,7 @@ export const translations = {
     quick_add: "Schnell hinzufügen",
     empty_pantry_msg: "Füge Artikel über die Schnellauswahl hinzu oder tippe oben eigene ein!",
     set_expiry: "Haltbarkeit",
+    moved_to_shopping: "Auf Einkaufsliste gesetzt",
 
     // Shopping List
     shopping_title: "Einkaufsliste",
@@ -167,6 +195,32 @@ export const translations = {
     nope: "NEE",
     view_details: "Rezept ansehen",
     default_desc: "Ein leckeres Gericht mit deinen Zutaten.",
+    create_own_button: "Rezept manuell erstellen",
+    generate_ai_button: "KI Rezepte generieren",
+    no_matches: "Keine passenden Rezepte gefunden.",
+    or_create: "Oder erstelle dein eigenes",
+
+    // Recipe Source
+    source_user: "Mein Rezept",
+    source_ai: "KI Chef",
+    source_local: "Sammlung",
+
+    // Recipe Creator
+    creator_title: "Neues Rezept",
+    creator_title_placeholder: "z.B. Omas Apfelkuchen",
+    creator_desc: "Beschreibung",
+    creator_desc_placeholder: "Kurze Beschreibung...",
+    creator_prep: "Zubereitungszeit",
+    creator_prep_placeholder: "z.B. 30 Min",
+    creator_portions: "Portionen",
+    creator_ingredients: "Zutaten",
+    creator_ing_name: "Name (z.B. Mehl)",
+    creator_ing_amount: "Menge",
+    creator_steps: "Schritte",
+    creator_step_placeholder: "Schritt beschreiben...",
+    creator_add_step: "Schritt hinzufügen",
+    creator_save_error: "Bitte Titel, mindestens eine Zutat und Schritte ausfüllen.",
+    creator_no_ing: "Noch keine Zutaten.",
 
     // Recipe Detail
     servings: "Portionen",

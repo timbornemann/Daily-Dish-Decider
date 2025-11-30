@@ -10,6 +10,7 @@ import { SwipeDeck } from './components/SwipeDeck';
 import { SuddenDeath } from './components/SuddenDeath';
 import { RecipeDetail } from './components/RecipeDetail';
 import { Settings } from './components/Settings';
+import { RecipeCreator } from './components/RecipeCreator';
 
 const App: React.FC = () => {
   // State
@@ -17,14 +18,19 @@ const App: React.FC = () => {
   const [pantry, setPantry] = useState<Ingredient[]>([]);
   const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
   const [likedRecipes, setLikedRecipes] = useState<Recipe[]>([]);
+  const [userRecipes, setUserRecipes] = useState<Recipe[]>([]);
   const [preferences, setPreferences] = useState<UserPreferences>(StorageService.getPreferences());
+  
+  // View States
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [isCreatingRecipe, setIsCreatingRecipe] = useState(false);
 
   // Initialize Data
   useEffect(() => {
     setPantry(StorageService.getPantry());
     setShoppingList(StorageService.getShoppingList());
     setLikedRecipes(StorageService.getLikedRecipes());
+    setUserRecipes(StorageService.getUserRecipes());
   }, []);
 
   // Theme Side Effect
@@ -53,6 +59,11 @@ const App: React.FC = () => {
     StorageService.saveLikedRecipes(recipes);
   };
 
+  const updateUserRecipes = (recipes: Recipe[]) => {
+    setUserRecipes(recipes);
+    StorageService.saveUserRecipes(recipes);
+  };
+
   const updatePreferences = (prefs: UserPreferences) => {
     setPreferences(prefs);
     StorageService.savePreferences(prefs);
@@ -63,6 +74,7 @@ const App: React.FC = () => {
     setPantry([]);
     setShoppingList([]);
     setLikedRecipes([]);
+    setUserRecipes([]);
     // Keep preferences active (theme, etc) but refresh them just in case
     // setPreferences(StorageService.getPreferences()); 
   };
@@ -76,7 +88,6 @@ const App: React.FC = () => {
   };
 
   const handleDislike = (recipe: Recipe) => {
-    // Could track dislikes to refine alg, ignoring for now
     console.log("Disliked", recipe.title);
   };
 
@@ -92,12 +103,37 @@ const App: React.FC = () => {
       checked: false
     }));
     updateShoppingList([...shoppingList, ...newItems]);
-    setView(AppView.SHOPPING);
-    setSelectedRecipe(null);
+    // Optional: Switch view, but staying on detail might be better UX
+    // setView(AppView.SHOPPING);
   };
 
   const handleWinnerSelected = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
+  };
+
+  const handleSaveNewRecipe = (recipe: Recipe) => {
+      updateUserRecipes([...userRecipes, recipe]);
+      setIsCreatingRecipe(false);
+      
+      // Check if ingredients exist in pantry, if not add them? 
+      // User request said: "falls es noch nicht existiert wird es hinzugefügt im vorrat"
+      // Let's add missing ingredients to pantry automatically
+      const newIngredients: Ingredient[] = [];
+      recipe.ingredients.forEach(ing => {
+          const exists = pantry.some(p => p.name.toLowerCase() === ing.name.toLowerCase());
+          if (!exists) {
+              newIngredients.push({
+                  id: `pantry-auto-${Date.now()}-${Math.random()}`,
+                  name: ing.name,
+                  category: 'General', // Default, difficult to guess without AI
+                  quantity: '1',
+              });
+          }
+      });
+      
+      if (newIngredients.length > 0) {
+          updatePantry([...pantry, ...newIngredients]);
+      }
   };
 
   // Ensure valid language
@@ -105,6 +141,17 @@ const App: React.FC = () => {
 
   // Render Logic
   const renderContent = () => {
+    if (isCreatingRecipe) {
+        return (
+            <RecipeCreator 
+                onSave={handleSaveNewRecipe}
+                onCancel={() => setIsCreatingRecipe(false)}
+                lang={currentLang}
+                pantryItems={pantry}
+            />
+        );
+    }
+
     // If Detail view is active (overlay)
     if (selectedRecipe) {
       return (
@@ -120,7 +167,14 @@ const App: React.FC = () => {
 
     switch (view) {
       case AppView.PANTRY:
-        return <Pantry items={pantry} onUpdate={updatePantry} lang={currentLang} />;
+        return (
+            <Pantry 
+                items={pantry} 
+                onUpdate={updatePantry} 
+                onAddToShopping={handleAddMissingToShopping}
+                lang={currentLang} 
+            />
+        );
       case AppView.SHOPPING:
         return <ShoppingList items={shoppingList} onUpdate={updateShoppingList} onMoveToPantry={handleMoveToPantry} lang={currentLang} />;
       case AppView.FAVORITES:
@@ -145,10 +199,12 @@ const App: React.FC = () => {
       default:
         return (
           <SwipeDeck 
-            pantryItems={pantry} 
+            pantryItems={pantry}
+            userRecipes={userRecipes}
             onLike={handleLike} 
             onDislike={handleDislike}
             onViewDetail={(r) => setSelectedRecipe(r)}
+            onCreateRecipe={() => setIsCreatingRecipe(true)}
             lang={currentLang}
           />
         );
@@ -165,7 +221,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Bottom Navigation */}
-        {!selectedRecipe && (
+        {!selectedRecipe && !isCreatingRecipe && (
           <Navigation 
             currentView={view} 
             onChange={setView} 

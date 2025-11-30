@@ -1,38 +1,87 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo, Variants } from 'framer-motion';
-import { X, Heart, ChefHat, RefreshCw, Info } from 'lucide-react';
+import { X, Heart, ChefHat, RefreshCw, Info, Plus, User, Bot, BookOpen } from 'lucide-react';
 import { Recipe, Ingredient } from '../types';
 import { generateRecipes } from '../services/gemini';
+import { getLocalRecipes, findMatchingRecipes } from '../services/localRecipes';
 import { translations, Language } from '../translations';
 
 interface SwipeDeckProps {
   pantryItems: Ingredient[];
+  userRecipes: Recipe[];
   onLike: (recipe: Recipe) => void;
   onDislike: (recipe: Recipe) => void;
   onViewDetail: (recipe: Recipe) => void;
+  onCreateRecipe: () => void;
   lang: Language;
 }
 
-export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDislike, onViewDetail, lang }) => {
+export const SwipeDeck: React.FC<SwipeDeckProps> = ({ 
+  pantryItems, 
+  userRecipes,
+  onLike, 
+  onDislike, 
+  onViewDetail, 
+  onCreateRecipe,
+  lang 
+}) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
-  const [exitDirection, setExitDirection] = useState<number>(0); // -1 for left, 1 for right
+  const [exitDirection, setExitDirection] = useState<number>(0); 
+  const [triedLocal, setTriedLocal] = useState(false);
   const t = translations[lang];
 
-  // Load initial batch if empty
+  // Initial Fetch Logic
   useEffect(() => {
     if (recipes.length === 0 && pantryItems.length > 0) {
-      fetchRecipes();
+        loadRecipes();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pantryItems]);
 
-  const fetchRecipes = async () => {
+  const loadRecipes = async () => {
     setLoading(true);
-    const newRecipes = await generateRecipes(pantryItems, [], lang);
-    setRecipes(prev => [...prev, ...newRecipes]);
+
+    let newStack: Recipe[] = [];
+
+    // 1. Try Local & User Recipes first if we haven't exhausted them easily
+    if (!triedLocal) {
+        const localDB = getLocalRecipes(lang);
+        const allLocal = [...userRecipes, ...localDB];
+        const matched = findMatchingRecipes(pantryItems, allLocal);
+        
+        // Remove duplicates if any exist in current state (unlikely on fresh load)
+        newStack = matched.filter(r => !recipes.find(ex => ex.id === r.id));
+        setTriedLocal(true);
+    }
+
+    // 2. If stack is still small, fetch AI
+    if (newStack.length < 3) {
+        try {
+            const aiRecipes = await generateRecipes(pantryItems, [], lang);
+            // Tag them as AI
+            const taggedAI = aiRecipes.map(r => ({ ...r, source: 'ai' as const }));
+            newStack = [...newStack, ...taggedAI];
+        } catch (e) {
+            console.error("AI fetch failed", e);
+        }
+    }
+
+    setRecipes(prev => [...prev, ...newStack]);
     setLoading(false);
+  };
+
+  const forceAiFetch = async () => {
+      setLoading(true);
+      try {
+          const aiRecipes = await generateRecipes(pantryItems, [], lang);
+          const taggedAI = aiRecipes.map(r => ({ ...r, source: 'ai' as const }));
+          setRecipes(prev => [...prev, ...taggedAI]);
+      } catch(e) {
+          console.error(e);
+      }
+      setLoading(false);
   };
 
   const handleDragEnd = (event: any, info: PanInfo, recipe: Recipe) => {
@@ -48,9 +97,6 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
 
   const handleSwipe = (direction: 'left' | 'right', recipe: Recipe) => {
     setExitDirection(direction === 'right' ? 1 : -1);
-    
-    // Slight delay to allow state to settle before filtering (ensures exit animation triggers with correct direction)
-    // In React 18+ batching usually handles this, but explicit ordering helps with Framer Motion logic
     setRecipes(prev => prev.filter(r => r.id !== recipe.id));
     
     if (direction === 'right') {
@@ -59,8 +105,14 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
       onDislike(recipe);
     }
 
+    // Load more logic
     if (recipes.length <= 2) {
-      fetchRecipes();
+        // Simple refill logic: if local tried, pull AI.
+        if (triedLocal) {
+             forceAiFetch();
+        } else {
+             loadRecipes();
+        }
     }
   };
 
@@ -71,13 +123,32 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
           <ChefHat size={48} className="text-gray-400 dark:text-gray-500" />
         </div>
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t.pantry_empty_title}</h3>
-        <p>{t.pantry_empty_desc}</p>
+        <p className="mb-6">{t.pantry_empty_desc}</p>
+        
+        <button 
+             onClick={onCreateRecipe}
+             className="px-6 py-3 bg-brand-500 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-brand-600 transition"
+        >
+            <Plus size={20} /> {t.create_own_button}
+        </button>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col items-center justify-center h-full relative overflow-hidden bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
+      
+      {/* Create Button (Top Right) */}
+      <div className="absolute top-4 right-4 z-20">
+          <button 
+            onClick={onCreateRecipe}
+            className="bg-white dark:bg-gray-800 p-3 rounded-full shadow-md text-brand-600 dark:text-brand-400 border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform"
+            title={t.create_own_button}
+          >
+              <Plus size={24} />
+          </button>
+      </div>
+
       {loading && recipes.length === 0 && (
         <div className="absolute inset-0 flex flex-col items-center justify-center z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
           <RefreshCw className="animate-spin text-brand-500 mb-4" size={40} />
@@ -108,12 +179,19 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
         </AnimatePresence>
         
         {recipes.length === 0 && !loading && (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center flex-col gap-4 text-center px-6">
+             <p className="text-gray-500 dark:text-gray-400">{t.no_matches}</p>
             <button 
-              onClick={fetchRecipes}
+              onClick={() => forceAiFetch()}
               className="bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg text-brand-500 font-bold flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <RefreshCw size={20} /> {t.load_more}
+              <RefreshCw size={20} /> {t.generate_ai_button}
+            </button>
+            <button 
+              onClick={onCreateRecipe}
+              className="text-gray-400 text-sm font-medium hover:text-brand-500 underline"
+            >
+              {t.or_create}
             </button>
           </div>
         )}
@@ -177,6 +255,22 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
     })
   };
 
+  const getSourceIcon = () => {
+      switch(recipe.source) {
+          case 'user': return <User size={14} />;
+          case 'ai': return <Bot size={14} />;
+          default: return <BookOpen size={14} />;
+      }
+  };
+
+  const getSourceLabel = () => {
+      switch(recipe.source) {
+          case 'user': return t.source_user;
+          case 'ai': return t.source_ai;
+          default: return t.source_local;
+      }
+  };
+
   return (
     <motion.div
       layout
@@ -217,6 +311,12 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
           className="w-full h-full object-cover pointer-events-none"
         />
         <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
+        
+        {/* Source Badge */}
+        <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 border border-white/20">
+            {getSourceIcon()} {getSourceLabel()}
+        </div>
+
         <div className="absolute bottom-4 left-4 text-white">
           <h2 className="text-3xl font-bold shadow-black drop-shadow-md leading-tight">{recipe.title}</h2>
           <p className="text-white/90 font-medium flex items-center gap-2">

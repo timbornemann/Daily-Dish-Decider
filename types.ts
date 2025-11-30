@@ -1,3 +1,4 @@
+
 export interface Ingredient {
   id: string;
   name: string;
@@ -23,6 +24,7 @@ export interface Recipe {
   calories?: number;
   tags: string[];
   basePortions: number;
+  source?: 'ai' | 'local' | 'user'; // New field
 }
 
 export interface ShoppingItem {

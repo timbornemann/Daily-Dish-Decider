@@ -1,9 +1,11 @@
+
 import { Ingredient, Recipe, ShoppingItem, UserPreferences } from '../types';
 
 const KEYS = {
   PANTRY: 'ddd_pantry',
   SHOPPING: 'ddd_shopping',
   LIKED_RECIPES: 'ddd_liked',
+  USER_RECIPES: 'ddd_user_recipes',
   PREFS: 'ddd_prefs'
 };
 
@@ -37,6 +39,13 @@ export const StorageService = {
   saveLikedRecipes: (recipes: Recipe[]) => {
     localStorage.setItem(KEYS.LIKED_RECIPES, JSON.stringify(recipes));
   },
+  getUserRecipes: (): Recipe[] => {
+    const data = localStorage.getItem(KEYS.USER_RECIPES);
+    return data ? JSON.parse(data) : [];
+  },
+  saveUserRecipes: (recipes: Recipe[]) => {
+    localStorage.setItem(KEYS.USER_RECIPES, JSON.stringify(recipes));
+  },
   getPreferences: (): UserPreferences => {
     const data = localStorage.getItem(KEYS.PREFS);
     return data ? { ...DEFAULT_PREFS, ...JSON.parse(data) } : DEFAULT_PREFS;
@@ -48,6 +57,7 @@ export const StorageService = {
     localStorage.removeItem(KEYS.PANTRY);
     localStorage.removeItem(KEYS.SHOPPING);
     localStorage.removeItem(KEYS.LIKED_RECIPES);
+    localStorage.removeItem(KEYS.USER_RECIPES);
     // We usually keep prefs, but for a full reset:
     localStorage.removeItem(KEYS.PREFS);
   }

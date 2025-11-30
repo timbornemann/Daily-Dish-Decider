@@ -1,20 +1,22 @@
 
 import React, { useState } from 'react';
-import { Plus, Minus, Trash2, Calendar, Clock, ShoppingBag, ChevronDown, ChevronUp, PackageOpen, LayoutGrid } from 'lucide-react';
-import { Ingredient } from '../types';
+import { Plus, Minus, Trash2, Calendar, Clock, ShoppingBag, ChevronDown, ChevronUp, PackageOpen, LayoutGrid, ShoppingCart, ArrowRight } from 'lucide-react';
+import { Ingredient, ShoppingItem } from '../types';
 import { translations, Language } from '../translations';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface PantryProps {
   items: Ingredient[];
   onUpdate: (items: Ingredient[]) => void;
+  onAddToShopping: (items: string[]) => void;
   lang: Language;
 }
 
-export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
+export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping, lang }) => {
   const [itemName, setItemName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Produce'); // Default to Produce for better immediate suggestions
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [lastMovedItem, setLastMovedItem] = useState<string | null>(null);
 
   const t = translations[lang];
   const categories = [
@@ -61,7 +63,17 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
     onUpdate(items.map(i => i.id === id ? { ...i, ...updates } : i));
   };
 
-  const removeSpecificItem = (id: string) => {
+  const removeSpecificItem = (id: string, name: string) => {
+    // Logic: If this is the LAST item with this name, move to shopping list automatically
+    const count = items.filter(i => i.name.toLowerCase() === name.toLowerCase()).length;
+    
+    if (count <= 1) {
+        // Automatically add to shopping list because it hits 0
+        onAddToShopping([name]);
+        setLastMovedItem(name);
+        setTimeout(() => setLastMovedItem(null), 3000);
+    }
+    
     onUpdate(items.filter(i => i.id !== id));
   };
 
@@ -200,8 +212,9 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
                                                 )}
                                             </div>
                                             <button 
-                                                onClick={() => removeSpecificItem(item.id)}
+                                                onClick={() => removeSpecificItem(item.id, item.name)}
                                                 className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                                title="Remove unit (Moves to shopping list if empty)"
                                             >
                                                 <Trash2 size={14} />
                                             </button>
@@ -237,8 +250,26 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
   // --- Main Render ---
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 p-4 pb-24 overflow-y-auto no-scrollbar transition-colors duration-200">
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 p-4 pb-24 overflow-y-auto no-scrollbar transition-colors duration-200 relative">
       <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">{t.pantry_title}</h2>
+
+      {/* Moved Item Toast */}
+      <AnimatePresence>
+          {lastMovedItem && (
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="absolute top-16 left-4 right-4 z-40 bg-gray-800 dark:bg-white text-white dark:text-gray-900 px-4 py-3 rounded-xl shadow-lg flex items-center justify-between"
+              >
+                  <span className="text-sm font-medium flex items-center gap-2">
+                      <ShoppingCart size={16} /> 
+                      {lastMovedItem} -&gt; {t.shopping_title}
+                  </span>
+                  <span className="text-xs opacity-70">({t.moved_to_shopping})</span>
+              </motion.div>
+          )}
+      </AnimatePresence>
 
       {/* Simplified Add Form */}
       <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700 sticky top-0 z-30">
