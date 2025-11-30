@@ -67,11 +67,19 @@ export const en = {
   filter_all: "All",
   filter_user: "My Recipes",
   filter_local: "Local",
-
-  // Recipe Source
+  delete_recipe_confirm: "Delete this recipe?",
+  filter_easy: "Easy",
+  filter_medium: "Medium",
+  filter_hard: "Hard",
+  
+  // Recipe Source & Difficulty
   source_user: "My Recipe",
   source_ai: "AI Chef",
   source_local: "Collection",
+  difficulty: "Difficulty",
+  diff_easy: "Easy",
+  diff_medium: "Medium",
+  diff_hard: "Hard",
 
   // Recipe Creator
   creator_title: "Create New Recipe",
@@ -204,140 +212,41 @@ export const en = {
     sponge: "Sponge", foil: "Foil"
   },
 
-  // Recipe Data
   recipes: {
-    pancakes: {
-      title: "Classic Fluffy Pancakes",
-      description: "The ultimate weekend breakfast. These pancakes are light, fluffy, and perfect for soaking up maple syrup.",
-      steps: [
-        "In a large mixing bowl, whisk together the flour and sugar. Create a well in the center.",
-        "In a separate jug, whisk the eggs, milk, and melted butter until combined.",
-        "Pour the wet mixture into the dry ingredients. Stir gently with a fork until just combined - do not overmix! It is okay if there are some lumps.",
-        "Heat a non-stick pan over medium heat. Grease lightly with a little extra butter or oil.",
-        "Pour about 1/4 cup of batter for each pancake onto the pan.",
-        "Cook until bubbles appear on the surface and pop (about 2-3 minutes).",
-        "Flip carefully and cook the other side until golden brown (another 1-2 minutes). Serve hot!"
-      ]
-    },
-    spaghetti_aglio: {
-      title: "Spaghetti Aglio e Olio",
-      description: "A traditional Italian pasta dish from Naples. It's incredibly simple but relies on technique to create a creamy emulsion.",
-      steps: [
-        "Bring a large pot of salted water to a boil. Add the spaghetti and cook until 'al dente' (usually 1 minute less than package instructions).",
-        "While pasta cooks, peel and thinly slice the garlic cloves.",
-        "In a large cold pan, combine the olive oil and garlic. Turn heat to medium-low and cook slowly. You want the garlic to turn pale gold, not brown or burnt.",
-        "Once the garlic is golden, add the chili flakes. Carefully ladle in about 1 cup of the starchy pasta water to stop the frying process (watch out for steam!).",
-        "Drain the pasta and toss it directly into the pan. Increase heat to high.",
-        "Stir and toss vigorously for 1-2 minutes. The oil and water will emulsify into a creamy, glossy sauce that coats the noodles. Garnish with parsley/herbs if available."
-      ]
-    },
-    scrambled_eggs: {
-      title: "Perfect Creamy Scrambled Eggs",
-      description: "Forget rubbery eggs. This method yields rich, custard-like soft scrambled eggs.",
-      steps: [
-        "Crack the eggs into a bowl. Add the salt and pepper. Whisk vigorously until the mixture is uniform and airy.",
-        "Place a non-stick pan over medium-low heat and add the butter.",
-        "Once the butter foams, pour in the eggs. Do not walk away!",
-        "Using a spatula, gently push the eggs from the edges to the center, creating soft curds. Tilt the pan to let uncooked egg flow to the hot spots.",
-        "When the eggs are mostly set but still look slightly wet/shiny, remove the pan from the heat immediately. The residual heat will finish cooking them.",
-        "Serve immediately on toast or plates."
-      ]
-    },
-    grilled_cheese: {
-      title: "Ultimate Grilled Cheese",
-      description: "Crispy, buttery bread on the outside, gooey melted cheese on the inside.",
-      steps: [
-        "Spread butter generously on one side of each slice of bread.",
-        "Place a non-stick skillet over medium heat.",
-        "Place one slice of bread in the pan, butter-side down.",
-        "Top with the cheese slices. Place the second slice of bread on top, butter-side up.",
-        "Cook for 3-4 minutes until the bottom is deep golden brown and crispy.",
-        "Flip carefully. Cook the other side for another 2-3 minutes until golden and the cheese is fully melted.",
-        "Slice diagonally and serve hot."
-      ]
-    },
-    carbonara: {
-      title: "Authentic Spaghetti Carbonara",
-      description: "The real Roman way - no cream, just eggs, cheese, and cured pork.",
-      steps: [
-        "Bring a large pot of salted water to a boil for the pasta.",
-        "Cut the bacon into small strips. Fry in a large pan over medium heat until crisp and fat has rendered. Turn off heat.",
-        "In a bowl, whisk the eggs, grated parmesan, and a generous amount of black pepper into a thick paste.",
-        "Cook pasta until al dente. Reserve 1/2 cup of pasta water, then drain.",
-        "Add the hot pasta directly to the pan with the bacon fat. Toss well to coat.",
-        "IMPORTANT: Remove pan from heat entirely. Pour in the egg mixture and a splash of pasta water. Stir quickly and continuously to create a creamy sauce without scrambling the eggs.",
-        "Serve immediately with extra cheese and pepper."
-      ]
-    },
-    chili_con_carne: {
-      title: "Hearty Chili con Carne",
-      description: "A spicy stew containing chili peppers, meat, tomatoes and beans.",
-      steps: [
-        "Dice the onion. Heat a little oil in a large pot over medium-high heat.",
-        "Add the onion and cook until soft. Add the ground beef and break it up with a spoon. Cook until browned.",
-        "Add the chili flakes/powder and stir for 1 minute until fragrant.",
-        "Pour in the canned tomatoes and the drained beans. Stir well.",
-        "Bring to a simmer, then reduce heat to low. Cover and cook for at least 30 minutes (longer is better) to let flavors meld.",
-        "Season with salt and pepper. Serve with rice or bread."
-      ]
-    },
-    french_toast: {
-      title: "Cinnamon French Toast",
-      description: "Custardy bread pan-fried in butter. A classic sweet breakfast.",
-      steps: [
-        "In a shallow dish, whisk together eggs, milk, and cinnamon.",
-        "Melt butter in a frying pan over medium heat.",
-        "Dip each slice of bread into the egg mixture, allowing it to soak for a few seconds on each side.",
-        "Place bread in the hot pan. Cook for 2-3 minutes per side until golden brown and slightly crispy.",
-        "Serve warm, optionally topped with syrup, fruit, or powdered sugar."
-      ]
-    },
-    oatmeal: {
-      title: "Creamy Stove-top Oatmeal",
-      description: "A healthy, warming bowl of oats that keeps you full all morning.",
-      steps: [
-        "In a small pot, combine oats, milk (or water), and a pinch of salt.",
-        "Bring to a gentle boil over medium-high heat, then immediately reduce to a simmer.",
-        "Cook for 5-10 minutes, stirring occasionally to prevent sticking, until the oats are soft and creamy.",
-        "Remove from heat. Stir in honey or sweetener.",
-        "Pour into a bowl and top with fresh fruit, nuts, or extra cinnamon."
-      ]
-    },
-    potato_soup: {
-      title: "Simple Potato Soup",
-      description: "Thick, creamy, and comforting soup using basic pantry vegetables.",
-      steps: [
-        "Peel and chop potatoes, carrots, and onion into small cubes.",
-        "In a large pot, sauté the onion in a little oil/butter until translucent.",
-        "Add the potatoes, carrots, and broth. The vegetables should be covered by liquid.",
-        "Bring to a boil, then cover and simmer for 20-25 minutes until potatoes are very soft.",
-        "Use a potato masher to crush some of the vegetables directly in the pot for a thicker texture (or use a blender for smooth soup).",
-        "Stir in the cream and heat through. Season with salt and pepper."
-      ]
-    },
-    caprese: {
-      title: "Fresh Caprese Salad",
-      description: "A simple Italian salad, made of sliced fresh mozzarella, tomatoes, and sweet basil.",
-      steps: [
-        "Slice the tomatoes and mozzarella cheese into 0.5cm thick rounds.",
-        "Arrange them on a serving platter, alternating between tomato and mozzarella slices.",
-        "Tuck fresh basil leaves between the slices.",
-        "Drizzle generously with olive oil and a splash of vinegar (balsamic is best).",
-        "Sprinkle with flaky salt and freshly cracked black pepper before serving."
-      ]
-    },
-    chicken_curry: {
-      title: "Easy Chicken Curry",
-      description: "A mild, creamy curry sauce with tender chicken and rice.",
-      steps: [
-        "Cook the rice according to package instructions.",
-        "Dice the chicken breast and onion. Mince the garlic.",
-        "Heat oil in a deep pan. Fry the chicken pieces until golden brown. Remove chicken from pan and set aside.",
-        "In the same pan, fry the onion and garlic until soft. Add the curry powder and stir for 1 minute.",
-        "Pour in the cream (or coconut milk/yogurt) and bring to a gentle simmer.",
-        "Return the chicken to the pan. Simmer for 10-15 minutes until chicken is cooked through and sauce has thickened.",
-        "Serve the curry over the fluffy rice."
-      ]
-    }
+    pancakes: { title: "Classic Pancakes", description: "Fluffy breakfast pancakes.", steps: ["Mix flour, sugar, baking powder.", "Whisk milk, egg, butter.", "Combine wet and dry ingredients.", "Cook on pan until golden."] },
+    spaghetti_aglio: { title: "Spaghetti Aglio e Olio", description: "Simple garlic and oil pasta.", steps: ["Boil pasta.", "Sauté garlic and chili in oil.", "Toss pasta in oil.", "Serve with parsley."] },
+    scrambled_eggs: { title: "Creamy Scrambled Eggs", description: "Perfect soft scrambled eggs.", steps: ["Whisk eggs with salt.", "Melt butter in pan.", "Cook gently, stirring constantly.", "Serve immediately."] },
+    grilled_cheese: { title: "Grilled Cheese Sandwich", description: "Crispy, cheesy comfort food.", steps: ["Butter bread slices.", "Place cheese between slices.", "Fry in pan until golden and melted."] },
+    carbonara: { title: "Spaghetti Carbonara", description: "Roman classic with egg and bacon.", steps: ["Fry bacon until crisp.", "Boil pasta.", "Whisk eggs with parmesan and pepper.", "Mix hot pasta with bacon and egg mixture off heat."] },
+    chili_con_carne: { title: "Chili con Carne", description: "Spicy beef and bean stew.", steps: ["Brown the beef.", "Add onions and spices.", "Add tomatoes and beans.", "Simmer for 30 mins."] },
+    french_toast: { title: "French Toast", description: "Sweet fried bread.", steps: ["Whisk eggs, milk, cinnamon.", "Dip bread in mixture.", "Fry in butter until golden."] },
+    oatmeal: { title: "Morning Oatmeal", description: "Healthy warm breakfast.", steps: ["Boil milk.", "Add oats and simmer.", "Top with honey and fruits."] },
+    potato_soup: { title: "Creamy Potato Soup", description: "Warming winter soup.", steps: ["Sauté onions and carrots.", "Add potatoes and broth.", "Simmer until soft.", "Blend and add cream."] },
+    caprese: { title: "Caprese Salad", description: "Fresh Italian salad.", steps: ["Slice tomatoes and mozzarella.", "Layer on plate.", "Top with basil, oil, and vinegar."] },
+    chicken_curry: { title: "Easy Chicken Curry", description: "Mild creamy curry.", steps: ["Fry chicken pieces.", "Add onions, garlic, curry powder.", "Add cream and simmer.", "Serve with rice."] },
+    
+    // New additions
+    schnitzel: { title: "Wiener Schnitzel", description: "Crispy breaded cutlet.", steps: ["Pound meat thin.", "Dredge in flour, egg, then crumbs.", "Fry in plenty of butter until golden."] },
+    bratkartoffeln: { title: "Fried Potatoes", description: "German style crispy potatoes.", steps: ["Boil potatoes then slice.", "Fry bacon and onions.", "Fry potatoes until crispy.", "Mix all together."] },
+    currywurst: { title: "Currywurst", description: "Sausage with curry sauce.", steps: ["Fry sausages.", "Mix ketchup, curry, and spices.", "Slice sausage and cover in sauce."] },
+    kaesespaetzle: { title: "Cheese Spaetzle", description: "German mac and cheese.", steps: ["Cook spaetzle.", "Layer with cheese and fried onions.", "Bake briefly until melted."] },
+    risotto_mushroom: { title: "Mushroom Risotto", description: "Creamy Italian rice.", steps: ["Sauté onions and mushrooms.", "Add rice and toast.", "Add broth ladle by ladle.", "Finish with butter and parmesan."] },
+    lasagne: { title: "Classic Lasagne", description: "Layered pasta bake.", steps: ["Make meat sauce.", "Make white sauce.", "Layer pasta, meat, white sauce.", "Top with cheese and bake."] },
+    bruschetta: { title: "Tomato Bruschetta", description: "Toasted bread with tomatoes.", steps: ["Toast bread slices.", "Dice tomatoes, mix with garlic and basil.", "Top bread with mixture."] },
+    tiramisu: { title: "Tiramisu", description: "Coffee flavored dessert.", steps: ["Dip cookies in coffee.", "Whip mascarpone with sugar.", "Layer cookies and cream.", "Dust with cocoa."] },
+    fried_rice: { title: "Egg Fried Rice", description: "Quick Asian rice dish.", steps: ["Scramble eggs.", "Fry veggies.", "Add cooked rice and soy sauce.", "Stir fry all together."] },
+    beef_broccoli: { title: "Beef and Broccoli", description: "Stir fry classic.", steps: ["Slice beef thin.", "Stir fry beef fast.", "Add broccoli and sauce.", "Serve with rice."] },
+    teriyaki_chicken: { title: "Teriyaki Chicken", description: "Sweet glazed chicken.", steps: ["Cook chicken.", "Add soy sauce, sugar, ginger glaze.", "Simmer until sticky."] },
+    summer_rolls: { title: "Fresh Summer Rolls", description: "Rice paper rolls.", steps: ["Wet rice paper.", "Fill with shrimp, veg, and noodles.", "Roll tightly.", "Serve with peanut dip."] },
+    pad_thai: { title: "Pad Thai", description: "Fried noodles.", steps: ["Soak noodles.", "Stir fry tofu/meat and egg.", "Add noodles and sauce.", "Top with peanuts and lime."] },
+    tacos: { title: "Beef Tacos", description: "Crunchy filled shells.", steps: ["Cook seasoned beef.", "Warm shells.", "Fill with beef, cheese, lettuce."] },
+    quesadillas: { title: "Cheese Quesadillas", description: "Grilled cheese tortillas.", steps: ["Place cheese on tortilla.", "Fold and fry until melted.", "Cut into wedges."] },
+    guacamole: { title: "Fresh Guacamole", description: "Avocado dip.", steps: ["Mash avocados.", "Mix with lime, onion, tomato.", "Season with salt."] },
+    burger: { title: "Classic Burger", description: "Juicy beef burger.", steps: ["Form beef patties.", "Grill or fry patties.", "Toast buns.", "Assemble with toppings."] },
+    greek_salad: { title: "Greek Salad", description: "Fresh feta salad.", steps: ["Chop cucumber and tomato.", "Add olives and onion.", "Top with feta slab and oregano."] },
+    shakshuka: { title: "Shakshuka", description: "Eggs poached in tomato sauce.", steps: ["Make spicy tomato sauce.", "Crack eggs into sauce.", "Cover and cook until set.", "Serve with bread."] },
+    caesar_salad: { title: "Caesar Salad", description: "Creamy lettuce salad.", steps: ["Chop lettuce.", "Toss with dressing and parmesan.", "Top with croutons and chicken."] },
+    banana_bread: { title: "Banana Bread", description: "Moist fruit cake.", steps: ["Mash bananas.", "Mix with wet ingredients.", "Fold in dry ingredients.", "Bake for 1 hour."] },
+    smoothie_bowl: { title: "Berry Smoothie Bowl", description: "Thick smoothie.", steps: ["Blend frozen fruit and yogurt.", "Pour into bowl.", "Top with granola and banana."] }
   }
 };

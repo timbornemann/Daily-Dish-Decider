@@ -24,7 +24,8 @@ export interface Recipe {
   calories?: number;
   tags: string[];
   basePortions: number;
-  source?: 'ai' | 'local' | 'user'; // New field
+  source?: 'ai' | 'local' | 'user';
+  difficulty?: 'Easy' | 'Medium' | 'Hard'; // New field
 }
 
 export interface ShoppingItem {
@@ -36,7 +37,7 @@ export interface ShoppingItem {
 
 export enum AppView {
   SWIPE = 'swipe',
-  COOKBOOK = 'cookbook', // New view
+  COOKBOOK = 'cookbook',
   PANTRY = 'pantry',
   SHOPPING = 'shopping',
   FAVORITES = 'favorites',

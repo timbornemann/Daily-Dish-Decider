@@ -14,10 +14,27 @@ const translateAmount = (amount: string, lang: Language): string => {
         .replace(/\bpinch\b/g, 'Prise')
         .replace(/\bslices\b/g, 'Scheiben')
         .replace(/\bcloves\b/g, 'Zehen')
-        .replace(/\bcan\b/g, 'Dose');
+        .replace(/\bcan\b/g, 'Dose')
+        .replace(/\bblock\b/g, 'Block')
+        .replace(/\bhead\b/g, 'Kopf');
+};
+
+const calculateDifficulty = (prepTime: string): 'Easy' | 'Medium' | 'Hard' => {
+    // Basic heuristic: check numbers in string
+    const match = prepTime.match(/(\d+)/);
+    if (!match) return 'Medium';
+    
+    const mins = parseInt(match[0]);
+    // If it mentions hours/hr, it's hard/long
+    if (prepTime.toLowerCase().includes('hr') || prepTime.toLowerCase().includes('hour')) return 'Hard';
+    
+    if (mins <= 20) return 'Easy';
+    if (mins <= 45) return 'Medium';
+    return 'Hard';
 };
 
 const RECIPE_DEFINITIONS = [
+  // --- EXISTING ---
   {
     id: 'local-pancakes',
     key: 'pancakes',
@@ -168,6 +185,327 @@ const RECIPE_DEFINITIONS = [
     prepTime: '30 mins',
     tags: ['Dinner', 'Asian Style', 'Spicy'],
     basePortions: 4
+  },
+
+  // --- NEW: GERMAN ---
+  {
+    id: 'local-schnitzel',
+    key: 'schnitzel',
+    ingredients: [
+      { id: 'pork_chop', amount: '4' },
+      { id: 'flour', amount: '100g' },
+      { id: 'egg', amount: '2' },
+      { id: 'bread', amount: '200g (Crumbs)' }, 
+      { id: 'lemon', amount: '1' },
+      { id: 'butter', amount: '100g' }
+    ],
+    prepTime: '30 mins',
+    tags: ['Dinner', 'German', 'Meat'],
+    basePortions: 4
+  },
+  {
+    id: 'local-bratkartoffeln',
+    key: 'bratkartoffeln',
+    ingredients: [
+      { id: 'potato', amount: '1kg' },
+      { id: 'bacon', amount: '100g' },
+      { id: 'onion', amount: '1' },
+      { id: 'butter', amount: '2 tbsp' }
+    ],
+    prepTime: '25 mins',
+    tags: ['Dinner', 'German', 'Comfort Food'],
+    basePortions: 4
+  },
+  {
+    id: 'local-currywurst',
+    key: 'currywurst',
+    ingredients: [
+      { id: 'sausage', amount: '4' },
+      { id: 'onion', amount: '1' },
+      { id: 'ketchup', amount: '200ml' },
+      { id: 'curry_powder', amount: '2 tbsp' },
+      { id: 'tomato_paste', amount: '1 tbsp' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Lunch', 'German', 'Street Food'],
+    basePortions: 2
+  },
+  {
+    id: 'local-kaesespaetzle',
+    key: 'kaesespaetzle',
+    ingredients: [
+      { id: 'pasta', amount: '500g (Spaetzle)' }, // Mapping generic pasta to Spaetzle concept
+      { id: 'cheese', amount: '250g' },
+      { id: 'onion', amount: '3' },
+      { id: 'butter', amount: '50g' }
+    ],
+    prepTime: '30 mins',
+    tags: ['Dinner', 'German', 'Vegetarian'],
+    basePortions: 4
+  },
+
+  // --- NEW: ITALIAN ---
+  {
+    id: 'local-risotto-mushroom',
+    key: 'risotto_mushroom',
+    ingredients: [
+      { id: 'rice', amount: '300g (Arborio)' },
+      { id: 'mushroom', amount: '300g' },
+      { id: 'onion', amount: '1' },
+      { id: 'parmesan', amount: '50g' },
+      { id: 'chicken_broth', amount: '1 liter' }, // or veg broth
+      { id: 'butter', amount: '50g' }
+    ],
+    prepTime: '40 mins',
+    tags: ['Dinner', 'Italian', 'Vegetarian Option'],
+    basePortions: 4
+  },
+  {
+    id: 'local-lasagne',
+    key: 'lasagne',
+    ingredients: [
+      { id: 'ground_beef', amount: '500g' },
+      { id: 'pasta', amount: '12 sheets' },
+      { id: 'canned_tomato', amount: '2 cans' },
+      { id: 'milk', amount: '500ml' },
+      { id: 'flour', amount: '50g' },
+      { id: 'cheese', amount: '200g' }
+    ],
+    prepTime: '1 hr 15 mins',
+    tags: ['Dinner', 'Italian', 'Family'],
+    basePortions: 6
+  },
+  {
+    id: 'local-bruschetta',
+    key: 'bruschetta',
+    ingredients: [
+      { id: 'bread', amount: '1 loaf' },
+      { id: 'tomato', amount: '4' },
+      { id: 'garlic', amount: '2 cloves' },
+      { id: 'basil', amount: '1 handful' },
+      { id: 'olive_oil', amount: '3 tbsp' }
+    ],
+    prepTime: '15 mins',
+    tags: ['Snack', 'Italian', 'Appetizer'],
+    basePortions: 4
+  },
+  {
+    id: 'local-tiramisu',
+    key: 'tiramisu',
+    ingredients: [
+      { id: 'coffee', amount: '1 cup' },
+      { id: 'cheese', amount: '500g (Mascarpone)' }, // Mapping cheese to Mascarpone
+      { id: 'sugar', amount: '100g' },
+      { id: 'cookie', amount: '200g (Ladyfingers)' },
+      { id: 'chocolate', amount: '2 tbsp (Cocoa)' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dessert', 'Italian', 'Sweet'],
+    basePortions: 6
+  },
+
+  // --- NEW: ASIAN ---
+  {
+    id: 'local-fried-rice',
+    key: 'fried_rice',
+    ingredients: [
+      { id: 'rice', amount: '400g (Cooked)' },
+      { id: 'egg', amount: '2' },
+      { id: 'frozen_peas', amount: '100g' },
+      { id: 'carrot', amount: '1' },
+      { id: 'soy_sauce', amount: '2 tbsp' }
+    ],
+    prepTime: '15 mins',
+    tags: ['Dinner', 'Asian', 'Quick'],
+    basePortions: 2
+  },
+  {
+    id: 'local-beef-broccoli',
+    key: 'beef_broccoli',
+    ingredients: [
+      { id: 'steak', amount: '400g' },
+      { id: 'broccoli', amount: '1 head' },
+      { id: 'soy_sauce', amount: '3 tbsp' },
+      { id: 'ginger', amount: '1 tbsp' },
+      { id: 'garlic', amount: '2 cloves' },
+      { id: 'sugar', amount: '1 tbsp' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dinner', 'Asian', 'High Protein'],
+    basePortions: 2
+  },
+  {
+    id: 'local-teriyaki-chicken',
+    key: 'teriyaki_chicken',
+    ingredients: [
+      { id: 'chicken_breast', amount: '500g' },
+      { id: 'soy_sauce', amount: '4 tbsp' },
+      { id: 'sugar', amount: '2 tbsp' }, // Honey ideally
+      { id: 'ginger', amount: '1 tsp' },
+      { id: 'rice', amount: '200g' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dinner', 'Asian', 'Family'],
+    basePortions: 4
+  },
+  {
+    id: 'local-summer-rolls',
+    key: 'summer_rolls',
+    ingredients: [
+      { id: 'tortilla', amount: '8 (Rice Paper)' }, // Using tortilla as mapping for wrapper
+      { id: 'shrimp', amount: '200g' },
+      { id: 'lettuce', amount: '1 head' },
+      { id: 'cucumber', amount: '1' },
+      { id: 'carrot', amount: '1' },
+      { id: 'peanut_butter', amount: '2 tbsp' }
+    ],
+    prepTime: '30 mins',
+    tags: ['Lunch', 'Asian', 'Healthy'],
+    basePortions: 4
+  },
+  {
+    id: 'local-pad-thai',
+    key: 'pad_thai',
+    ingredients: [
+      { id: 'pasta', amount: '200g (Rice Noodles)' },
+      { id: 'egg', amount: '2' },
+      { id: 'tofu', amount: '200g' }, // or chicken
+      { id: 'nuts', amount: '2 tbsp (Peanuts)' },
+      { id: 'soy_sauce', amount: '2 tbsp' },
+      { id: 'lime', amount: '1' }
+    ],
+    prepTime: '25 mins',
+    tags: ['Dinner', 'Thai', 'Noodles'],
+    basePortions: 2
+  },
+
+  // --- NEW: MEXICAN ---
+  {
+    id: 'local-tacos',
+    key: 'tacos',
+    ingredients: [
+      { id: 'ground_beef', amount: '400g' },
+      { id: 'tortilla', amount: '8' },
+      { id: 'cheese', amount: '100g' },
+      { id: 'lettuce', amount: '1/2 head' },
+      { id: 'chili_flakes', amount: '1 tbsp' },
+      { id: 'canned_tomato', amount: '100g (Salsa)' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dinner', 'Mexican', 'Fun'],
+    basePortions: 4
+  },
+  {
+    id: 'local-quesadillas',
+    key: 'quesadillas',
+    ingredients: [
+      { id: 'tortilla', amount: '4' },
+      { id: 'cheese', amount: '200g' },
+      { id: 'bean', amount: '100g' } // optional
+    ],
+    prepTime: '10 mins',
+    tags: ['Lunch', 'Mexican', 'Quick'],
+    basePortions: 2
+  },
+  {
+    id: 'local-guacamole',
+    key: 'guacamole',
+    ingredients: [
+      { id: 'avocado', amount: '3' },
+      { id: 'lime', amount: '1' },
+      { id: 'onion', amount: '1/2' },
+      { id: 'tomato', amount: '1' },
+      { id: 'chips', amount: '1 bag' }
+    ],
+    prepTime: '10 mins',
+    tags: ['Snack', 'Mexican', 'Party'],
+    basePortions: 4
+  },
+
+  // --- NEW: INT / OTHER ---
+  {
+    id: 'local-burger',
+    key: 'burger',
+    ingredients: [
+      { id: 'ground_beef', amount: '400g' },
+      { id: 'bun', amount: '4' },
+      { id: 'cheese', amount: '4 slices' },
+      { id: 'tomato', amount: '1' },
+      { id: 'lettuce', amount: '4 leaves' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dinner', 'American', 'Comfort Food'],
+    basePortions: 4
+  },
+  {
+    id: 'local-greek-salad',
+    key: 'greek_salad',
+    ingredients: [
+      { id: 'cucumber', amount: '1' },
+      { id: 'tomato', amount: '4' },
+      { id: 'onion', amount: '1' },
+      { id: 'cheese', amount: '200g (Feta)' },
+      { id: 'olive_oil', amount: '3 tbsp' },
+      { id: 'oregano', amount: '1 tsp' }
+    ],
+    prepTime: '15 mins',
+    tags: ['Lunch', 'Greek', 'Healthy', 'Vegetarian'],
+    basePortions: 2
+  },
+  {
+    id: 'local-shakshuka',
+    key: 'shakshuka',
+    ingredients: [
+      { id: 'egg', amount: '4' },
+      { id: 'canned_tomato', amount: '1 can' },
+      { id: 'pepper', amount: '1' },
+      { id: 'onion', amount: '1' },
+      { id: 'bread', amount: 'for serving' }
+    ],
+    prepTime: '25 mins',
+    tags: ['Breakfast', 'Middle Eastern', 'Vegetarian'],
+    basePortions: 2
+  },
+  {
+    id: 'local-caesar-salad',
+    key: 'caesar_salad',
+    ingredients: [
+      { id: 'lettuce', amount: '1 head' },
+      { id: 'chicken_breast', amount: '2' },
+      { id: 'bread', amount: '2 slices (Croutons)' },
+      { id: 'parmesan', amount: '50g' },
+      { id: 'mayo', amount: '2 tbsp' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Lunch', 'Salad', 'Healthy'],
+    basePortions: 2
+  },
+  {
+    id: 'local-banana-bread',
+    key: 'banana_bread',
+    ingredients: [
+      { id: 'banana', amount: '3' },
+      { id: 'flour', amount: '250g' },
+      { id: 'sugar', amount: '100g' },
+      { id: 'butter', amount: '100g' },
+      { id: 'egg', amount: '1' }
+    ],
+    prepTime: '1 hr 10 mins',
+    tags: ['Baking', 'Sweet', 'Snack'],
+    basePortions: 8
+  },
+  {
+    id: 'local-smoothie-bowl',
+    key: 'smoothie_bowl',
+    ingredients: [
+      { id: 'berry', amount: '200g (Frozen)' },
+      { id: 'banana', amount: '1' },
+      { id: 'yogurt', amount: '100g' },
+      { id: 'oat', amount: '2 tbsp' }
+    ],
+    prepTime: '5 mins',
+    tags: ['Breakfast', 'Healthy', 'Quick'],
+    basePortions: 1
   }
 ];
 
@@ -175,8 +513,6 @@ export const getLocalRecipes = (lang: Language): Recipe[] => {
     const t = translations[lang];
 
     return RECIPE_DEFINITIONS.map(def => {
-        // Safe access to the recipe text in the current language
-        // Cast as any because TS might not perfectly infer the dynamic key access
         const content = (t.recipes as any)[def.key]; 
         
         if (!content) return null;
@@ -187,13 +523,14 @@ export const getLocalRecipes = (lang: Language): Recipe[] => {
             description: content.description,
             steps: content.steps,
             ingredients: def.ingredients.map(ing => ({
-                name: (t.ingredients as any)[ing.id] || ing.id, // Translate ingredient name
+                name: (t.ingredients as any)[ing.id] || ing.id, 
                 amount: translateAmount(ing.amount, lang)
             })),
             prepTime: def.prepTime,
             tags: def.tags,
             basePortions: def.basePortions,
-            source: 'local'
+            source: 'local',
+            difficulty: calculateDifficulty(def.prepTime)
         };
     }).filter(r => r !== null) as Recipe[];
 };
@@ -207,7 +544,6 @@ export const findMatchingRecipes = (
   const scored = availableRecipes.map(recipe => {
     let matches = 0;
     recipe.ingredients.forEach(req => {
-      // Loose string matching
       const hasItem = pantryItems.some(
         p => p.name.toLowerCase().includes(req.name.toLowerCase()) || 
              req.name.toLowerCase().includes(p.name.toLowerCase())

@@ -126,8 +126,6 @@ const App: React.FC = () => {
       setIsCreatingRecipe(false);
       
       // Check if ingredients exist in pantry, if not add them? 
-      // User request said: "falls es noch nicht existiert wird es hinzugefügt im vorrat"
-      // Let's add missing ingredients to pantry automatically
       const newIngredients: Ingredient[] = [];
       recipe.ingredients.forEach(ing => {
           const exists = pantry.some(p => p.name.toLowerCase() === ing.name.toLowerCase());
@@ -135,7 +133,7 @@ const App: React.FC = () => {
               newIngredients.push({
                   id: `pantry-auto-${Date.now()}-${Math.random()}`,
                   name: ing.name,
-                  category: 'General', // Default, difficult to guess without AI
+                  category: 'General', 
                   quantity: '1',
               });
           }
@@ -144,6 +142,18 @@ const App: React.FC = () => {
       if (newIngredients.length > 0) {
           updatePantry([...pantry, ...newIngredients]);
       }
+  };
+
+  const handleDeleteRecipe = (recipe: Recipe) => {
+    if (recipe.source === 'user') {
+        const updated = userRecipes.filter(r => r.id !== recipe.id);
+        updateUserRecipes(updated);
+        
+        // Also remove from likes if it was liked
+        if (likedRecipes.some(r => r.id === recipe.id)) {
+            updateLikedRecipes(likedRecipes.filter(r => r.id !== recipe.id));
+        }
+    }
   };
 
   // Ensure valid language
@@ -192,6 +202,7 @@ const App: React.FC = () => {
             likedRecipes={likedRecipes}
             onToggleLike={handleToggleLike}
             onViewDetail={(r) => setSelectedRecipe(r)}
+            onDeleteRecipe={handleDeleteRecipe}
             lang={currentLang}
           />
         );

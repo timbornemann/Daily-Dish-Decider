@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ChevronLeft, Plus, Save, Trash2, Clock, Users, X } from 'lucide-react';
+import { ChevronLeft, Plus, Save, Trash2, Clock, Users, X, BarChart } from 'lucide-react';
 import { Recipe, RecipeIngredient, Ingredient } from '../types';
 import { translations, Language } from '../translations';
 
@@ -18,6 +18,7 @@ export const RecipeCreator: React.FC<RecipeCreatorProps> = ({ onSave, onCancel, 
   const [description, setDescription] = useState('');
   const [prepTime, setPrepTime] = useState('');
   const [basePortions, setBasePortions] = useState(2);
+  const [difficulty, setDifficulty] = useState<'Easy' | 'Medium' | 'Hard'>('Medium');
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
   const [steps, setSteps] = useState<string[]>(['']);
   
@@ -66,7 +67,8 @@ export const RecipeCreator: React.FC<RecipeCreatorProps> = ({ onSave, onCancel, 
         prepTime: prepTime || '30 mins',
         tags: ['User Created'],
         basePortions,
-        source: 'user'
+        source: 'user',
+        difficulty
     };
 
     onSave(newRecipe);
@@ -113,8 +115,8 @@ export const RecipeCreator: React.FC<RecipeCreatorProps> = ({ onSave, onCancel, 
                 />
             </div>
             
-            <div className="flex gap-4">
-                <div className="flex-1">
+            <div className="grid grid-cols-3 gap-4">
+                <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.creator_prep}</label>
                     <div className="relative">
                         <Clock className="absolute left-3 top-3 text-gray-400" size={16} />
@@ -127,7 +129,7 @@ export const RecipeCreator: React.FC<RecipeCreatorProps> = ({ onSave, onCancel, 
                         />
                     </div>
                 </div>
-                <div className="flex-1">
+                <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.creator_portions}</label>
                     <div className="relative">
                         <Users className="absolute left-3 top-3 text-gray-400" size={16} />
@@ -137,6 +139,21 @@ export const RecipeCreator: React.FC<RecipeCreatorProps> = ({ onSave, onCancel, 
                             onChange={e => setBasePortions(parseInt(e.target.value))}
                             className="w-full p-3 pl-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
+                    </div>
+                </div>
+                 <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.difficulty}</label>
+                    <div className="relative">
+                        <BarChart className="absolute left-3 top-3 text-gray-400" size={16} />
+                        <select 
+                            value={difficulty}
+                            onChange={e => setDifficulty(e.target.value as any)}
+                            className="w-full p-3 pl-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white appearance-none"
+                        >
+                            <option value="Easy">{t.diff_easy}</option>
+                            <option value="Medium">{t.diff_medium}</option>
+                            <option value="Hard">{t.diff_hard}</option>
+                        </select>
                     </div>
                 </div>
             </div>
