@@ -1,15 +1,19 @@
+
 import React, { useState } from 'react';
 import { Check, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 import { ShoppingItem, Ingredient } from '../types';
+import { translations, Language } from '../translations';
 
 interface ShoppingListProps {
   items: ShoppingItem[];
   onUpdate: (items: ShoppingItem[]) => void;
   onMoveToPantry: (items: Ingredient[]) => void;
+  lang: Language;
 }
 
-export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onMoveToPantry }) => {
+export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onMoveToPantry, lang }) => {
   const [inputValue, setInputValue] = useState('');
+  const t = translations[lang];
 
   const handleAddItem = () => {
     if (!inputValue.trim()) return;
@@ -53,13 +57,13 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
   return (
     <div className="flex flex-col h-full bg-gray-50 p-4 pb-24 overflow-y-auto no-scrollbar">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Shopping List</h2>
+        <h2 className="text-2xl font-bold text-gray-800">{t.shopping_title}</h2>
         {items.filter(i => i.checked).length > 0 && (
           <button 
             onClick={handleCheckout}
             className="text-sm bg-green-500 text-white px-3 py-1 rounded-full flex items-center gap-1 shadow-sm hover:bg-green-600 transition"
           >
-            Checkout <ArrowRight size={14} />
+            {t.checkout_button} <ArrowRight size={14} />
           </button>
         )}
       </div>
@@ -70,7 +74,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
-          placeholder="Add item..."
+          placeholder={t.add_item_placeholder}
           className="flex-1 px-4 py-2 focus:outline-none"
         />
         <button 
@@ -84,7 +88,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64 text-gray-400">
           <ShoppingBag size={48} className="mb-2 opacity-50" />
-          <p>Your shopping list is clear.</p>
+          <p>{t.empty_shopping_msg}</p>
         </div>
       ) : (
         <div className="space-y-2">

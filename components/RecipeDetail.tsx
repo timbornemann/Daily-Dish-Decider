@@ -1,16 +1,20 @@
+
 import React, { useState } from 'react';
 import { ChevronLeft, Users, Clock, ShoppingBag } from 'lucide-react';
 import { Recipe, Ingredient } from '../types';
+import { translations, Language } from '../translations';
 
 interface RecipeDetailProps {
   recipe: Recipe;
   onBack: () => void;
   pantryItems: Ingredient[];
   onAddToShoppingList: (items: string[]) => void;
+  lang: Language;
 }
 
-export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pantryItems, onAddToShoppingList }) => {
+export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pantryItems, onAddToShoppingList, lang }) => {
   const [portions, setPortions] = useState(recipe.basePortions || 2);
+  const t = translations[lang];
 
   const scale = (amountStr: string) => {
     // Very basic fraction parsing and scaling
@@ -65,7 +69,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
         <div className="flex items-center justify-between mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100">
           <div className="flex items-center gap-2 text-gray-700 font-medium">
             <Users size={20} className="text-brand-500" />
-            <span>Servings</span>
+            <span>{t.servings}</span>
           </div>
           <div className="flex items-center gap-4 bg-white rounded-lg shadow-sm border border-gray-200 px-2 py-1">
             <button 
@@ -88,7 +92,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
         {missingItems.length > 0 && (
           <div className="mb-8 p-4 bg-orange-50 border border-orange-100 rounded-xl">
              <h3 className="text-orange-800 font-bold mb-2 flex items-center gap-2">
-                <ShoppingBag size={18} /> Missing Ingredients
+                <ShoppingBag size={18} /> {t.missing_ingredients}
              </h3>
              <ul className="list-disc list-inside text-sm text-orange-700 mb-3 ml-1">
                 {missingItems.map(m => <li key={m}>{m}</li>)}
@@ -97,14 +101,14 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
                 onClick={() => onAddToShoppingList(missingItems)}
                 className="text-xs font-bold bg-orange-200 text-orange-800 px-3 py-2 rounded-lg hover:bg-orange-300 w-full"
              >
-                Add Missing to Shopping List
+                {t.add_missing_shopping}
              </button>
           </div>
         )}
 
         <div className="grid md:grid-cols-2 gap-8">
             <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Ingredients</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{t.ingredients_title}</h3>
                 <ul className="space-y-3">
                 {recipe.ingredients.map((ing, idx) => (
                     <li key={idx} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
@@ -118,7 +122,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
             </div>
 
             <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Instructions</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{t.instructions_title}</h3>
                 <div className="space-y-6">
                 {recipe.steps.map((step, idx) => (
                     <div key={idx} className="flex gap-4">

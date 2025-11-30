@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { HashRouter } from 'react-router-dom';
 import { StorageService } from './services/storage';
@@ -99,6 +100,9 @@ const App: React.FC = () => {
     setSelectedRecipe(recipe);
   };
 
+  // Ensure valid language
+  const currentLang = preferences.language === 'de' ? 'de' : 'en';
+
   // Render Logic
   const renderContent = () => {
     // If Detail view is active (overlay)
@@ -109,21 +113,23 @@ const App: React.FC = () => {
           onBack={() => setSelectedRecipe(null)}
           pantryItems={pantry}
           onAddToShoppingList={handleAddMissingToShopping}
+          lang={currentLang}
         />
       );
     }
 
     switch (view) {
       case AppView.PANTRY:
-        return <Pantry items={pantry} onUpdate={updatePantry} />;
+        return <Pantry items={pantry} onUpdate={updatePantry} lang={currentLang} />;
       case AppView.SHOPPING:
-        return <ShoppingList items={shoppingList} onUpdate={updateShoppingList} onMoveToPantry={handleMoveToPantry} />;
+        return <ShoppingList items={shoppingList} onUpdate={updateShoppingList} onMoveToPantry={handleMoveToPantry} lang={currentLang} />;
       case AppView.FAVORITES:
         return (
           <SuddenDeath 
             recipes={likedRecipes} 
             onWinnerSelected={handleWinnerSelected} 
             onRestart={() => setView(AppView.SWIPE)}
+            lang={currentLang}
           />
         );
       case AppView.SETTINGS:
@@ -132,6 +138,7 @@ const App: React.FC = () => {
             preferences={preferences} 
             onUpdatePreferences={updatePreferences}
             onClearData={handleClearData}
+            lang={currentLang}
           />
         );
       case AppView.SWIPE:
@@ -142,6 +149,7 @@ const App: React.FC = () => {
             onLike={handleLike} 
             onDislike={handleDislike}
             onViewDetail={(r) => setSelectedRecipe(r)}
+            lang={currentLang}
           />
         );
     }
@@ -162,6 +170,7 @@ const App: React.FC = () => {
             currentView={view} 
             onChange={setView} 
             badgeCount={shoppingList.filter(i => !i.checked).length}
+            lang={currentLang}
           />
         )}
       </div>

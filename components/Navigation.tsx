@@ -1,20 +1,25 @@
+
 import React from 'react';
 import { Refrigerator, Heart, Utensils, ShoppingCart, Settings } from 'lucide-react';
 import { AppView } from '../types';
+import { translations, Language } from '../translations';
 
 interface NavigationProps {
   currentView: AppView;
   onChange: (view: AppView) => void;
   badgeCount?: number;
+  lang: Language;
 }
 
-export const Navigation: React.FC<NavigationProps> = ({ currentView, onChange, badgeCount = 0 }) => {
+export const Navigation: React.FC<NavigationProps> = ({ currentView, onChange, badgeCount = 0, lang }) => {
+  const t = translations[lang];
+  
   const items = [
-    { id: AppView.PANTRY, icon: Refrigerator, label: 'Pantry' },
-    { id: AppView.SWIPE, icon: Utensils, label: 'Discover' },
-    { id: AppView.FAVORITES, icon: Heart, label: 'Favorites' },
-    { id: AppView.SHOPPING, icon: ShoppingCart, label: 'Shopping', badge: badgeCount },
-    { id: AppView.SETTINGS, icon: Settings, label: 'Settings' },
+    { id: AppView.PANTRY, icon: Refrigerator, label: t.nav_pantry },
+    { id: AppView.SWIPE, icon: Utensils, label: t.nav_discover },
+    { id: AppView.FAVORITES, icon: Heart, label: t.nav_favorites },
+    { id: AppView.SHOPPING, icon: ShoppingCart, label: t.nav_shopping, badge: badgeCount },
+    { id: AppView.SETTINGS, icon: Settings, label: t.nav_settings },
   ];
 
   return (

@@ -1,27 +1,31 @@
+
 import React, { useState } from 'react';
 import { Recipe } from '../types';
 import { Trophy, ArrowRight, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { translations, Language } from '../translations';
 
 interface SuddenDeathProps {
   recipes: Recipe[];
   onWinnerSelected: (recipe: Recipe) => void;
   onRestart: () => void;
+  lang: Language;
 }
 
-export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelected, onRestart }) => {
+export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelected, onRestart, lang }) => {
   // Simple tournament queue state
   const [queue, setQueue] = useState<Recipe[]>([...recipes]);
   const [currentPair, setCurrentPair] = useState<[Recipe, Recipe] | null>(
     recipes.length >= 2 ? [recipes[0], recipes[1]] : null
   );
+  const t = translations[lang];
 
   // If only 1 recipe, it is the winner
   if (recipes.length === 0) {
     return (
         <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-            <p className="text-gray-500 mb-4">No liked recipes yet.</p>
-            <button onClick={onRestart} className="text-brand-500 font-bold">Start Swiping</button>
+            <p className="text-gray-500 mb-4">{t.no_liked_recipes}</p>
+            <button onClick={onRestart} className="text-brand-500 font-bold">{t.start_swiping}</button>
         </div>
     );
   }
@@ -29,7 +33,7 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelec
   if (recipes.length === 1) {
     // Should auto-select, but let's show UI
     return (
-      <WinnerView recipe={recipes[0]} onAction={() => onWinnerSelected(recipes[0])} />
+      <WinnerView recipe={recipes[0]} onAction={() => onWinnerSelected(recipes[0])} t={t} />
     );
   }
 
@@ -50,14 +54,14 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelec
   };
 
   if (queue.length === 1) {
-      return <WinnerView recipe={queue[0]} onAction={() => onWinnerSelected(queue[0])} />;
+      return <WinnerView recipe={queue[0]} onAction={() => onWinnerSelected(queue[0])} t={t} />;
   }
 
   return (
     <div className="h-full flex flex-col bg-gray-900 text-white relative overflow-hidden">
       <div className="absolute top-4 inset-x-0 text-center z-10">
-        <h2 className="text-2xl font-black uppercase tracking-widest text-red-500 animate-pulse">Sudden Death</h2>
-        <p className="text-xs text-gray-400">Choose the winner</p>
+        <h2 className="text-2xl font-black uppercase tracking-widest text-red-500 animate-pulse">{t.sudden_death_title}</h2>
+        <p className="text-xs text-gray-400">{t.choose_winner}</p>
       </div>
 
       <div className="flex-1 flex flex-col md:flex-row relative">
@@ -69,6 +73,7 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelec
                     recipe={currentPair[0]} 
                     position="A" 
                     onClick={() => handleChoice(currentPair[0], currentPair[1])} 
+                    t={t}
                 />
                 
                 {/* VS Divider */}
@@ -83,6 +88,7 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelec
                     recipe={currentPair[1]} 
                     position="B" 
                     onClick={() => handleChoice(currentPair[1], currentPair[0])} 
+                    t={t}
                 />
                 </>
             )}
@@ -92,7 +98,7 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelec
   );
 };
 
-const Choice = ({ recipe, position, onClick }: { recipe: Recipe, position: 'A' | 'B', onClick: () => void }) => {
+const Choice = ({ recipe, position, onClick, t }: { recipe: Recipe, position: 'A' | 'B', onClick: () => void, t: any }) => {
     return (
         <motion.div 
             initial={{ opacity: 0, x: position === 'A' ? -50 : 50 }}
@@ -108,18 +114,18 @@ const Choice = ({ recipe, position, onClick }: { recipe: Recipe, position: 'A' |
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
             <div className="absolute bottom-0 inset-x-0 p-8 flex flex-col items-center text-center">
-                <span className="text-red-500 font-bold tracking-widest text-sm mb-2">OPTION {position}</span>
+                <span className="text-red-500 font-bold tracking-widest text-sm mb-2">{t.option_prefix} {position}</span>
                 <h3 className="text-3xl font-bold mb-2 shadow-black drop-shadow-md">{recipe.title}</h3>
                 <p className="text-sm text-gray-300 max-w-xs line-clamp-2">{recipe.description}</p>
                 <div className="mt-4 px-6 py-2 bg-white text-black font-bold rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all">
-                    Select This
+                    {t.select_this}
                 </div>
             </div>
         </motion.div>
     )
 }
 
-const WinnerView = ({ recipe, onAction }: { recipe: Recipe, onAction: () => void }) => (
+const WinnerView = ({ recipe, onAction, t }: { recipe: Recipe, onAction: () => void, t: any }) => (
     <div className="h-full flex flex-col items-center justify-center bg-gray-50 p-6 text-center">
         <motion.div 
             initial={{ scale: 0 }}
@@ -128,14 +134,14 @@ const WinnerView = ({ recipe, onAction }: { recipe: Recipe, onAction: () => void
         >
             <Trophy size={64} />
         </motion.div>
-        <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">The Winner Is</h2>
+        <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">{t.winner_is}</h2>
         <h1 className="text-3xl font-bold text-gray-900 mb-8">{recipe.title}</h1>
         
         <button 
             onClick={onAction}
             className="bg-brand-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:bg-brand-700 flex items-center gap-2 transition-transform hover:scale-105"
         >
-            Let's Cook It! <ArrowRight size={20} />
+            {t.lets_cook} <ArrowRight size={20} />
         </button>
     </div>
 );

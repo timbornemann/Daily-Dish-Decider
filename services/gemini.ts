@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { Ingredient, Recipe } from "../types";
 
@@ -5,14 +6,20 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const generateRecipes = async (
   pantryItems: Ingredient[],
-  dietaryRestrictions: string[] = []
+  dietaryRestrictions: string[] = [],
+  language: 'en' | 'de' = 'en'
 ): Promise<Recipe[]> => {
   const pantryNames = pantryItems.map(i => i.name).join(', ');
   const restrictions = dietaryRestrictions.length > 0 ? `Dietary restrictions: ${dietaryRestrictions.join(', ')}.` : '';
+  
+  const langInstruction = language === 'de' 
+    ? "Generate the recipe titles, descriptions, ingredients, and steps in German (Deutsch). The field names in JSON must remain in English (e.g. 'title', 'ingredients'), but the content values must be German." 
+    : "Generate the recipe titles, descriptions, ingredients, and steps in English.";
 
   const prompt = `
     I have the following ingredients in my pantry: ${pantryNames}.
     ${restrictions}
+    ${langInstruction}
     Suggest 5 distinct recipes I can make using mostly these ingredients.
     It is okay if I need to buy 1 or 2 common items (like eggs, oil, spices, or fresh produce).
     Make the titles catchy.

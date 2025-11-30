@@ -1,28 +1,22 @@
+
 import React, { useState } from 'react';
 import { Plus, Minus, Trash2, AlertCircle, Calendar, Clock, Scale, ShoppingBag } from 'lucide-react';
 import { Ingredient } from '../types';
+import { translations, Language } from '../translations';
 
 interface PantryProps {
   items: Ingredient[];
   onUpdate: (items: Ingredient[]) => void;
+  lang: Language;
 }
 
-// Standard items to be always available for quick add
-const COMMON_PANTRY_ITEMS: Record<string, string[]> = {
-  'Produce': ['Onions', 'Garlic', 'Potatoes', 'Carrots', 'Tomatoes', 'Lemons', 'Bananas', 'Spinach', 'Peppers'],
-  'Dairy': ['Milk', 'Eggs', 'Butter', 'Cheese', 'Yogurt', 'Cream', 'Parmesan'],
-  'Meat': ['Chicken Breast', 'Ground Beef', 'Bacon', 'Salmon', 'Sausages', 'Tofu'],
-  'Pantry': ['Rice', 'Pasta', 'Flour', 'Sugar', 'Olive Oil', 'Vegetable Oil', 'Canned Tomatoes', 'Beans', 'Lentils', 'Bread'],
-  'Spices': ['Salt', 'Pepper', 'Cumin', 'Paprika', 'Oregano', 'Basil', 'Soy Sauce', 'Vinegar'],
-  'General': ['Coffee', 'Tea', 'Snacks', 'Water']
-};
-
-export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
+export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
   const [newItemName, setNewItemName] = useState('');
   const [newItemQuantity, setNewItemQuantity] = useState('1');
   const [newItemExpiry, setNewItemExpiry] = useState('');
   const [newItemCategory, setNewItemCategory] = useState('General');
 
+  const t = translations[lang];
   const categories = ['Produce', 'Meat', 'Dairy', 'Pantry', 'Spices', 'General'];
 
   const handleAdd = () => {
@@ -98,9 +92,9 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
     const diffTime = expiry.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 0) return { color: 'text-red-600', label: 'Expired', bg: 'bg-red-100' };
-    if (diffDays <= 3) return { color: 'text-red-500', label: `${diffDays} days left`, bg: 'bg-red-50' };
-    if (diffDays <= 7) return { color: 'text-yellow-600', label: 'Expiring soon', bg: 'bg-yellow-50' };
+    if (diffDays < 0) return { color: 'text-red-600', label: t.expired, bg: 'bg-red-100' };
+    if (diffDays <= 3) return { color: 'text-red-500', label: `${diffDays} ${t.days_left}`, bg: 'bg-red-50' };
+    if (diffDays <= 7) return { color: 'text-yellow-600', label: t.expiring_soon, bg: 'bg-yellow-50' };
     
     return { color: 'text-green-600', label: null, bg: 'bg-green-50' };
   };
@@ -116,13 +110,14 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
   // Get list of standard items that are NOT currently in the pantry for a specific category
   const getMissingStandardItems = (category: string) => {
     const currentNames = new Set(items.map(i => i.name.toLowerCase()));
-    const standards = COMMON_PANTRY_ITEMS[category] || [];
-    return standards.filter(name => !currentNames.has(name.toLowerCase()));
+    // Use type assertion to access dynamic property safely or fallback to empty array
+    const standards = (t.common_items as any)[category] || [];
+    return standards.filter((name: string) => !currentNames.has(name.toLowerCase()));
   };
 
   return (
     <div className="flex flex-col h-full bg-gray-50 p-4 pb-24 overflow-y-auto no-scrollbar">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">My Pantry</h2>
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">{t.pantry_title}</h2>
 
       {/* Custom Add Form */}
       <div className="bg-white p-4 rounded-xl shadow-sm mb-6 border border-gray-100">
@@ -132,7 +127,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
                     type="text"
                     value={newItemName}
                     onChange={(e) => setNewItemName(e.target.value)}
-                    placeholder="Custom item name..."
+                    placeholder={t.custom_item_placeholder}
                     className="flex-1 border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
                 />
                 <div className="relative w-1/3">
@@ -140,7 +135,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
                         type="text"
                         value={newItemQuantity}
                         onChange={(e) => setNewItemQuantity(e.target.value)}
-                        placeholder="Qty"
+                        placeholder={t.qty_placeholder}
                         className="w-full border border-gray-200 rounded-lg pl-8 pr-2 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
                     />
                     <Scale size={14} className="absolute left-2.5 top-3 text-gray-400" />
@@ -167,19 +162,22 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
             </div>
 
             <div className="flex gap-2 overflow-x-auto no-scrollbar pt-1">
-                {categories.map(c => (
+                {categories.map(c => {
+                  const catLabel = (t as any)[`cat_${c}`] || c;
+                  return (
                     <button
-                    key={c}
-                    onClick={() => setNewItemCategory(c)}
-                    className={`text-xs px-3 py-1.5 rounded-full whitespace-nowrap transition-colors border ${
-                        newItemCategory === c 
-                        ? 'bg-brand-50 text-brand-600 border-brand-200 font-medium' 
-                        : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'
-                    }`}
+                      key={c}
+                      onClick={() => setNewItemCategory(c)}
+                      className={`text-xs px-3 py-1.5 rounded-full whitespace-nowrap transition-colors border ${
+                          newItemCategory === c 
+                          ? 'bg-brand-50 text-brand-600 border-brand-200 font-medium' 
+                          : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'
+                      }`}
                     >
-                    {c}
+                      {catLabel}
                     </button>
-                ))}
+                  );
+                })}
             </div>
         </div>
       </div>
@@ -188,13 +186,14 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
         {categories.map((category) => {
            const catItems = groupedItems[category] || [];
            const missingStandard = getMissingStandardItems(category);
+           const catLabel = (t as any)[`cat_${category}`] || category;
            
            if (catItems.length === 0 && missingStandard.length === 0) return null;
 
            return (
             <div key={category} className="mb-2">
                 <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1 flex items-center gap-2">
-                  {category} 
+                  {catLabel} 
                   <span className="bg-gray-200 text-gray-600 rounded-full px-1.5 py-0.5 text-[10px]">{catItems.length}</span>
                 </h3>
                 
@@ -238,7 +237,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
                                         <div className={`flex items-center gap-1 px-2 py-1 rounded-md ${expiryStatus.bg} ${expiryStatus.color}`}>
                                             <Clock size={10} />
                                             <span className="font-medium whitespace-nowrap">
-                                                {expiryStatus.label || 'Good'}
+                                                {expiryStatus.label || t.good}
                                             </span>
                                         </div>
                                     )}
@@ -247,7 +246,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
                                             onClick={() => handleOpenProduct(item.id)}
                                             className="text-gray-400 hover:text-brand-500 flex items-center gap-1 transition-colors bg-gray-50 px-2 py-1 rounded-md"
                                           >
-                                            <Calendar size={10} /> Open
+                                            <Calendar size={10} /> {t.open_action}
                                           </button>
                                     )}
                                 </div>
@@ -259,9 +258,9 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
                     {/* Quick Add Buttons for Missing Standards */}
                     {missingStandard.length > 0 && (
                         <div className="pt-1">
-                            <p className="text-[10px] font-bold text-gray-400 mb-2 uppercase ml-1">Quick Add</p>
+                            <p className="text-[10px] font-bold text-gray-400 mb-2 uppercase ml-1">{t.quick_add}</p>
                             <div className="flex flex-wrap gap-2">
-                                {missingStandard.map(name => (
+                                {missingStandard.map((name: string) => (
                                     <button
                                         key={name}
                                         onClick={() => handleQuickAdd(name, category)}
@@ -284,7 +283,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate }) => {
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 text-gray-400 mb-3">
                 <ShoppingBag size={24} />
             </div>
-            <p className="text-gray-500 text-sm">Start adding items from the Quick Add sections or type your own above!</p>
+            <p className="text-gray-500 text-sm">{t.empty_pantry_msg}</p>
          </div>
       )}
     </div>

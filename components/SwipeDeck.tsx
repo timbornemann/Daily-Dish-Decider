@@ -1,20 +1,24 @@
+
 import React, { useState, useEffect } from 'react';
-import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from 'framer-motion';
+import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo, Variants } from 'framer-motion';
 import { X, Heart, ChefHat, RefreshCw, Info } from 'lucide-react';
 import { Recipe, Ingredient } from '../types';
 import { generateRecipes } from '../services/gemini';
+import { translations, Language } from '../translations';
 
 interface SwipeDeckProps {
   pantryItems: Ingredient[];
   onLike: (recipe: Recipe) => void;
   onDislike: (recipe: Recipe) => void;
   onViewDetail: (recipe: Recipe) => void;
+  lang: Language;
 }
 
-export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDislike, onViewDetail }) => {
+export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDislike, onViewDetail, lang }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [exitDirection, setExitDirection] = useState<number>(0); // -1 for left, 1 for right
+  const t = translations[lang];
 
   // Load initial batch if empty
   useEffect(() => {
@@ -26,7 +30,7 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
 
   const fetchRecipes = async () => {
     setLoading(true);
-    const newRecipes = await generateRecipes(pantryItems);
+    const newRecipes = await generateRecipes(pantryItems, [], lang);
     setRecipes(prev => [...prev, ...newRecipes]);
     setLoading(false);
   };
@@ -66,8 +70,8 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
         <div className="bg-gray-100 p-6 rounded-full mb-4">
           <ChefHat size={48} className="text-gray-400" />
         </div>
-        <h3 className="text-xl font-bold text-gray-800 mb-2">Pantry is Empty</h3>
-        <p>Add ingredients to your pantry to start discovering recipes!</p>
+        <h3 className="text-xl font-bold text-gray-800 mb-2">{t.pantry_empty_title}</h3>
+        <p>{t.pantry_empty_desc}</p>
       </div>
     );
   }
@@ -77,7 +81,7 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
       {loading && recipes.length === 0 && (
         <div className="absolute inset-0 flex flex-col items-center justify-center z-50 bg-white/80 backdrop-blur-sm">
           <RefreshCw className="animate-spin text-brand-500 mb-4" size={40} />
-          <p className="text-brand-900 font-medium animate-pulse">Consulting the chefs...</p>
+          <p className="text-brand-900 font-medium animate-pulse">{t.loading_chef}</p>
         </div>
       )}
 
@@ -97,6 +101,7 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
                 onSwipe={(dir) => handleSwipe(dir, recipe)}
                 onDragEnd={(e, i) => handleDragEnd(e, i, recipe)}
                 onViewDetail={() => onViewDetail(recipe)}
+                lang={lang}
               />
              );
           })}
@@ -108,7 +113,7 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({ pantryItems, onLike, onDis
               onClick={fetchRecipes}
               className="bg-white px-6 py-3 rounded-full shadow-lg text-brand-500 font-bold flex items-center gap-2 hover:bg-gray-50"
             >
-              <RefreshCw size={20} /> Load More Recipes
+              <RefreshCw size={20} /> {t.load_more}
             </button>
           </div>
         )}
@@ -141,18 +146,20 @@ interface CardProps {
   onSwipe: (dir: 'left' | 'right') => void;
   onDragEnd: (e: any, info: PanInfo) => void;
   onViewDetail: () => void;
+  lang: Language;
 }
 
-const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, onViewDetail }) => {
+const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, onViewDetail, lang }) => {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-25, 25]);
   const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
+  const t = translations[lang];
   
   // Visual indicators overlay
   const nopeOpacity = useTransform(x, [-150, -20], [1, 0]);
   const likeOpacity = useTransform(x, [20, 150], [0, 1]);
 
-  const variants = {
+  const variants: Variants = {
     enter: { scale: 0.95, y: 20, opacity: 0 },
     center: { 
         scale: 1, 
@@ -194,10 +201,10 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
       {isTop && (
         <>
           <motion.div style={{ opacity: likeOpacity }} className="absolute top-8 left-8 z-20 border-4 border-green-500 text-green-500 font-bold text-4xl px-4 py-2 rounded-lg transform -rotate-12 bg-white/20 backdrop-blur-sm pointer-events-none">
-            LIKE
+            {t.like}
           </motion.div>
           <motion.div style={{ opacity: nopeOpacity }} className="absolute top-8 right-8 z-20 border-4 border-red-500 text-red-500 font-bold text-4xl px-4 py-2 rounded-lg transform rotate-12 bg-white/20 backdrop-blur-sm pointer-events-none">
-            NOPE
+            {t.nope}
           </motion.div>
         </>
       )}
@@ -214,7 +221,7 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
           <h2 className="text-3xl font-bold shadow-black drop-shadow-md leading-tight">{recipe.title}</h2>
           <p className="text-white/90 font-medium flex items-center gap-2">
             <span className="bg-white/20 px-2 py-0.5 rounded text-sm backdrop-blur-md">{recipe.prepTime || '30 mins'}</span>
-            <span className="text-sm">• {recipe.ingredients.length} Ingredients</span>
+            <span className="text-sm">• {recipe.ingredients.length} {t.ingredients_title}</span>
           </p>
         </div>
       </div>
@@ -230,7 +237,7 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
             ))}
           </div>
           <p className="text-gray-600 line-clamp-4 text-sm leading-relaxed mb-4">
-            {recipe.description || "A delicious meal you can make with your pantry ingredients."}
+            {recipe.description || t.default_desc}
           </p>
         </div>
         
@@ -241,7 +248,7 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
           }}
           className="w-full py-3 border-2 border-brand-100 text-brand-600 font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-brand-50 transition-colors"
         >
-          <Info size={18} /> View Recipe Details
+          <Info size={18} /> {t.view_details}
         </button>
       </div>
     </motion.div>
