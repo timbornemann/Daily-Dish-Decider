@@ -10,22 +10,30 @@ export const translations = {
 
     // Pantry
     pantry_title: "My Pantry",
-    custom_item_placeholder: "Custom item name...",
+    custom_item_placeholder: "Add item name...",
     qty_placeholder: "Qty",
     add_button: "Add",
     cat_Produce: "Produce",
     cat_Dairy: "Dairy",
     cat_Meat: "Meat",
+    cat_Bakery: "Bakery",
+    cat_Frozen: "Frozen",
     cat_Pantry: "Pantry",
     cat_Spices: "Spices",
+    cat_Snacks: "Snacks",
+    cat_Beverages: "Beverages",
     cat_General: "General",
     expired: "Expired",
     days_left: "days left",
     expiring_soon: "Expiring soon",
     good: "Good",
     open_action: "Open",
+    opened: "Opened",
+    settings_units: "Units",
+    units: "units",
     quick_add: "Quick Add",
     empty_pantry_msg: "Start adding items from the Quick Add sections or type your own above!",
+    set_expiry: "Set Expiry",
     
     // Shopping List
     shopping_title: "Shopping List",
@@ -71,7 +79,6 @@ export const translations = {
     off: "Off",
     language: "Language",
     app_language: "App Language",
-    units: "Units",
     measurement_system: "Measurement System",
     measurement_desc: "Used for ingredient amounts",
     dietary_desc: "Select your dietary preferences. These will be used to filter recipe suggestions and generate ideas.",
@@ -87,12 +94,16 @@ export const translations = {
 
     // Common Items
     common_items: {
-        'Produce': ['Onions', 'Garlic', 'Potatoes', 'Carrots', 'Tomatoes', 'Lemons', 'Bananas', 'Spinach', 'Peppers'],
-        'Dairy': ['Milk', 'Eggs', 'Butter', 'Cheese', 'Yogurt', 'Cream', 'Parmesan'],
-        'Meat': ['Chicken Breast', 'Ground Beef', 'Bacon', 'Salmon', 'Sausages', 'Tofu'],
-        'Pantry': ['Rice', 'Pasta', 'Flour', 'Sugar', 'Olive Oil', 'Vegetable Oil', 'Canned Tomatoes', 'Beans', 'Lentils', 'Bread'],
-        'Spices': ['Salt', 'Pepper', 'Cumin', 'Paprika', 'Oregano', 'Basil', 'Soy Sauce', 'Vinegar'],
-        'General': ['Coffee', 'Tea', 'Snacks', 'Water']
+        'Produce': ['Onions', 'Garlic', 'Potatoes', 'Carrots', 'Tomatoes', 'Lemons', 'Limes', 'Bananas', 'Spinach', 'Peppers', 'Cucumber', 'Zucchini', 'Lettuce', 'Apples', 'Oranges', 'Berries', 'Avocado', 'Mushrooms', 'Ginger', 'Chili', 'Broccoli', 'Cauliflower', 'Sweet Potato', 'Fresh Herbs'],
+        'Dairy': ['Milk', 'Eggs', 'Butter', 'Cheese', 'Yogurt', 'Cream', 'Parmesan', 'Mozzarella', 'Cheddar', 'Sour Cream', 'Cottage Cheese', 'Almond Milk', 'Oat Milk', 'Cream Cheese'],
+        'Meat': ['Chicken Breast', 'Ground Beef', 'Bacon', 'Salmon', 'Sausages', 'Tofu', 'Steak', 'Pork Chops', 'Turkey', 'Ham', 'Salami', 'Prosciutto', 'Shrimp', 'Tuna'],
+        'Bakery': ['Bread', 'Toast', 'Bagels', 'Tortillas', 'Buns', 'Pita Bread', 'Croissants', 'Rolls', 'Pizza Dough'],
+        'Frozen': ['Frozen Peas', 'Frozen Pizza', 'Ice Cream', 'Frozen Berries', 'Fries', 'Frozen Spinach', 'Fish Sticks', 'Frozen Corn'],
+        'Pantry': ['Rice', 'Pasta', 'Flour', 'Sugar', 'Olive Oil', 'Vegetable Oil', 'Canned Tomatoes', 'Beans', 'Lentils', 'Quinoa', 'Couscous', 'Oats', 'Cereal', 'Chicken Broth', 'Beef Broth', 'Tomato Paste', 'Honey', 'Maple Syrup', 'Peanut Butter', 'Jam', 'Baking Powder', 'Yeast'],
+        'Spices': ['Salt', 'Pepper', 'Cumin', 'Paprika', 'Oregano', 'Basil', 'Soy Sauce', 'Vinegar', 'Garlic Powder', 'Onion Powder', 'Chili Flakes', 'Cinnamon', 'Turmeric', 'Curry Powder', 'Thyme', 'Rosemary', 'Mustard', 'Mayo', 'Ketchup', 'Hot Sauce'],
+        'Snacks': ['Chips', 'Nuts', 'Chocolate', 'Crackers', 'Popcorn', 'Cookies', 'Granola Bars', 'Dried Fruit'],
+        'Beverages': ['Coffee', 'Tea', 'Water', 'Juice', 'Soda', 'Beer', 'Wine', 'Sparkling Water'],
+        'General': ['Paper Towels', 'Toilet Paper', 'Dish Soap', 'Sponge', 'Foil']
     },
 
     // Dietary Options
@@ -116,22 +127,30 @@ export const translations = {
 
     // Pantry
     pantry_title: "Mein Vorrat",
-    custom_item_placeholder: "Eigener Artikel...",
+    custom_item_placeholder: "Artikelname eingeben...",
     qty_placeholder: "Menge",
     add_button: "Hinzufügen",
     cat_Produce: "Obst & Gemüse",
     cat_Dairy: "Milchprodukte",
-    cat_Meat: "Fleisch",
-    cat_Pantry: "Vorrat",
-    cat_Spices: "Gewürze",
-    cat_General: "Allgemein",
+    cat_Meat: "Fleisch & Fisch",
+    cat_Bakery: "Backwaren",
+    cat_Frozen: "Tiefkühl",
+    cat_Pantry: "Vorratsschrank",
+    cat_Spices: "Gewürze & Saucen",
+    cat_Snacks: "Snacks",
+    cat_Beverages: "Getränke",
+    cat_General: "Haushalt",
     expired: "Abgelaufen",
     days_left: "Tage übrig",
     expiring_soon: "Bald abgelaufen",
     good: "Gut",
     open_action: "Öffnen",
+    opened: "Geöffnet",
+    settings_units: "Einheiten",
+    units: "Stück",
     quick_add: "Schnell hinzufügen",
     empty_pantry_msg: "Füge Artikel über die Schnellauswahl hinzu oder tippe oben eigene ein!",
+    set_expiry: "Haltbarkeit",
 
     // Shopping List
     shopping_title: "Einkaufsliste",
@@ -177,7 +196,6 @@ export const translations = {
     off: "Aus",
     language: "Sprache",
     app_language: "App Sprache",
-    units: "Einheiten",
     measurement_system: "Maßsystem",
     measurement_desc: "Für Mengenangaben",
     dietary_desc: "Wähle deine Ernährungsvorlieben. Diese werden für Rezeptvorschläge verwendet.",
@@ -193,12 +211,16 @@ export const translations = {
 
     // Common Items
     common_items: {
-        'Produce': ['Zwiebeln', 'Knoblauch', 'Kartoffeln', 'Karotten', 'Tomaten', 'Zitronen', 'Bananen', 'Spinat', 'Paprika'],
-        'Dairy': ['Milch', 'Eier', 'Butter', 'Käse', 'Joghurt', 'Sahne', 'Parmesan'],
-        'Meat': ['Hähnchenbrust', 'Hackfleisch', 'Speck', 'Lachs', 'Würstchen', 'Tofu'],
-        'Pantry': ['Reis', 'Nudeln', 'Mehl', 'Zucker', 'Olivenöl', 'Pflanzenöl', 'Dosentomaten', 'Bohnen', 'Linsen', 'Brot'],
-        'Spices': ['Salz', 'Pfeffer', 'Kreuzkümmel', 'Paprika', 'Oregano', 'Basilikum', 'Sojasauce', 'Essig'],
-        'General': ['Kaffee', 'Tee', 'Snacks', 'Wasser']
+        'Produce': ['Zwiebeln', 'Knoblauch', 'Kartoffeln', 'Karotten', 'Tomaten', 'Zitronen', 'Limetten', 'Bananen', 'Spinat', 'Paprika', 'Gurke', 'Zucchini', 'Salat', 'Äpfel', 'Orangen', 'Beeren', 'Avocado', 'Pilze', 'Ingwer', 'Chili', 'Brokkoli', 'Blumenkohl', 'Süßkartoffel', 'Frische Kräuter'],
+        'Dairy': ['Milch', 'Eier', 'Butter', 'Käse', 'Joghurt', 'Sahne', 'Parmesan', 'Mozzarella', 'Cheddar', 'Schmand', 'Körniger Frischkäse', 'Mandelmilch', 'Hafermilch', 'Frischkäse'],
+        'Meat': ['Hähnchenbrust', 'Hackfleisch', 'Speck', 'Lachs', 'Würstchen', 'Tofu', 'Steak', 'Kotelett', 'Pute', 'Schinken', 'Salami', 'Prosciutto', 'Garnelen', 'Thunfisch'],
+        'Bakery': ['Brot', 'Toast', 'Bagels', 'Tortillas', 'Brötchen', 'Pita', 'Croissants', 'Pizzateig'],
+        'Frozen': ['TK Erbsen', 'TK Pizza', 'Eiscreme', 'TK Beeren', 'Pommes', 'TK Spinat', 'Fischstäbchen', 'TK Mais'],
+        'Pantry': ['Reis', 'Nudeln', 'Mehl', 'Zucker', 'Olivenöl', 'Pflanzenöl', 'Dosentomaten', 'Bohnen', 'Linsen', 'Quinoa', 'Couscous', 'Haferflocken', 'Müsli', 'Hühnerbrühe', 'Rinderbrühe', 'Tomatenmark', 'Honig', 'Ahornsirup', 'Erdnussbutter', 'Marmelade', 'Backpulver', 'Hefe'],
+        'Spices': ['Salz', 'Pfeffer', 'Kreuzkümmel', 'Paprika', 'Oregano', 'Basilikum', 'Sojasauce', 'Essig', 'Knoblauchpulver', 'Zwiebelpulver', 'Chiliflocken', 'Zimt', 'Kurkuma', 'Currypulver', 'Thymian', 'Rosmarin', 'Senf', 'Mayo', 'Ketchup', 'Scharfe Soße'],
+        'Snacks': ['Chips', 'Nüsse', 'Schokolade', 'Cracker', 'Popcorn', 'Kekse', 'Müsliriegel', 'Trockenobst'],
+        'Beverages': ['Kaffee', 'Tee', 'Wasser', 'Saft', 'Limo', 'Bier', 'Wein', 'Sprudelwasser'],
+        'General': ['Küchenrolle', 'Toilettenpapier', 'Spülmittel', 'Schwamm', 'Alufolie']
     },
     
     // Dietary Options

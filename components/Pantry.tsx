@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { Plus, Minus, Trash2, AlertCircle, Calendar, Clock, Scale, ShoppingBag } from 'lucide-react';
+import { Plus, Minus, Trash2, Calendar, Clock, ShoppingBag, ChevronDown, ChevronUp, PackageOpen, LayoutGrid } from 'lucide-react';
 import { Ingredient } from '../types';
 import { translations, Language } from '../translations';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface PantryProps {
   items: Ingredient[];
@@ -11,81 +12,82 @@ interface PantryProps {
 }
 
 export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
-  const [newItemName, setNewItemName] = useState('');
-  const [newItemQuantity, setNewItemQuantity] = useState('1');
-  const [newItemExpiry, setNewItemExpiry] = useState('');
-  const [newItemCategory, setNewItemCategory] = useState('General');
+  const [itemName, setItemName] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Produce'); // Default to Produce for better immediate suggestions
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
   const t = translations[lang];
-  const categories = ['Produce', 'Meat', 'Dairy', 'Pantry', 'Spices', 'General'];
+  const categories = [
+    'Produce', 
+    'Meat', 
+    'Dairy', 
+    'Bakery', 
+    'Frozen', 
+    'Pantry', 
+    'Spices', 
+    'Snacks', 
+    'Beverages', 
+    'General'
+  ];
+
+  // --- Actions ---
 
   const handleAdd = () => {
-    if (!newItemName.trim()) return;
+    if (!itemName.trim()) return;
+    
+    // Add a single unit of this item
     const newItem: Ingredient = {
       id: Date.now().toString(),
-      name: newItemName,
-      quantity: newItemQuantity || '1',
-      category: newItemCategory,
-      expiryDate: newItemExpiry || undefined
+      name: itemName.trim(),
+      quantity: '1', // Default to 1 unit internally
+      category: selectedCategory,
     };
-    onUpdate([...items, newItem]);
     
-    // Reset fields
-    setNewItemName('');
-    setNewItemQuantity('1');
-    setNewItemExpiry('');
+    onUpdate([...items, newItem]);
+    setItemName('');
   };
 
   const handleQuickAdd = (name: string, category: string) => {
-    // Check if it already exists to just increment
-    const existingItem = items.find(i => i.name.toLowerCase() === name.toLowerCase());
-    if (existingItem) {
-      updateQuantity(existingItem.id, 1);
-    } else {
-      const newItem: Ingredient = {
-        id: Date.now().toString(),
-        name: name,
-        quantity: '1',
-        category: category,
-      };
-      onUpdate([...items, newItem]);
-    }
+    const newItem: Ingredient = {
+      id: Date.now().toString(),
+      name: name,
+      quantity: '1',
+      category: category,
+    };
+    onUpdate([...items, newItem]);
   };
 
-  const handleRemove = (id: string) => {
+  const updateItemDetails = (id: string, updates: Partial<Ingredient>) => {
+    onUpdate(items.map(i => i.id === id ? { ...i, ...updates } : i));
+  };
+
+  const removeSpecificItem = (id: string) => {
     onUpdate(items.filter(i => i.id !== id));
   };
 
-  const updateQuantity = (id: string, delta: number) => {
-    onUpdate(items.map(i => {
-      if (i.id === id) {
-        // Try to parse number, default to 1 if NaN
-        let currentQty = parseInt(i.quantity);
-        if (isNaN(currentQty)) currentQty = 1;
-        
-        const newQty = Math.max(0, currentQty + delta);
-        
-        // Return null to signal removal in the filter step (handled in a separate wrapper if needed, 
-        // but here we map then filter in the parent or handle 0 logic)
-        return { ...i, quantity: newQty.toString() };
-      }
-      return i;
-    }).filter(i => parseInt(i.quantity) > 0)); // Auto-remove if 0
+  const toggleGroup = (groupKey: string) => {
+    setExpandedGroups(prev => ({ ...prev, [groupKey]: !prev[groupKey] }));
   };
 
-  const handleOpenProduct = (id: string) => {
-    onUpdate(items.map(i => {
-      if (i.id === id) {
-        return { ...i, openedDate: new Date().toISOString().split('T')[0], daysGoodAfterOpen: 3 }; 
-      }
-      return i;
-    }));
-  };
+  // --- Grouping Logic ---
 
-  // Helper to determine expiry status color
+  // Group items by unique key (Category + Name) to display as one card
+  const groupedItems = items.reduce((acc, item) => {
+    const key = `${item.category}-${item.name.toLowerCase().trim()}`;
+    if (!acc[key]) {
+        acc[key] = {
+            name: item.name,
+            category: item.category,
+            items: []
+        };
+    }
+    acc[key].items.push(item);
+    return acc;
+  }, {} as Record<string, { name: string, category: string, items: Ingredient[] }>);
+
+  // Helper for expiry color logic (reused)
   const getExpiryStatus = (dateStr?: string) => {
-    if (!dateStr) return { color: 'text-gray-400 dark:text-gray-500', label: null, bg: 'bg-gray-100 dark:bg-gray-700' };
-    
+    if (!dateStr) return null;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const expiry = new Date(dateStr);
@@ -95,197 +97,228 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, lang }) => {
     if (diffDays < 0) return { color: 'text-red-600 dark:text-red-400', label: t.expired, bg: 'bg-red-100 dark:bg-red-900/30' };
     if (diffDays <= 3) return { color: 'text-red-500 dark:text-red-300', label: `${diffDays} ${t.days_left}`, bg: 'bg-red-50 dark:bg-red-900/20' };
     if (diffDays <= 7) return { color: 'text-yellow-600 dark:text-yellow-400', label: t.expiring_soon, bg: 'bg-yellow-50 dark:bg-yellow-900/20' };
+    return { color: 'text-green-600 dark:text-green-400', label: t.good, bg: 'bg-green-50 dark:bg-green-900/20' };
+  };
+
+  // Get current suggestions based on selected category
+  const currentSuggestions = (t.common_items as any)[selectedCategory] || [];
+
+  // --- Render Helpers ---
+
+  const renderGroup = (groupKey: string, group: { name: string, category: string, items: Ingredient[] }) => {
+    const isExpanded = expandedGroups[groupKey];
+    const totalCount = group.items.length;
     
-    return { color: 'text-green-600 dark:text-green-400', label: null, bg: 'bg-green-50 dark:bg-green-900/20' };
+    // Check for any urgent statuses to show on closed card
+    const urgentItems = group.items.filter(i => {
+        const status = getExpiryStatus(i.expiryDate);
+        return status && (status.label === t.expired || status.label?.includes(t.days_left));
+    });
+    const hasOpened = group.items.some(i => i.openedDate);
+
+    return (
+        <div key={groupKey} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-200">
+            {/* Header / Summary Card */}
+            <div 
+                onClick={() => toggleGroup(groupKey)}
+                className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
+            >
+                <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="flex flex-col">
+                        <span className="font-bold text-gray-800 dark:text-gray-100 text-lg truncate">{group.name}</span>
+                        <div className="flex items-center gap-2 text-xs">
+                           <span className="text-gray-400 dark:text-gray-500">{group.category}</span>
+                           {hasOpened && (
+                               <span className="flex items-center gap-1 text-orange-500 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-1.5 py-0.5 rounded">
+                                   <PackageOpen size={10} /> {t.opened}
+                               </span>
+                           )}
+                           {urgentItems.length > 0 && (
+                               <span className="flex items-center gap-1 text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-1.5 py-0.5 rounded">
+                                   <Clock size={10} /> {urgentItems.length} !
+                               </span>
+                           )}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg px-2 py-1">
+                        <span className="font-bold text-gray-800 dark:text-gray-100 text-sm">{totalCount}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">{t.units}</span>
+                    </div>
+                    {isExpanded ? <ChevronUp size={20} className="text-gray-400" /> : <ChevronDown size={20} className="text-gray-400" />}
+                </div>
+            </div>
+
+            {/* Expanded Details */}
+            <AnimatePresence>
+                {isExpanded && (
+                    <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700"
+                    >
+                        <div className="p-3 space-y-2">
+                             {/* Controls for the group */}
+                             <div className="flex justify-end mb-2">
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleQuickAdd(group.name, group.category);
+                                    }}
+                                    className="text-xs flex items-center gap-1 bg-brand-500 text-white px-3 py-1.5 rounded-lg hover:bg-brand-600 transition-colors shadow-sm"
+                                >
+                                    <Plus size={14} /> {t.add_button} {t.units}
+                                </button>
+                             </div>
+
+                             {/* Individual Item Rows */}
+                             {group.items.map((item, idx) => {
+                                 const expiryStatus = getExpiryStatus(item.expiryDate);
+                                 
+                                 return (
+                                    <div key={item.id} className="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col gap-2">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs font-bold text-gray-400 dark:text-gray-600">#{idx + 1}</span>
+                                                {item.openedDate ? (
+                                                     <span className="text-xs font-medium text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                                        <PackageOpen size={10} /> {t.opened}
+                                                     </span>
+                                                ) : (
+                                                    <button 
+                                                        onClick={() => updateItemDetails(item.id, { 
+                                                            openedDate: new Date().toISOString().split('T')[0],
+                                                            daysGoodAfterOpen: 3 // Default assumption
+                                                        })}
+                                                        className="text-xs text-gray-500 hover:text-brand-500 border border-gray-200 dark:border-gray-600 hover:border-brand-500 rounded-full px-2 py-0.5 transition-colors"
+                                                    >
+                                                        {t.open_action}
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <button 
+                                                onClick={() => removeSpecificItem(item.id)}
+                                                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            <div className="relative flex-1">
+                                                <input 
+                                                    type="date"
+                                                    value={item.expiryDate || ''}
+                                                    onChange={(e) => updateItemDetails(item.id, { expiryDate: e.target.value })}
+                                                    className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg py-1.5 pl-8 pr-2 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                                                />
+                                                <Calendar size={12} className="absolute left-2.5 top-2 text-gray-400" />
+                                            </div>
+                                            {expiryStatus && (
+                                                <span className={`text-[10px] px-2 py-1 rounded-md font-medium whitespace-nowrap ${expiryStatus.bg} ${expiryStatus.color}`}>
+                                                    {expiryStatus.label}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                 );
+                             })}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
   };
 
-  // Group items by category
-  const groupedItems = items.reduce((acc, item) => {
-    const cat = item.category || 'General';
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(item);
-    return acc;
-  }, {} as Record<string, Ingredient[]>);
-
-  // Get list of standard items that are NOT currently in the pantry for a specific category
-  const getMissingStandardItems = (category: string) => {
-    const currentNames = new Set(items.map(i => i.name.toLowerCase()));
-    // Use type assertion to access dynamic property safely or fallback to empty array
-    const standards = (t.common_items as any)[category] || [];
-    return standards.filter((name: string) => !currentNames.has(name.toLowerCase()));
-  };
+  // --- Main Render ---
 
   return (
     <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 p-4 pb-24 overflow-y-auto no-scrollbar transition-colors duration-200">
       <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">{t.pantry_title}</h2>
 
-      {/* Custom Add Form */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700 transition-colors">
-        <div className="flex flex-col gap-3">
-            <div className="flex gap-2">
+      {/* Simplified Add Form */}
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700 sticky top-0 z-30">
+         <div className="flex flex-col gap-3">
+             
+             {/* Category Dropdown */}
+             <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
+                    <LayoutGrid size={18} />
+                </div>
+                <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="w-full appearance-none bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 hover:border-brand-500 dark:hover:border-brand-500 rounded-xl px-10 py-3 font-medium focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all cursor-pointer"
+                >
+                    {categories.map(c => (
+                        <option key={c} value={c}>
+                            {(t as any)[`cat_${c}`] || c}
+                        </option>
+                    ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
+                    <ChevronDown size={18} />
+                </div>
+             </div>
+
+             {/* Input & Add Button */}
+             <div className="relative">
                 <input
                     type="text"
-                    value={newItemName}
-                    onChange={(e) => setNewItemName(e.target.value)}
+                    value={itemName}
+                    onChange={(e) => setItemName(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
                     placeholder={t.custom_item_placeholder}
-                    className="flex-1 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-colors"
+                    className="w-full bg-gray-50 dark:bg-gray-700 border-none text-gray-900 dark:text-white placeholder-gray-400 text-lg font-medium px-4 py-3 rounded-xl focus:ring-2 focus:ring-brand-500 transition-all"
                 />
-                <div className="relative w-1/3">
-                    <input
-                        type="text"
-                        value={newItemQuantity}
-                        onChange={(e) => setNewItemQuantity(e.target.value)}
-                        placeholder={t.qty_placeholder}
-                        className="w-full border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-lg pl-8 pr-2 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-colors"
-                    />
-                    <Scale size={14} className="absolute left-2.5 top-3 text-gray-400" />
-                </div>
-            </div>
-
-            <div className="flex gap-2 items-center">
-                <div className="relative flex-1">
-                    <input 
-                        type="date" 
-                        value={newItemExpiry}
-                        onChange={(e) => setNewItemExpiry(e.target.value)}
-                        className="w-full border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg pl-8 pr-2 py-2 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
-                    />
-                    <Clock size={14} className="absolute left-2.5 top-3 text-gray-400" />
-                </div>
-                
                 <button 
                     onClick={handleAdd}
-                    className="bg-brand-500 text-white p-2 rounded-lg hover:bg-brand-600 transition-colors shadow-sm"
+                    disabled={!itemName.trim()}
+                    className="absolute right-2 top-2 bottom-2 bg-brand-500 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white px-4 rounded-lg font-bold hover:bg-brand-600 transition-colors shadow-sm flex items-center gap-1"
                 >
                     <Plus size={20} />
                 </button>
+             </div>
+             
+             {/* Dynamic Suggestions based on Category */}
+             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 pt-1 touch-pan-x">
+                 {currentSuggestions.length > 0 ? (
+                    currentSuggestions.map((name: string) => (
+                        <button
+                            key={name}
+                            onClick={() => handleQuickAdd(name, selectedCategory)}
+                            className="shrink-0 text-xs font-medium px-3 py-2 rounded-full whitespace-nowrap transition-all border bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-brand-500 hover:text-brand-500 dark:hover:text-brand-400 dark:hover:border-brand-400 active:scale-95"
+                        >
+                            + {name}
+                        </button>
+                    ))
+                 ) : (
+                     <span className="text-xs text-gray-400 italic px-2 py-1">No suggestions for this category</span>
+                 )}
             </div>
-
-            <div className="flex gap-2 overflow-x-auto no-scrollbar pt-1">
-                {categories.map(c => {
-                  const catLabel = (t as any)[`cat_${c}`] || c;
-                  return (
-                    <button
-                      key={c}
-                      onClick={() => setNewItemCategory(c)}
-                      className={`text-xs px-3 py-1.5 rounded-full whitespace-nowrap transition-colors border ${
-                          newItemCategory === c 
-                          ? 'bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300 border-brand-200 dark:border-brand-800 font-medium' 
-                          : 'bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
-                      }`}
-                    >
-                      {catLabel}
-                    </button>
-                  );
-                })}
-            </div>
-        </div>
-      </div>
-
-      <div className="space-y-6">
-        {categories.map((category) => {
-           const catItems = groupedItems[category] || [];
-           const missingStandard = getMissingStandardItems(category);
-           const catLabel = (t as any)[`cat_${category}`] || category;
-           
-           if (catItems.length === 0 && missingStandard.length === 0) return null;
-
-           return (
-            <div key={category} className="mb-2">
-                <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3 ml-1 flex items-center gap-2">
-                  {catLabel} 
-                  <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full px-1.5 py-0.5 text-[10px]">{catItems.length}</span>
-                </h3>
-                
-                <div className="space-y-3">
-                    {/* Active Items */}
-                    {catItems.map(item => {
-                        const expiryStatus = getExpiryStatus(item.expiryDate);
-                        return (
-                        <div key={item.id} className="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
-                            <div className="flex items-center justify-between mb-2">
-                                <p className="font-semibold text-gray-800 dark:text-gray-100 truncate flex-1">{item.name}</p>
-                                <button 
-                                    onClick={() => handleRemove(item.id)}
-                                    className="text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 p-1 transition-colors"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                            </div>
-                            
-                            <div className="flex items-center justify-between">
-                                {/* Quantity Stepper */}
-                                <div className="flex items-center bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 h-8">
-                                    <button 
-                                        onClick={() => updateQuantity(item.id, -1)}
-                                        className="w-8 h-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-red-500 rounded-l-lg transition-colors"
-                                    >
-                                        <Minus size={14} />
-                                    </button>
-                                    <span className="w-8 text-center text-sm font-bold text-gray-800 dark:text-gray-100">{item.quantity}</span>
-                                    <button 
-                                        onClick={() => updateQuantity(item.id, 1)}
-                                        className="w-8 h-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-green-600 rounded-r-lg transition-colors"
-                                    >
-                                        <Plus size={14} />
-                                    </button>
-                                </div>
-
-                                {/* Meta Info */}
-                                <div className="flex items-center gap-2 text-xs">
-                                     {item.expiryDate && (
-                                        <div className={`flex items-center gap-1 px-2 py-1 rounded-md ${expiryStatus.bg} ${expiryStatus.color}`}>
-                                            <Clock size={10} />
-                                            <span className="font-medium whitespace-nowrap">
-                                                {expiryStatus.label || t.good}
-                                            </span>
-                                        </div>
-                                    )}
-                                    {!item.expiryDate && !item.openedDate && (
-                                         <button 
-                                            onClick={() => handleOpenProduct(item.id)}
-                                            className="text-gray-400 dark:text-gray-500 hover:text-brand-500 dark:hover:text-brand-400 flex items-center gap-1 transition-colors bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md"
-                                          >
-                                            <Calendar size={10} /> {t.open_action}
-                                          </button>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                        );
-                    })}
-
-                    {/* Quick Add Buttons for Missing Standards */}
-                    {missingStandard.length > 0 && (
-                        <div className="pt-1">
-                            <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 mb-2 uppercase ml-1">{t.quick_add}</p>
-                            <div className="flex flex-wrap gap-2">
-                                {missingStandard.map((name: string) => (
-                                    <button
-                                        key={name}
-                                        onClick={() => handleQuickAdd(name, category)}
-                                        className="text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-300 hover:border-brand-200 dark:hover:border-brand-800 hover:bg-brand-50 dark:hover:bg-brand-900/30 px-3 py-1.5 rounded-full transition-all flex items-center gap-1"
-                                    >
-                                        <Plus size={12} /> {name}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-           ); 
-        })}
-      </div>
-      
-      {items.length === 0 && (
-         <div className="mt-8 text-center px-6">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 mb-3">
-                <ShoppingBag size={24} />
-            </div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">{t.empty_pantry_msg}</p>
          </div>
-      )}
+      </div>
+
+      {/* Grouped List */}
+      <div className="space-y-4">
+        {Object.keys(groupedItems).length === 0 ? (
+            <div className="mt-8 text-center px-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 mb-4">
+                    <ShoppingBag size={32} />
+                </div>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">{t.empty_pantry_msg}</p>
+            </div>
+        ) : (
+            // Render groups sorted by category, then name
+            Object.entries(groupedItems)
+                .sort(([, a], [, b]) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name))
+                .map(([key, group]) => renderGroup(key, group))
+        )}
+      </div>
     </div>
   );
 };
