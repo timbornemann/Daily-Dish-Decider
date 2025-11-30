@@ -120,6 +120,7 @@ export const en = {
   tab_general: "General",
   tab_dietary: "Dietary",
   tab_data: "Data",
+  tab_algorithm: "Algorithm",
   appearance: "Appearance",
   dark_mode: "Dark Mode",
   on: "On",
@@ -139,6 +140,14 @@ export const en = {
   cancel: "Cancel",
   yes_delete: "Yes, Delete",
   
+  // Algorithm
+  algo_title: "Taste Brain",
+  algo_desc: "This is what the app thinks you like based on your swipes.",
+  algo_reset: "Reset Memory",
+  algo_reset_confirm: "Are you sure you want to reset the learning algorithm? It will forget what you like.",
+  algo_weights_title: "Taste Weights",
+  algo_no_data: "No data yet. Swipe some recipes!",
+
   // Dietary Options
   dietary: {
     Vegetarian: "Vegetarian",

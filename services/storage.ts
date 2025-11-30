@@ -14,7 +14,8 @@ const DEFAULT_PREFS: UserPreferences = {
   theme: 'light',
   language: 'en',
   measurementSystem: 'metric',
-  notificationsEnabled: true
+  notificationsEnabled: true,
+  tasteProfile: {}
 };
 
 export const StorageService = {
@@ -48,6 +49,7 @@ export const StorageService = {
   },
   getPreferences: (): UserPreferences => {
     const data = localStorage.getItem(KEYS.PREFS);
+    // Merge with default to ensure new fields (like tasteProfile) exist
     return data ? { ...DEFAULT_PREFS, ...JSON.parse(data) } : DEFAULT_PREFS;
   },
   savePreferences: (prefs: UserPreferences) => {

@@ -14,6 +14,7 @@ import { RecipeCreator } from './components/RecipeCreator';
 import { RecipeBook } from './components/RecipeBook';
 import { translations } from './translations';
 import { checkForExpiry } from './services/notifications';
+import { updateTasteProfile } from './services/recommendation';
 
 const App: React.FC = () => {
   // State
@@ -94,14 +95,21 @@ const App: React.FC = () => {
 
   // Logic Helpers
   const handleLike = (recipe: Recipe) => {
+    // 1. Save to favorites
     // Avoid duplicates
     if (!likedRecipes.find(r => r.id === recipe.id)) {
       updateLikedRecipes([...likedRecipes, recipe]);
     }
+
+    // 2. Update Algorithm
+    const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'LIKE');
+    updatePreferences({ ...preferences, tasteProfile: newProfile });
   };
 
   const handleDislike = (recipe: Recipe) => {
-    console.log("Disliked", recipe.title);
+    // Update Algorithm
+    const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'DISLIKE');
+    updatePreferences({ ...preferences, tasteProfile: newProfile });
   };
 
   const handleToggleLike = (recipe: Recipe) => {
@@ -110,6 +118,10 @@ const App: React.FC = () => {
       updateLikedRecipes(likedRecipes.filter(r => r.id !== recipe.id));
     } else {
       updateLikedRecipes([...likedRecipes, recipe]);
+      // Only train positive signal on explicit like from book? Maybe safer not to overtrain here
+      // But let's add it for consistency
+      const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'LIKE');
+      updatePreferences({ ...preferences, tasteProfile: newProfile });
     }
   };
 
@@ -125,12 +137,20 @@ const App: React.FC = () => {
       checked: false
     }));
     updateShoppingList([...shoppingList, ...newItems]);
-    // Optional: Switch view, but staying on detail might be better UX
-    // setView(AppView.SHOPPING);
   };
 
   const handleWinnerSelected = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
+    // Strong signal that they want to cook this
+    const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'COOK_WINNER');
+    updatePreferences({ ...preferences, tasteProfile: newProfile });
+  };
+
+  const handleViewDetail = (recipe: Recipe) => {
+      setSelectedRecipe(recipe);
+      // Weak signal
+      const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'VIEW_DETAIL');
+      updatePreferences({ ...preferences, tasteProfile: newProfile });
   };
 
   const handleSaveNewRecipe = (recipe: Recipe) => {
@@ -210,7 +230,7 @@ const App: React.FC = () => {
             userRecipes={userRecipes}
             likedRecipes={likedRecipes}
             onToggleLike={handleToggleLike}
-            onViewDetail={(r) => setSelectedRecipe(r)}
+            onViewDetail={handleViewDetail}
             onDeleteRecipe={handleDeleteRecipe}
             onCreateRecipe={() => setIsCreatingRecipe(true)}
             lang={currentLang}
@@ -244,7 +264,7 @@ const App: React.FC = () => {
             userRecipes={userRecipes}
             onLike={handleLike} 
             onDislike={handleDislike}
-            onViewDetail={(r) => setSelectedRecipe(r)}
+            onViewDetail={handleViewDetail}
             onCreateRecipe={() => setIsCreatingRecipe(true)}
             lang={currentLang}
           />

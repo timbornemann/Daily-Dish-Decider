@@ -119,6 +119,7 @@ export const de = {
   tab_general: "Allgemein",
   tab_dietary: "Ernährung",
   tab_data: "Daten",
+  tab_algorithm: "Algorithmus",
   appearance: "Darstellung",
   dark_mode: "Dunkelmodus",
   on: "An",
@@ -138,6 +139,14 @@ export const de = {
   cancel: "Abbrechen",
   yes_delete: "Ja, löschen",
   
+  // Algorithm
+  algo_title: "Geschmacks-Gehirn",
+  algo_desc: "Das denkt die App über deinen Geschmack basierend auf deinen Likes.",
+  algo_reset: "Gedächtnis löschen",
+  algo_reset_confirm: "Möchtest du den Algorithmus wirklich zurücksetzen? Er vergisst deine Vorlieben.",
+  algo_weights_title: "Geschmacks-Gewichtung",
+  algo_no_data: "Noch keine Daten. Swipe ein paar Rezepte!",
+
   // Dietary Options
   dietary: {
     Vegetarian: "Vegetarisch",

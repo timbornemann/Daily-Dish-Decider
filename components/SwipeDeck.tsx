@@ -5,7 +5,9 @@ import { X, Heart, ChefHat, RefreshCw, Info, Plus, User, Bot, BookOpen } from 'l
 import { Recipe, Ingredient } from '../types';
 import { generateRecipes } from '../services/gemini';
 import { getLocalRecipes, findMatchingRecipes } from '../services/localRecipes';
+import { getRecommendedRecipes } from '../services/recommendation';
 import { translations, Language } from '../translations';
+import { StorageService } from '../services/storage';
 
 interface SwipeDeckProps {
   pantryItems: Ingredient[];
@@ -31,27 +33,25 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
   const [exitDirection, setExitDirection] = useState<number>(0); 
   const t = translations[lang];
 
-  // Initial Fetch Logic - ONLY Local/User recipes
+  // Initial Fetch Logic
   useEffect(() => {
-    // Reset recipes when pantry changes significantly or on mount
-    // We only load local matches initially.
-    loadLocalMatches();
+    loadRecommendations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pantryItems, userRecipes]);
 
-  const loadLocalMatches = () => {
+  const loadRecommendations = () => {
     setLoading(true);
     const localDB = getLocalRecipes(lang);
     const allLocal = [...userRecipes, ...localDB];
     
-    // Find matches
-    const matched = findMatchingRecipes(pantryItems, allLocal);
+    // 1. Filter by Pantry availability (Hard constraint)
+    const pantryMatches = findMatchingRecipes(pantryItems, allLocal);
     
-    // Filter out duplicates if we already have them (though usually we replace the stack on pantry update)
-    // For this simple version, we'll just set the stack to the matches.
-    // To preserve existing stack if just adding items, we could do more complex logic, 
-    // but resetting matched recipes based on new pantry state is safer.
-    setRecipes(matched);
+    // 2. Sort by User Taste Profile (Soft constraint / RL)
+    const currentPrefs = StorageService.getPreferences();
+    const recommended = getRecommendedRecipes(pantryMatches, currentPrefs.tasteProfile);
+    
+    setRecipes(recommended);
     setLoading(false);
   };
 
@@ -61,7 +61,7 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
           const aiRecipes = await generateRecipes(pantryItems, [], lang);
           const taggedAI = aiRecipes.map(r => ({ ...r, source: 'ai' as const }));
           
-          // Add AI recipes to the current stack (or empty stack)
+          // Add AI recipes to the current stack
           setRecipes(prev => [...prev, ...taggedAI]);
       } catch(e) {
           console.error(e);
@@ -91,9 +91,6 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
     } else {
       onDislike(recipe);
     }
-
-    // NOTE: We do NOT automatically load more here anymore.
-    // If the list runs empty, the "No Matches / Generate AI" view will appear automatically.
   };
 
   if (pantryItems.length === 0) {

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Moon, Sun, Globe, Scale, Bell, Trash2, Check, AlertTriangle } from 'lucide-react';
+import { Moon, Sun, Globe, Scale, Bell, Trash2, Check, AlertTriangle, Brain, RefreshCcw, X } from 'lucide-react';
 import { UserPreferences } from '../types';
 import { translations, Language } from '../translations';
 import { requestNotificationPermission } from '../services/notifications';
@@ -12,7 +12,7 @@ interface SettingsProps {
   lang: Language;
 }
 
-type Tab = 'general' | 'dietary' | 'data';
+type Tab = 'general' | 'dietary' | 'algorithm' | 'data';
 
 export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePreferences, onClearData, lang }) => {
   const [activeTab, setActiveTab] = useState<Tab>('general');
@@ -45,22 +45,30 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
 
   const toggleNotifications = async () => {
       const newState = !preferences.notificationsEnabled;
-      
       if (newState) {
-          // Turning ON: Request permission
           const granted = await requestNotificationPermission();
           if (granted) {
               onUpdatePreferences({ ...preferences, notificationsEnabled: true });
           } else {
-              // Permission denied or dismissed
-              // In a real app, you might show a toast explaining they need to enable it in browser settings
               alert("Notification permission is required to enable alerts.");
               onUpdatePreferences({ ...preferences, notificationsEnabled: false });
           }
       } else {
-          // Turning OFF
           onUpdatePreferences({ ...preferences, notificationsEnabled: false });
       }
+  };
+
+  // Algorithm controls
+  const resetAlgorithm = () => {
+    if(confirm(t.algo_reset_confirm)) {
+        onUpdatePreferences({ ...preferences, tasteProfile: {} });
+    }
+  };
+
+  const deleteTagWeight = (tag: string) => {
+    const newProfile = { ...preferences.tasteProfile };
+    delete newProfile[tag];
+    onUpdatePreferences({ ...preferences, tasteProfile: newProfile });
   };
 
   // Common dietary restrictions
@@ -70,20 +78,25 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
     'Keto', 'Paleo', 'Low_Carb'
   ];
 
+  // Helper to sort and visualize weights
+  const sortedWeights = Object.entries(preferences.tasteProfile || {})
+    .sort(([, a], [, b]) => Math.abs(b) - Math.abs(a)) // Sort by magnitude (impact)
+    .slice(0, 50); // Limit list
+
   return (
     <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 overflow-y-auto no-scrollbar pb-24 transition-colors duration-200">
       
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 p-6 shadow-sm border-b border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 p-6 shadow-sm border-b border-gray-100 dark:border-gray-700 sticky top-0 z-10">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">{t.settings_title}</h2>
         
         {/* Tabs */}
-        <div className="flex p-1 bg-gray-100 dark:bg-gray-700 rounded-lg">
-          {(['general', 'dietary', 'data'] as Tab[]).map((tab) => (
+        <div className="flex p-1 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-x-auto no-scrollbar">
+          {(['general', 'dietary', 'algorithm', 'data'] as Tab[]).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all capitalize ${
+              className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all capitalize whitespace-nowrap ${
                 activeTab === tab 
                   ? 'bg-white dark:bg-gray-600 text-brand-600 dark:text-white shadow-sm' 
                   : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
@@ -100,7 +113,6 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
         {/* General Tab */}
         {activeTab === 'general' && (
           <div className="space-y-6">
-            
             {/* Appearance */}
             <section className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
               <h3 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">{t.appearance}</h3>
@@ -206,7 +218,6 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                 <div className="flex flex-wrap gap-2">
                     {dietaryOptions.map(option => {
                         const isSelected = preferences.dietaryRestrictions.includes(option);
-                        // Access nested dietary object
                         const label = (t.dietary as any)[option] || option;
                         return (
                             <button
@@ -225,6 +236,83 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                     })}
                 </div>
              </div>
+          </div>
+        )}
+
+        {/* Algorithm Tab (New) */}
+        {activeTab === 'algorithm' && (
+          <div className="space-y-6">
+            <div className="bg-gradient-to-br from-brand-500 to-purple-600 p-6 rounded-2xl text-white shadow-lg">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-white/20 p-2 rounded-full backdrop-blur-sm">
+                        <Brain size={24} className="text-white" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-lg">{t.algo_title}</h3>
+                        <p className="text-xs text-white/80">{t.algo_desc}</p>
+                    </div>
+                </div>
+                
+                <button 
+                    onClick={resetAlgorithm}
+                    className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-2 transition-colors border border-white/30"
+                >
+                    <RefreshCcw size={14} /> {t.algo_reset}
+                </button>
+            </div>
+
+            <div className="space-y-3">
+                <h4 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">{t.algo_weights_title}</h4>
+                
+                {sortedWeights.length === 0 ? (
+                    <div className="text-center py-8 bg-gray-100 dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">{t.algo_no_data}</p>
+                    </div>
+                ) : (
+                    sortedWeights.map(([tag, weight]) => {
+                        const isPositive = weight > 0;
+                        const percentage = Math.min(Math.abs(weight) * 10, 100); // Scale for visual bar
+                        
+                        return (
+                            <div key={tag} className="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700 flex items-center gap-3">
+                                <div className="flex-1">
+                                    <div className="flex justify-between items-end mb-1">
+                                        <span className="font-medium text-gray-800 dark:text-gray-200 capitalize">{tag}</span>
+                                        <span className={`text-xs font-bold ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                                            {weight > 0 ? '+' : ''}{weight}
+                                        </span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden flex">
+                                        {/* Center axis visualization */}
+                                        <div className="w-1/2 flex justify-end">
+                                            {!isPositive && (
+                                                <div 
+                                                    style={{ width: `${percentage}%` }} 
+                                                    className="h-full bg-red-400 rounded-l-full"
+                                                />
+                                            )}
+                                        </div>
+                                        <div className="w-1/2 flex justify-start">
+                                            {isPositive && (
+                                                <div 
+                                                    style={{ width: `${percentage}%` }} 
+                                                    className="h-full bg-green-500 rounded-r-full"
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => deleteTagWeight(tag)}
+                                    className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
+                        );
+                    })
+                )}
+            </div>
           </div>
         )}
 

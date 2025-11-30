@@ -51,4 +51,5 @@ export interface UserPreferences {
   language: 'en' | 'de';
   measurementSystem: 'metric' | 'imperial';
   notificationsEnabled: boolean;
+  tasteProfile: Record<string, number>; // Tag weights: e.g. { "Italian": 5.2, "Spicy": -2.0 }
 }
