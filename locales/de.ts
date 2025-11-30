@@ -1,3 +1,4 @@
+
 export const de = {
   // Navigation
   nav_pantry: "Vorrat",
@@ -198,42 +199,135 @@ export const de = {
   recipes: {
     pancakes: {
       title: "Klassische Pfannkuchen",
-      description: "Fluffige Pfannkuchen, perfekt für das Frühstück.",
+      description: "Fluffige Pfannkuchen, perfekt für das Wochenende. Leicht, luftig und ideal für Ahornsirup.",
       steps: [
-        "Trockene Zutaten in einer Schüssel mischen.",
-        "Nasse Zutaten verquirlen und untermischen.",
-        "Teig in eine heiße Pfanne geben.",
-        "Backen bis Blasen entstehen, dann wenden."
+        "In einer großen Schüssel Mehl und Zucker vermischen. Eine Mulde in der Mitte formen.",
+        "In einem separaten Gefäß Eier, Milch und geschmolzene Butter verquirlen.",
+        "Die flüssige Mischung zu den trockenen Zutaten geben. Vorsichtig mit einer Gabel oder Schneebesen verrühren, bis gerade so verbunden. Klümpchen sind okay – nicht überrühren!",
+        "Eine beschichtete Pfanne auf mittlerer Hitze erwärmen und leicht einfetten.",
+        "Pro Pfannkuchen etwa eine kleine Kelle Teig hineingeben.",
+        "Backen bis Blasen an der Oberfläche entstehen und platzen (ca. 2-3 Min).",
+        "Vorsichtig wenden und die andere Seite goldbraun backen (1-2 Min). Heiß servieren!"
       ]
     },
     spaghetti_aglio: {
       title: "Spaghetti Aglio e Olio",
-      description: "Klassische italienische Pasta mit Knoblauch und Öl.",
+      description: "Ein traditioneller Klassiker aus Neapel. Unglaublich simpel, aber die Technik macht die cremige Emulsion aus.",
       steps: [
-        "Pasta in Salzwasser kochen.",
-        "Knoblauch in Öl goldgelb anbraten.",
-        "Chili und etwas Nudelwasser hinzufügen.",
-        "Pasta in der Soße schwenken und mit Petersilie garnieren."
+        "Einen großen Topf Salzwasser zum Kochen bringen. Spaghetti hinzufügen und 'al dente' kochen (ca. 1 Min weniger als Packungsanweisung).",
+        "Währenddessen den Knoblauch schälen und in feine Scheiben schneiden.",
+        "Olivenöl und Knoblauch in eine kalte Pfanne geben. Auf mittlere Hitze stellen und langsam erwärmen. Der Knoblauch soll goldgelb werden, nicht braun!",
+        "Sobald der Knoblauch goldgelb ist, Chiliflocken hinzufügen. Vorsichtig eine Kelle Nudelwasser hinzufügen, um den Bratprozess zu stoppen.",
+        "Pasta abgießen und direkt in die Pfanne geben. Hitze hochdrehen.",
+        "Kräftig rühren und schwenken (1-2 Min). Öl und Wasser verbinden sich zu einer cremigen Soße. Mit Petersilie garnieren."
       ]
     },
     scrambled_eggs: {
-      title: "Cremiges Rührei",
-      description: "Reichhaltiges und cremiges Ei für eine schnelle Mahlzeit.",
+      title: "Perfektes Cremiges Rührei",
+      description: "Vergiss trockenes Rührei. Diese Methode sorgt für reichhaltige, fast soßenartige Eier.",
       steps: [
-        "Eier mit Salz und Pfeffer verquirlen.",
-        "Butter bei niedriger Hitze schmelzen.",
-        "Eier hineingeben und sanft rühren.",
-        "Vom Herd nehmen, solange sie noch leicht flüssig sind."
+        "Eier in eine Schüssel schlagen. Salz und Pfeffer hinzufügen. Kräftig verquirlen, bis die Masse einheitlich ist.",
+        "Eine Pfanne auf mittlere bis niedrige Hitze stellen und Butter darin schmelzen.",
+        "Sobald die Butter schäumt, Eier hineingießen. Nicht weggehen!",
+        "Mit einem Spatel die Eier sanft von außen nach innen schieben. Pfanne schwenken, damit flüssiges Ei nachlaufen kann.",
+        "Wenn die Eier größtenteils gestockt sind, aber noch feucht glänzen, sofort vom Herd nehmen. Die Restwärme gart sie fertig.",
+        "Sofort auf Toast oder Tellern servieren."
       ]
     },
     grilled_cheese: {
-      title: "Grilled Cheese Sandwich",
-      description: "Knuspriges Brot mit geschmolzenem Käse.",
+      title: "Ultimatives Grilled Cheese",
+      description: "Außen knusprig gebuttertes Brot, innen geschmolzener Käse.",
       steps: [
-        "Brot einseitig buttern.",
-        "Mit der Butterseite nach unten in die Pfanne legen.",
-        "Käse darauflegen und zweite Scheibe darauf (Butter oben).",
-        "Goldbraun braten von beiden Seiten."
+        "Jede Brotscheibe auf einer Seite großzügig mit Butter bestreichen.",
+        "Eine Pfanne auf mittlere Hitze erwärmen.",
+        "Eine Scheibe Brot mit der Butterseite nach unten hineinlegen.",
+        "Käsescheiben darauf verteilen. Zweite Brotscheibe darauflegen (Butterseite nach oben).",
+        "Ca. 3-4 Minuten braten, bis die Unterseite tief goldbraun und knusprig ist.",
+        "Vorsichtig wenden. Weitere 2-3 Minuten braten, bis der Käse komplett geschmolzen ist.",
+        "Diagonal durchschneiden und heiß servieren."
+      ]
+    },
+    carbonara: {
+      title: "Authentische Spaghetti Carbonara",
+      description: "Das römische Original – keine Sahne, nur Eier, Käse und Speck.",
+      steps: [
+        "Einen großen Topf Salzwasser für die Pasta aufsetzen.",
+        "Speck in kleine Streifen schneiden. In einer Pfanne bei mittlerer Hitze braten, bis er knusprig ist und das Fett ausgetreten ist. Herd ausschalten.",
+        "In einer Schüssel Eier, geriebenen Parmesan und viel schwarzen Pfeffer zu einer Paste verquirlen.",
+        "Pasta al dente kochen. Eine Tasse Nudelwasser abschöpfen, dann abgießen.",
+        "Die heiße Pasta direkt in die Pfanne zum Speckfett geben und gut vermischen.",
+        "WICHTIG: Pfanne komplett von der heißen Platte nehmen. Die Ei-Mischung und einen Schluck Nudelwasser darübergießen. Schnell und stetig rühren, damit eine cremige Soße entsteht, ohne dass das Ei stockt.",
+        "Sofort servieren."
+      ]
+    },
+    chili_con_carne: {
+      title: "Deftiges Chili con Carne",
+      description: "Ein würziger Eintopf mit Fleisch, Bohnen und Tomaten.",
+      steps: [
+        "Zwiebel würfeln. Etwas Öl in einem großen Topf erhitzen.",
+        "Zwiebel glasig dünsten. Hackfleisch hinzufügen und krümelig braten, bis es braun ist.",
+        "Chili und Gewürze hinzufügen, 1 Minute mitrösten.",
+        "Dosentomaten und die abgegossenen Bohnen hinzufügen. Gut umrühren.",
+        "Aufkochen lassen, dann Hitze reduzieren. Abgedeckt mind. 30 Minuten köcheln lassen (länger ist besser).",
+        "Mit Salz und Pfeffer abschmecken. Dazu passt Reis oder Brot."
+      ]
+    },
+    french_toast: {
+      title: "Zimtiger Armer Ritter (French Toast)",
+      description: "In Eiermilch getränktes Brot, goldbraun gebraten. Ein süßes Frühstück.",
+      steps: [
+        "In einer flachen Schale Eier, Milch und Zimt verquirlen.",
+        "Butter in einer Pfanne bei mittlerer Hitze schmelzen.",
+        "Jede Brotscheibe kurz in die Eimischung tauchen, sodass sie sich vollsaugt (aber nicht zerfällt).",
+        "In die heiße Pfanne legen und 2-3 Minuten pro Seite goldbraun braten.",
+        "Warm servieren, optional mit Sirup, Früchten oder Puderzucker."
+      ]
+    },
+    oatmeal: {
+      title: "Cremiger Haferbrei (Porridge)",
+      description: "Ein gesundes, warmes Frühstück, das lange satt macht.",
+      steps: [
+        "Haferflocken, Milch (oder Wasser) und eine Prise Salz in einen kleinen Topf geben.",
+        "Aufkochen lassen, dann sofort auf kleine Hitze reduzieren.",
+        "Unter gelegentlichem Rühren 5-10 Minuten köcheln lassen, bis die Flocken weich und die Konsistenz cremig ist.",
+        "Vom Herd nehmen. Honig oder Süßungsmittel unterrühren.",
+        "In eine Schale füllen und mit Früchten oder Nüssen toppen."
+      ]
+    },
+    potato_soup: {
+      title: "Einfache Kartoffelsuppe",
+      description: "Sämig, wärmend und aus einfachen Vorratszutaten gemacht.",
+      steps: [
+        "Kartoffeln, Möhren und Zwiebel schälen und würfeln.",
+        "Zwiebel im Topf in etwas Fett andünsten.",
+        "Kartoffeln, Möhren und Brühe hinzufügen. Das Gemüse sollte bedeckt sein.",
+        "Aufkochen und dann zugedeckt 20-25 Min köcheln, bis alles sehr weich ist.",
+        "Mit einem Kartoffelstampfer einen Teil des Gemüses im Topf zerdrücken (für Bindung) oder teilweise pürieren.",
+        "Sahne unterrühren, kurz erwärmen. Mit Salz und Pfeffer abschmecken."
+      ]
+    },
+    caprese: {
+      title: "Frischer Caprese Salat",
+      description: "Der italienische Klassiker aus Tomaten, Mozzarella und Basilikum.",
+      steps: [
+        "Tomaten und Mozzarella in ca. 0,5cm dicke Scheiben schneiden.",
+        "Abwechselnd auf einem Teller schichten.",
+        "Frische Basilikumblätter dazwischen stecken.",
+        "Großzügig mit Olivenöl und etwas Essig (Balsamico) beträufeln.",
+        "Mit grobem Salz und frisch gemahlenem Pfeffer bestreuen."
+      ]
+    },
+    chicken_curry: {
+      title: "Einfaches Hähnchen Curry",
+      description: "Eine milde, cremige Soße mit zartem Hähnchen und Reis.",
+      steps: [
+        "Reis nach Packungsanweisung kochen.",
+        "Hähnchenbrust und Zwiebel würfeln. Knoblauch hacken.",
+        "Öl in einer Pfanne erhitzen. Hähnchen goldbraun anbraten, dann herausnehmen.",
+        "Im selben Fett Zwiebel und Knoblauch andünsten. Currypulver zugeben und kurz mitrösten.",
+        "Sahne (oder Kokosmilch/Joghurt) angießen und leicht köcheln lassen.",
+        "Hähnchen zurück in die Soße geben. 10-15 Min sanft köcheln, bis das Fleisch durch ist.",
+        "Zusammen mit dem Reis servieren."
       ]
     }
   }

@@ -2,8 +2,21 @@
 import { Recipe, Ingredient } from '../types';
 import { translations, Translation, Language } from '../translations';
 
-// We define the structure and the keys here, but not the text.
-// The text comes from the passed 't' (translation) object.
+// Helper to translate common units
+const translateAmount = (amount: string, lang: Language): string => {
+    if (lang !== 'de') return amount;
+    return amount
+        .replace(/\btbsp\b/g, 'EL')
+        .replace(/\btsp\b/g, 'TL')
+        .replace(/\bcup\b/g, 'Tasse')
+        .replace(/\bcups\b/g, 'Tassen')
+        .replace(/\bhandful\b/g, 'Handvoll')
+        .replace(/\bpinch\b/g, 'Prise')
+        .replace(/\bslices\b/g, 'Scheiben')
+        .replace(/\bcloves\b/g, 'Zehen')
+        .replace(/\bcan\b/g, 'Dose');
+};
+
 const RECIPE_DEFINITIONS = [
   {
     id: 'local-pancakes',
@@ -27,7 +40,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'garlic', amount: '4 cloves' },
       { id: 'olive_oil', amount: '100ml' },
       { id: 'chili_flakes', amount: '1 tsp' },
-      { id: 'herbs', amount: '1 handful' }
+      { id: 'herbs', amount: '1 handful' } // parsley ideally
     ],
     prepTime: '15 mins',
     tags: ['Dinner', 'Italian', 'Vegetarian'],
@@ -39,8 +52,8 @@ const RECIPE_DEFINITIONS = [
     ingredients: [
       { id: 'egg', amount: '4' },
       { id: 'butter', amount: '1 tbsp' },
-      { id: 'salt', amount: 'pinch' },
-      { id: 'pepper_spice', amount: 'pinch' }
+      { id: 'salt', amount: '1 pinch' },
+      { id: 'pepper_spice', amount: '1 pinch' }
     ],
     prepTime: '10 mins',
     tags: ['Breakfast', 'Quick', 'Vegetarian', 'Keto'],
@@ -57,6 +70,104 @@ const RECIPE_DEFINITIONS = [
     prepTime: '10 mins',
     tags: ['Lunch', 'Comfort Food', 'Vegetarian'],
     basePortions: 2
+  },
+  {
+    id: 'local-carbonara',
+    key: 'carbonara',
+    ingredients: [
+      { id: 'pasta', amount: '400g' },
+      { id: 'egg', amount: '3' },
+      { id: 'bacon', amount: '150g' },
+      { id: 'parmesan', amount: '100g' },
+      { id: 'pepper_spice', amount: '1 tbsp' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dinner', 'Italian', 'Comfort Food'],
+    basePortions: 4
+  },
+  {
+    id: 'local-chili-con-carne',
+    key: 'chili_con_carne',
+    ingredients: [
+        { id: 'ground_beef', amount: '500g' },
+        { id: 'bean', amount: '1 can' },
+        { id: 'canned_tomato', amount: '1 can' },
+        { id: 'onion', amount: '1' },
+        { id: 'chili_flakes', amount: '1 tbsp' }
+    ],
+    prepTime: '45 mins',
+    tags: ['Dinner', 'Spicy', 'Hearty'],
+    basePortions: 4
+  },
+  {
+    id: 'local-french-toast',
+    key: 'french_toast',
+    ingredients: [
+        { id: 'bread', amount: '4 slices' },
+        { id: 'egg', amount: '2' },
+        { id: 'milk', amount: '100ml' },
+        { id: 'cinnamon', amount: '1 tsp' },
+        { id: 'butter', amount: '1 tbsp' }
+    ],
+    prepTime: '15 mins',
+    tags: ['Breakfast', 'Sweet', 'Vegetarian'],
+    basePortions: 2
+  },
+  {
+    id: 'local-oatmeal',
+    key: 'oatmeal',
+    ingredients: [
+        { id: 'oat', amount: '1 cup' },
+        { id: 'milk', amount: '2 cups' },
+        { id: 'honey', amount: '1 tbsp' },
+        { id: 'salt', amount: '1 pinch' }
+    ],
+    prepTime: '10 mins',
+    tags: ['Breakfast', 'Healthy', 'Vegetarian'],
+    basePortions: 2
+  },
+  {
+    id: 'local-potato-soup',
+    key: 'potato_soup',
+    ingredients: [
+        { id: 'potato', amount: '500g' },
+        { id: 'carrot', amount: '2' },
+        { id: 'onion', amount: '1' },
+        { id: 'chicken_broth', amount: '1 liter' },
+        { id: 'cream', amount: '100ml' }
+    ],
+    prepTime: '35 mins',
+    tags: ['Lunch', 'Soup', 'Comfort Food'],
+    basePortions: 4
+  },
+  {
+    id: 'local-caprese',
+    key: 'caprese',
+    ingredients: [
+        { id: 'tomato', amount: '3' },
+        { id: 'mozzarella', amount: '2 balls' },
+        { id: 'basil', amount: '1 handful' },
+        { id: 'olive_oil', amount: '2 tbsp' },
+        { id: 'vinegar', amount: '1 tbsp' }
+    ],
+    prepTime: '10 mins',
+    tags: ['Lunch', 'Salad', 'Vegetarian', 'Italian'],
+    basePortions: 2
+  },
+  {
+    id: 'local-chicken-curry',
+    key: 'chicken_curry',
+    ingredients: [
+        { id: 'chicken_breast', amount: '500g' },
+        { id: 'rice', amount: '200g' },
+        { id: 'onion', amount: '1' },
+        { id: 'garlic', amount: '2 cloves' },
+        { id: 'curry_powder', amount: '2 tbsp' },
+        { id: 'cream', amount: '200ml' }
+    ],
+    prepTime: '30 mins',
+    tags: ['Dinner', 'Asian Style', 'Spicy'],
+    basePortions: 4
   }
 ];
 
@@ -77,7 +188,7 @@ export const getLocalRecipes = (lang: Language): Recipe[] => {
             steps: content.steps,
             ingredients: def.ingredients.map(ing => ({
                 name: (t.ingredients as any)[ing.id] || ing.id, // Translate ingredient name
-                amount: ing.amount
+                amount: translateAmount(ing.amount, lang)
             })),
             prepTime: def.prepTime,
             tags: def.tags,

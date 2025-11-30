@@ -1,3 +1,4 @@
+
 export const en = {
   // Navigation
   nav_pantry: "Pantry",
@@ -170,7 +171,7 @@ export const en = {
     peanut_butter: "Peanut Butter", jam: "Jam", baking_powder: "Baking Powder", yeast: "Yeast",
 
     // Spices
-    salt: "Salt", pepper_spice: "Pepper", cumin: "Cumin", paprika: "Paprika",
+    salt: "Salt", pepper_spice: "Black Pepper", cumin: "Cumin", paprika: "Paprika",
     oregano: "Oregano", basil: "Basil", soy_sauce: "Soy Sauce", vinegar: "Vinegar",
     garlic_powder: "Garlic Powder", onion_powder: "Onion Powder", chili_flakes: "Chili Flakes",
     cinnamon: "Cinnamon", turmeric: "Turmeric", curry_powder: "Curry Powder",
@@ -198,43 +199,136 @@ export const en = {
   // Recipe Data
   recipes: {
     pancakes: {
-      title: "Classic Pancakes",
-      description: "Fluffy homemade pancakes perfect for breakfast.",
+      title: "Classic Fluffy Pancakes",
+      description: "The ultimate weekend breakfast. These pancakes are light, fluffy, and perfect for soaking up maple syrup.",
       steps: [
-        "Mix dry ingredients in a bowl.",
-        "Whisk wet ingredients in another bowl.",
-        "Combine both mixtures until just moistened.",
-        "Pour batter onto a hot griddle and cook until bubbles form."
+        "In a large mixing bowl, whisk together the flour and sugar. Create a well in the center.",
+        "In a separate jug, whisk the eggs, milk, and melted butter until combined.",
+        "Pour the wet mixture into the dry ingredients. Stir gently with a fork until just combined - do not overmix! It is okay if there are some lumps.",
+        "Heat a non-stick pan over medium heat. Grease lightly with a little extra butter or oil.",
+        "Pour about 1/4 cup of batter for each pancake onto the pan.",
+        "Cook until bubbles appear on the surface and pop (about 2-3 minutes).",
+        "Flip carefully and cook the other side until golden brown (another 1-2 minutes). Serve hot!"
       ]
     },
     spaghetti_aglio: {
       title: "Spaghetti Aglio e Olio",
-      description: "A traditional Italian pasta dish with garlic and oil.",
+      description: "A traditional Italian pasta dish from Naples. It's incredibly simple but relies on technique to create a creamy emulsion.",
       steps: [
-        "Boil pasta in salted water.",
-        "Sauté sliced garlic in generous olive oil until golden.",
-        "Add chili flakes and some pasta water to the oil.",
-        "Toss pasta in the sauce and garnish with parsley."
+        "Bring a large pot of salted water to a boil. Add the spaghetti and cook until 'al dente' (usually 1 minute less than package instructions).",
+        "While pasta cooks, peel and thinly slice the garlic cloves.",
+        "In a large cold pan, combine the olive oil and garlic. Turn heat to medium-low and cook slowly. You want the garlic to turn pale gold, not brown or burnt.",
+        "Once the garlic is golden, add the chili flakes. Carefully ladle in about 1 cup of the starchy pasta water to stop the frying process (watch out for steam!).",
+        "Drain the pasta and toss it directly into the pan. Increase heat to high.",
+        "Stir and toss vigorously for 1-2 minutes. The oil and water will emulsify into a creamy, glossy sauce that coats the noodles. Garnish with parsley/herbs if available."
       ]
     },
     scrambled_eggs: {
-      title: "Creamy Scrambled Eggs",
-      description: "Rich and creamy eggs for a quick meal.",
+      title: "Perfect Creamy Scrambled Eggs",
+      description: "Forget rubbery eggs. This method yields rich, custard-like soft scrambled eggs.",
       steps: [
-        "Whisk eggs with salt and pepper.",
-        "Melt butter in a pan over low heat.",
-        "Pour in eggs and stir gently and continuously.",
-        "Remove from heat while still slightly runny."
+        "Crack the eggs into a bowl. Add the salt and pepper. Whisk vigorously until the mixture is uniform and airy.",
+        "Place a non-stick pan over medium-low heat and add the butter.",
+        "Once the butter foams, pour in the eggs. Do not walk away!",
+        "Using a spatula, gently push the eggs from the edges to the center, creating soft curds. Tilt the pan to let uncooked egg flow to the hot spots.",
+        "When the eggs are mostly set but still look slightly wet/shiny, remove the pan from the heat immediately. The residual heat will finish cooking them.",
+        "Serve immediately on toast or plates."
       ]
     },
     grilled_cheese: {
       title: "Ultimate Grilled Cheese",
-      description: "Crispy bread with melted cheese filling.",
+      description: "Crispy, buttery bread on the outside, gooey melted cheese on the inside.",
       steps: [
-        "Butter one side of each bread slice.",
-        "Place bread butter-side down in pan.",
-        "Add cheese and top with second slice (butter-side up).",
-        "Grill until golden brown on both sides."
+        "Spread butter generously on one side of each slice of bread.",
+        "Place a non-stick skillet over medium heat.",
+        "Place one slice of bread in the pan, butter-side down.",
+        "Top with the cheese slices. Place the second slice of bread on top, butter-side up.",
+        "Cook for 3-4 minutes until the bottom is deep golden brown and crispy.",
+        "Flip carefully. Cook the other side for another 2-3 minutes until golden and the cheese is fully melted.",
+        "Slice diagonally and serve hot."
+      ]
+    },
+    carbonara: {
+      title: "Authentic Spaghetti Carbonara",
+      description: "The real Roman way - no cream, just eggs, cheese, and cured pork.",
+      steps: [
+        "Bring a large pot of salted water to a boil for the pasta.",
+        "Cut the bacon into small strips. Fry in a large pan over medium heat until crisp and fat has rendered. Turn off heat.",
+        "In a bowl, whisk the eggs, grated parmesan, and a generous amount of black pepper into a thick paste.",
+        "Cook pasta until al dente. Reserve 1/2 cup of pasta water, then drain.",
+        "Add the hot pasta directly to the pan with the bacon fat. Toss well to coat.",
+        "IMPORTANT: Remove pan from heat entirely. Pour in the egg mixture and a splash of pasta water. Stir quickly and continuously to create a creamy sauce without scrambling the eggs.",
+        "Serve immediately with extra cheese and pepper."
+      ]
+    },
+    chili_con_carne: {
+      title: "Hearty Chili con Carne",
+      description: "A spicy stew containing chili peppers, meat, tomatoes and beans.",
+      steps: [
+        "Dice the onion. Heat a little oil in a large pot over medium-high heat.",
+        "Add the onion and cook until soft. Add the ground beef and break it up with a spoon. Cook until browned.",
+        "Add the chili flakes/powder and stir for 1 minute until fragrant.",
+        "Pour in the canned tomatoes and the drained beans. Stir well.",
+        "Bring to a simmer, then reduce heat to low. Cover and cook for at least 30 minutes (longer is better) to let flavors meld.",
+        "Season with salt and pepper. Serve with rice or bread."
+      ]
+    },
+    french_toast: {
+      title: "Cinnamon French Toast",
+      description: "Custardy bread pan-fried in butter. A classic sweet breakfast.",
+      steps: [
+        "In a shallow dish, whisk together eggs, milk, and cinnamon.",
+        "Melt butter in a frying pan over medium heat.",
+        "Dip each slice of bread into the egg mixture, allowing it to soak for a few seconds on each side.",
+        "Place bread in the hot pan. Cook for 2-3 minutes per side until golden brown and slightly crispy.",
+        "Serve warm, optionally topped with syrup, fruit, or powdered sugar."
+      ]
+    },
+    oatmeal: {
+      title: "Creamy Stove-top Oatmeal",
+      description: "A healthy, warming bowl of oats that keeps you full all morning.",
+      steps: [
+        "In a small pot, combine oats, milk (or water), and a pinch of salt.",
+        "Bring to a gentle boil over medium-high heat, then immediately reduce to a simmer.",
+        "Cook for 5-10 minutes, stirring occasionally to prevent sticking, until the oats are soft and creamy.",
+        "Remove from heat. Stir in honey or sweetener.",
+        "Pour into a bowl and top with fresh fruit, nuts, or extra cinnamon."
+      ]
+    },
+    potato_soup: {
+      title: "Simple Potato Soup",
+      description: "Thick, creamy, and comforting soup using basic pantry vegetables.",
+      steps: [
+        "Peel and chop potatoes, carrots, and onion into small cubes.",
+        "In a large pot, sauté the onion in a little oil/butter until translucent.",
+        "Add the potatoes, carrots, and broth. The vegetables should be covered by liquid.",
+        "Bring to a boil, then cover and simmer for 20-25 minutes until potatoes are very soft.",
+        "Use a potato masher to crush some of the vegetables directly in the pot for a thicker texture (or use a blender for smooth soup).",
+        "Stir in the cream and heat through. Season with salt and pepper."
+      ]
+    },
+    caprese: {
+      title: "Fresh Caprese Salad",
+      description: "A simple Italian salad, made of sliced fresh mozzarella, tomatoes, and sweet basil.",
+      steps: [
+        "Slice the tomatoes and mozzarella cheese into 0.5cm thick rounds.",
+        "Arrange them on a serving platter, alternating between tomato and mozzarella slices.",
+        "Tuck fresh basil leaves between the slices.",
+        "Drizzle generously with olive oil and a splash of vinegar (balsamic is best).",
+        "Sprinkle with flaky salt and freshly cracked black pepper before serving."
+      ]
+    },
+    chicken_curry: {
+      title: "Easy Chicken Curry",
+      description: "A mild, creamy curry sauce with tender chicken and rice.",
+      steps: [
+        "Cook the rice according to package instructions.",
+        "Dice the chicken breast and onion. Mince the garlic.",
+        "Heat oil in a deep pan. Fry the chicken pieces until golden brown. Remove chicken from pan and set aside.",
+        "In the same pan, fry the onion and garlic until soft. Add the curry powder and stir for 1 minute.",
+        "Pour in the cream (or coconut milk/yogurt) and bring to a gentle simmer.",
+        "Return the chicken to the pan. Simmer for 10-15 minutes until chicken is cooked through and sauce has thickened.",
+        "Serve the curry over the fluffy rice."
       ]
     }
   }
