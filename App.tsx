@@ -12,6 +12,8 @@ import { RecipeDetail } from './components/RecipeDetail';
 import { Settings } from './components/Settings';
 import { RecipeCreator } from './components/RecipeCreator';
 import { RecipeBook } from './components/RecipeBook';
+import { translations } from './translations';
+import { checkForExpiry } from './services/notifications';
 
 const App: React.FC = () => {
   // State
@@ -43,6 +45,16 @@ const App: React.FC = () => {
       root.classList.remove('dark');
     }
   }, [preferences.theme]);
+
+  // Ensure valid language
+  const currentLang = preferences.language === 'de' ? 'de' : 'en';
+
+  // Notification Check Side Effect
+  useEffect(() => {
+    if (preferences.notificationsEnabled && pantry.length > 0) {
+        checkForExpiry(pantry, translations[currentLang]);
+    }
+  }, [pantry, preferences.notificationsEnabled, currentLang]);
 
   // Persistence Wrappers
   const updatePantry = (items: Ingredient[]) => {
@@ -155,9 +167,6 @@ const App: React.FC = () => {
         }
     }
   };
-
-  // Ensure valid language
-  const currentLang = preferences.language === 'de' ? 'de' : 'en';
 
   // Render Logic
   const renderContent = () => {

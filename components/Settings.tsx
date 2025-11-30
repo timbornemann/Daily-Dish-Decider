@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { Moon, Sun, Globe, Scale, Bell, Trash2, Check, AlertTriangle } from 'lucide-react';
 import { UserPreferences } from '../types';
 import { translations, Language } from '../translations';
+import { requestNotificationPermission } from '../services/notifications';
 
 interface SettingsProps {
   preferences: UserPreferences;
@@ -39,6 +41,26 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
       : [...current, restriction];
     
     onUpdatePreferences({ ...preferences, dietaryRestrictions: updated });
+  };
+
+  const toggleNotifications = async () => {
+      const newState = !preferences.notificationsEnabled;
+      
+      if (newState) {
+          // Turning ON: Request permission
+          const granted = await requestNotificationPermission();
+          if (granted) {
+              onUpdatePreferences({ ...preferences, notificationsEnabled: true });
+          } else {
+              // Permission denied or dismissed
+              // In a real app, you might show a toast explaining they need to enable it in browser settings
+              alert("Notification permission is required to enable alerts.");
+              onUpdatePreferences({ ...preferences, notificationsEnabled: false });
+          }
+      } else {
+          // Turning OFF
+          onUpdatePreferences({ ...preferences, notificationsEnabled: false });
+      }
   };
 
   // Common dietary restrictions
@@ -222,7 +244,7 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                         </div>
                     </div>
                     <button 
-                        onClick={() => onUpdatePreferences({...preferences, notificationsEnabled: !preferences.notificationsEnabled})}
+                        onClick={toggleNotifications}
                         className={`w-12 h-6 rounded-full p-1 transition-colors ${
                             preferences.notificationsEnabled ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
                         }`}
