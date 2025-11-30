@@ -29,46 +29,29 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [exitDirection, setExitDirection] = useState<number>(0); 
-  const [triedLocal, setTriedLocal] = useState(false);
   const t = translations[lang];
 
-  // Initial Fetch Logic
+  // Initial Fetch Logic - ONLY Local/User recipes
   useEffect(() => {
-    if (recipes.length === 0 && pantryItems.length > 0) {
-        loadRecipes();
-    }
+    // Reset recipes when pantry changes significantly or on mount
+    // We only load local matches initially.
+    loadLocalMatches();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pantryItems]);
+  }, [pantryItems, userRecipes]);
 
-  const loadRecipes = async () => {
+  const loadLocalMatches = () => {
     setLoading(true);
-
-    let newStack: Recipe[] = [];
-
-    // 1. Try Local & User Recipes first if we haven't exhausted them easily
-    if (!triedLocal) {
-        const localDB = getLocalRecipes(lang);
-        const allLocal = [...userRecipes, ...localDB];
-        const matched = findMatchingRecipes(pantryItems, allLocal);
-        
-        // Remove duplicates if any exist in current state (unlikely on fresh load)
-        newStack = matched.filter(r => !recipes.find(ex => ex.id === r.id));
-        setTriedLocal(true);
-    }
-
-    // 2. If stack is still small, fetch AI
-    if (newStack.length < 3) {
-        try {
-            const aiRecipes = await generateRecipes(pantryItems, [], lang);
-            // Tag them as AI
-            const taggedAI = aiRecipes.map(r => ({ ...r, source: 'ai' as const }));
-            newStack = [...newStack, ...taggedAI];
-        } catch (e) {
-            console.error("AI fetch failed", e);
-        }
-    }
-
-    setRecipes(prev => [...prev, ...newStack]);
+    const localDB = getLocalRecipes(lang);
+    const allLocal = [...userRecipes, ...localDB];
+    
+    // Find matches
+    const matched = findMatchingRecipes(pantryItems, allLocal);
+    
+    // Filter out duplicates if we already have them (though usually we replace the stack on pantry update)
+    // For this simple version, we'll just set the stack to the matches.
+    // To preserve existing stack if just adding items, we could do more complex logic, 
+    // but resetting matched recipes based on new pantry state is safer.
+    setRecipes(matched);
     setLoading(false);
   };
 
@@ -77,6 +60,8 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
       try {
           const aiRecipes = await generateRecipes(pantryItems, [], lang);
           const taggedAI = aiRecipes.map(r => ({ ...r, source: 'ai' as const }));
+          
+          // Add AI recipes to the current stack (or empty stack)
           setRecipes(prev => [...prev, ...taggedAI]);
       } catch(e) {
           console.error(e);
@@ -97,6 +82,8 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
 
   const handleSwipe = (direction: 'left' | 'right', recipe: Recipe) => {
     setExitDirection(direction === 'right' ? 1 : -1);
+    
+    // Remove the swiped recipe from state
     setRecipes(prev => prev.filter(r => r.id !== recipe.id));
     
     if (direction === 'right') {
@@ -105,15 +92,8 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
       onDislike(recipe);
     }
 
-    // Load more logic
-    if (recipes.length <= 2) {
-        // Simple refill logic: if local tried, pull AI.
-        if (triedLocal) {
-             forceAiFetch();
-        } else {
-             loadRecipes();
-        }
-    }
+    // NOTE: We do NOT automatically load more here anymore.
+    // If the list runs empty, the "No Matches / Generate AI" view will appear automatically.
   };
 
   if (pantryItems.length === 0) {
@@ -178,18 +158,25 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
           })}
         </AnimatePresence>
         
+        {/* Empty State / Trigger AI State */}
         {recipes.length === 0 && !loading && (
           <div className="absolute inset-0 flex items-center justify-center flex-col gap-4 text-center px-6">
-             <p className="text-gray-500 dark:text-gray-400">{t.no_matches}</p>
+             <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-2 text-gray-400">
+                <BookOpen size={24} />
+             </div>
+             <p className="text-gray-500 dark:text-gray-400 max-w-[250px]">{t.no_matches}</p>
+             
+             {/* Explicit AI Trigger Button */}
             <button 
               onClick={() => forceAiFetch()}
-              className="bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg text-brand-500 font-bold flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg text-brand-500 font-bold flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-100 dark:border-gray-700"
             >
               <RefreshCw size={20} /> {t.generate_ai_button}
             </button>
+            
             <button 
               onClick={onCreateRecipe}
-              className="text-gray-400 text-sm font-medium hover:text-brand-500 underline"
+              className="text-gray-400 text-sm font-medium hover:text-brand-500 underline mt-2"
             >
               {t.or_create}
             </button>

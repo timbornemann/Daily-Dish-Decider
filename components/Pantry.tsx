@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Plus, Minus, Trash2, Calendar, Clock, ShoppingBag, ChevronDown, ChevronUp, PackageOpen, LayoutGrid, ShoppingCart, ArrowRight } from 'lucide-react';
 import { Ingredient, ShoppingItem } from '../types';
-import { translations, Language } from '../translations';
+import { translations, Language, COMMON_ITEMS_IDS } from '../translations';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface PantryProps {
@@ -14,23 +13,12 @@ interface PantryProps {
 
 export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping, lang }) => {
   const [itemName, setItemName] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Produce'); // Default to Produce for better immediate suggestions
+  const [selectedCategory, setSelectedCategory] = useState('Produce'); // Default to Produce
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [lastMovedItem, setLastMovedItem] = useState<string | null>(null);
 
   const t = translations[lang];
-  const categories = [
-    'Produce', 
-    'Meat', 
-    'Dairy', 
-    'Bakery', 
-    'Frozen', 
-    'Pantry', 
-    'Spices', 
-    'Snacks', 
-    'Beverages', 
-    'General'
-  ];
+  const categories = Object.keys(COMMON_ITEMS_IDS);
 
   // --- Actions ---
 
@@ -49,10 +37,13 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
     setItemName('');
   };
 
-  const handleQuickAdd = (name: string, category: string) => {
+  const handleQuickAdd = (idOrName: string, category: string) => {
+    // If it's a key from our translation map, translate it. If it's raw text, use it.
+    const translatedName = (t.ingredients as any)[idOrName] || idOrName;
+
     const newItem: Ingredient = {
       id: Date.now().toString(),
-      name: name,
+      name: translatedName,
       quantity: '1',
       category: category,
     };
@@ -64,11 +55,9 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
   };
 
   const removeSpecificItem = (id: string, name: string) => {
-    // Logic: If this is the LAST item with this name, move to shopping list automatically
     const count = items.filter(i => i.name.toLowerCase() === name.toLowerCase()).length;
     
     if (count <= 1) {
-        // Automatically add to shopping list because it hits 0
         onAddToShopping([name]);
         setLastMovedItem(name);
         setTimeout(() => setLastMovedItem(null), 3000);
@@ -83,7 +72,6 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
 
   // --- Grouping Logic ---
 
-  // Group items by unique key (Category + Name) to display as one card
   const groupedItems = items.reduce((acc, item) => {
     const key = `${item.category}-${item.name.toLowerCase().trim()}`;
     if (!acc[key]) {
@@ -97,7 +85,6 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
     return acc;
   }, {} as Record<string, { name: string, category: string, items: Ingredient[] }>);
 
-  // Helper for expiry color logic (reused)
   const getExpiryStatus = (dateStr?: string) => {
     if (!dateStr) return null;
     const today = new Date();
@@ -112,8 +99,8 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
     return { color: 'text-green-600 dark:text-green-400', label: t.good, bg: 'bg-green-50 dark:bg-green-900/20' };
   };
 
-  // Get current suggestions based on selected category
-  const currentSuggestions = (t.common_items as any)[selectedCategory] || [];
+  // Get current suggestions based on selected category IDs
+  const currentSuggestionIds = COMMON_ITEMS_IDS[selectedCategory] || [];
 
   // --- Render Helpers ---
 
@@ -121,12 +108,14 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
     const isExpanded = expandedGroups[groupKey];
     const totalCount = group.items.length;
     
-    // Check for any urgent statuses to show on closed card
     const urgentItems = group.items.filter(i => {
         const status = getExpiryStatus(i.expiryDate);
         return status && (status.label === t.expired || status.label?.includes(t.days_left));
     });
     const hasOpened = group.items.some(i => i.openedDate);
+    
+    // Translate category name for display
+    const displayCategory = (t.categories as any)[group.category] || group.category;
 
     return (
         <div key={groupKey} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-200">
@@ -139,7 +128,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
                     <div className="flex flex-col">
                         <span className="font-bold text-gray-800 dark:text-gray-100 text-lg truncate">{group.name}</span>
                         <div className="flex items-center gap-2 text-xs">
-                           <span className="text-gray-400 dark:text-gray-500">{group.category}</span>
+                           <span className="text-gray-400 dark:text-gray-500">{displayCategory}</span>
                            {hasOpened && (
                                <span className="flex items-center gap-1 text-orange-500 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-1.5 py-0.5 rounded">
                                    <PackageOpen size={10} /> {t.opened}
@@ -178,6 +167,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
                                 <button 
                                     onClick={(e) => {
                                         e.stopPropagation();
+                                        // Quick add uses the already translated name from the group title
                                         handleQuickAdd(group.name, group.category);
                                     }}
                                     className="text-xs flex items-center gap-1 bg-brand-500 text-white px-3 py-1.5 rounded-lg hover:bg-brand-600 transition-colors shadow-sm"
@@ -287,7 +277,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
                 >
                     {categories.map(c => (
                         <option key={c} value={c}>
-                            {(t as any)[`cat_${c}`] || c}
+                            {(t.categories as any)[c] || c}
                         </option>
                     ))}
                 </select>
@@ -317,16 +307,19 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
              
              {/* Dynamic Suggestions based on Category */}
              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 pt-1 touch-pan-x">
-                 {currentSuggestions.length > 0 ? (
-                    currentSuggestions.map((name: string) => (
-                        <button
-                            key={name}
-                            onClick={() => handleQuickAdd(name, selectedCategory)}
-                            className="shrink-0 text-xs font-medium px-3 py-2 rounded-full whitespace-nowrap transition-all border bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-brand-500 hover:text-brand-500 dark:hover:text-brand-400 dark:hover:border-brand-400 active:scale-95"
-                        >
-                            + {name}
-                        </button>
-                    ))
+                 {currentSuggestionIds.length > 0 ? (
+                    currentSuggestionIds.map((id) => {
+                        const displayName = (t.ingredients as any)[id] || id;
+                        return (
+                            <button
+                                key={id}
+                                onClick={() => handleQuickAdd(id, selectedCategory)}
+                                className="shrink-0 text-xs font-medium px-3 py-2 rounded-full whitespace-nowrap transition-all border bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-brand-500 hover:text-brand-500 dark:hover:text-brand-400 dark:hover:border-brand-400 active:scale-95"
+                            >
+                                + {displayName}
+                            </button>
+                        );
+                    })
                  ) : (
                      <span className="text-xs text-gray-400 italic px-2 py-1">No suggestions for this category</span>
                  )}
@@ -344,7 +337,6 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
                 <p className="text-gray-500 dark:text-gray-400 text-sm">{t.empty_pantry_msg}</p>
             </div>
         ) : (
-            // Render groups sorted by category, then name
             Object.entries(groupedItems)
                 .sort(([, a], [, b]) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name))
                 .map(([key, group]) => renderGroup(key, group))

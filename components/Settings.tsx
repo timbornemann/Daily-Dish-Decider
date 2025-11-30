@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Moon, Sun, Globe, Scale, Bell, Trash2, Check, AlertTriangle } from 'lucide-react';
 import { UserPreferences } from '../types';
@@ -45,8 +44,8 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
   // Common dietary restrictions
   const dietaryOptions = [
     'Vegetarian', 'Vegan', 'Pescatarian', 
-    'Gluten-Free', 'Dairy-Free', 'Nut-Free', 
-    'Keto', 'Paleo', 'Low-Carb'
+    'Gluten_Free', 'Dairy_Free', 'Nut_Free', 
+    'Keto', 'Paleo', 'Low_Carb'
   ];
 
   return (
@@ -185,7 +184,8 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                 <div className="flex flex-wrap gap-2">
                     {dietaryOptions.map(option => {
                         const isSelected = preferences.dietaryRestrictions.includes(option);
-                        const label = (t as any)[`dietary_${option.replace(/-/g, '_')}`] || option;
+                        // Access nested dietary object
+                        const label = (t.dietary as any)[option] || option;
                         return (
                             <button
                                 key={option}

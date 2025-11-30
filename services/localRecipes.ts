@@ -1,185 +1,90 @@
 
 import { Recipe, Ingredient } from '../types';
-import { Language } from '../translations';
+import { translations, Translation, Language } from '../translations';
 
-const COMMON_RECIPES_EN: Recipe[] = [
+// We define the structure and the keys here, but not the text.
+// The text comes from the passed 't' (translation) object.
+const RECIPE_DEFINITIONS = [
   {
     id: 'local-pancakes',
-    title: 'Classic Pancakes',
-    description: 'Fluffy homemade pancakes perfect for breakfast.',
+    key: 'pancakes',
     ingredients: [
-      { name: 'Flour', amount: '1.5 cups' },
-      { name: 'Milk', amount: '1.25 cups' },
-      { name: 'Eggs', amount: '1' },
-      { name: 'Butter', amount: '3 tbsp' },
-      { name: 'Sugar', amount: '1 tbsp' }
-    ],
-    steps: [
-      'Mix dry ingredients in a bowl.',
-      'Whisk wet ingredients in another bowl.',
-      'Combine both mixtures until just moistened.',
-      'Pour batter onto a hot griddle and cook until bubbles form.'
+      { id: 'flour', amount: '200g' },
+      { id: 'milk', amount: '300ml' },
+      { id: 'egg', amount: '2' },
+      { id: 'butter', amount: '30g' },
+      { id: 'sugar', amount: '1 tbsp' }
     ],
     prepTime: '20 mins',
     tags: ['Breakfast', 'Vegetarian', 'Sweet'],
-    basePortions: 4,
-    source: 'local'
+    basePortions: 4
   },
   {
     id: 'local-spaghetti-aglio',
-    title: 'Spaghetti Aglio e Olio',
-    description: 'A traditional Italian pasta dish with garlic and oil.',
+    key: 'spaghetti_aglio',
     ingredients: [
-      { name: 'Spaghetti', amount: '400g' },
-      { name: 'Garlic', amount: '4 cloves' },
-      { name: 'Olive Oil', amount: '1/2 cup' },
-      { name: 'Chili Flakes', amount: '1 tsp' },
-      { name: 'Parsley', amount: '1 handful' }
-    ],
-    steps: [
-      'Boil pasta in salted water.',
-      'Sauté sliced garlic in generous olive oil until golden.',
-      'Add chili flakes and some pasta water to the oil.',
-      'Toss pasta in the sauce and garnish with parsley.'
+      { id: 'pasta', amount: '400g' },
+      { id: 'garlic', amount: '4 cloves' },
+      { id: 'olive_oil', amount: '100ml' },
+      { id: 'chili_flakes', amount: '1 tsp' },
+      { id: 'herbs', amount: '1 handful' }
     ],
     prepTime: '15 mins',
     tags: ['Dinner', 'Italian', 'Vegetarian'],
-    basePortions: 4,
-    source: 'local'
+    basePortions: 4
   },
   {
     id: 'local-scrambled-eggs',
-    title: 'Creamy Scrambled Eggs',
-    description: 'Rich and creamy eggs for a quick meal.',
+    key: 'scrambled_eggs',
     ingredients: [
-      { name: 'Eggs', amount: '4' },
-      { name: 'Butter', amount: '1 tbsp' },
-      { name: 'Salt', amount: 'pinch' },
-      { name: 'Pepper', amount: 'pinch' }
-    ],
-    steps: [
-      'Whisk eggs with salt and pepper.',
-      'Melt butter in a pan over low heat.',
-      'Pour in eggs and stir gently and continuously.',
-      'Remove from heat while still slightly runny.'
+      { id: 'egg', amount: '4' },
+      { id: 'butter', amount: '1 tbsp' },
+      { id: 'salt', amount: 'pinch' },
+      { id: 'pepper_spice', amount: 'pinch' }
     ],
     prepTime: '10 mins',
     tags: ['Breakfast', 'Quick', 'Vegetarian', 'Keto'],
-    basePortions: 2,
-    source: 'local'
+    basePortions: 2
   },
   {
     id: 'local-grilled-cheese',
-    title: 'Ultimate Grilled Cheese',
-    description: 'Crispy bread with melted cheese filling.',
+    key: 'grilled_cheese',
     ingredients: [
-      { name: 'Bread', amount: '4 slices' },
-      { name: 'Cheese', amount: '4 slices' },
-      { name: 'Butter', amount: '2 tbsp' }
-    ],
-    steps: [
-      'Butter one side of each bread slice.',
-      'Place bread butter-side down in pan.',
-      'Add cheese and top with second slice (butter-side up).',
-      'Grill until golden brown on both sides.'
+      { id: 'bread', amount: '4 slices' },
+      { id: 'cheese', amount: '4 slices' },
+      { id: 'butter', amount: '2 tbsp' }
     ],
     prepTime: '10 mins',
     tags: ['Lunch', 'Comfort Food', 'Vegetarian'],
-    basePortions: 2,
-    source: 'local'
-  }
-];
-
-const COMMON_RECIPES_DE: Recipe[] = [
-  {
-    id: 'local-pancakes',
-    title: 'Klassische Pfannkuchen',
-    description: 'Fluffige Pfannkuchen, perfekt für das Frühstück.',
-    ingredients: [
-      { name: 'Mehl', amount: '200g' },
-      { name: 'Milch', amount: '300ml' },
-      { name: 'Eier', amount: '2' },
-      { name: 'Butter', amount: '30g' },
-      { name: 'Zucker', amount: '1 EL' }
-    ],
-    steps: [
-      'Trockene Zutaten in einer Schüssel mischen.',
-      'Nasse Zutaten verquirlen und untermischen.',
-      'Teig in eine heiße Pfanne geben.',
-      'Backen bis Blasen entstehen, dann wenden.'
-    ],
-    prepTime: '20 Min',
-    tags: ['Frühstück', 'Vegetarisch', 'Süß'],
-    basePortions: 4,
-    source: 'local'
-  },
-  {
-    id: 'local-spaghetti-aglio',
-    title: 'Spaghetti Aglio e Olio',
-    description: 'Klassische italienische Pasta mit Knoblauch und Öl.',
-    ingredients: [
-      { name: 'Spaghetti', amount: '400g' },
-      { name: 'Knoblauch', amount: '4 Zehen' },
-      { name: 'Olivenöl', amount: '100ml' },
-      { name: 'Chiliflocken', amount: '1 TL' },
-      { name: 'Petersilie', amount: '1 Handvoll' }
-    ],
-    steps: [
-      'Pasta in Salzwasser kochen.',
-      'Knoblauch in Öl goldgelb anbraten.',
-      'Chili und etwas Nudelwasser hinzufügen.',
-      'Pasta in der Soße schwenken und mit Petersilie garnieren.'
-    ],
-    prepTime: '15 Min',
-    tags: ['Abendessen', 'Italienisch', 'Vegetarisch'],
-    basePortions: 4,
-    source: 'local'
-  },
-  {
-    id: 'local-scrambled-eggs',
-    title: 'Cremiges Rührei',
-    description: 'Reichhaltiges und cremiges Ei für eine schnelle Mahlzeit.',
-    ingredients: [
-      { name: 'Eier', amount: '4' },
-      { name: 'Butter', amount: '1 EL' },
-      { name: 'Salz', amount: 'Prise' },
-      { name: 'Pfeffer', amount: 'Prise' }
-    ],
-    steps: [
-      'Eier mit Salz und Pfeffer verquirlen.',
-      'Butter bei niedriger Hitze schmelzen.',
-      'Eier hineingeben und sanft rühren.',
-      'Vom Herd nehmen, solange sie noch leicht flüssig sind.'
-    ],
-    prepTime: '10 Min',
-    tags: ['Frühstück', 'Schnell', 'Vegetarisch', 'Keto'],
-    basePortions: 2,
-    source: 'local'
-  },
-  {
-    id: 'local-grilled-cheese',
-    title: 'Grilled Cheese Sandwich',
-    description: 'Knuspriges Brot mit geschmolzenem Käse.',
-    ingredients: [
-      { name: 'Brot', amount: '4 Scheiben' },
-      { name: 'Käse', amount: '4 Scheiben' },
-      { name: 'Butter', amount: '2 EL' }
-    ],
-    steps: [
-      'Brot einseitig buttern.',
-      'Mit der Butterseite nach unten in die Pfanne legen.',
-      'Käse darauflegen und zweite Scheibe darauf (Butter oben).',
-      'Goldbraun braten von beiden Seiten.'
-    ],
-    prepTime: '10 Min',
-    tags: ['Mittagessen', 'Soulfood', 'Vegetarisch'],
-    basePortions: 2,
-    source: 'local'
+    basePortions: 2
   }
 ];
 
 export const getLocalRecipes = (lang: Language): Recipe[] => {
-    return lang === 'de' ? COMMON_RECIPES_DE : COMMON_RECIPES_EN;
+    const t = translations[lang];
+
+    return RECIPE_DEFINITIONS.map(def => {
+        // Safe access to the recipe text in the current language
+        // Cast as any because TS might not perfectly infer the dynamic key access
+        const content = (t.recipes as any)[def.key]; 
+        
+        if (!content) return null;
+
+        return {
+            id: def.id,
+            title: content.title,
+            description: content.description,
+            steps: content.steps,
+            ingredients: def.ingredients.map(ing => ({
+                name: (t.ingredients as any)[ing.id] || ing.id, // Translate ingredient name
+                amount: ing.amount
+            })),
+            prepTime: def.prepTime,
+            tags: def.tags,
+            basePortions: def.basePortions,
+            source: 'local'
+        };
+    }).filter(r => r !== null) as Recipe[];
 };
 
 export const findMatchingRecipes = (
@@ -188,7 +93,6 @@ export const findMatchingRecipes = (
 ): Recipe[] => {
   if (pantryItems.length === 0) return [];
   
-  // Scoring Logic: +1 for every matching ingredient
   const scored = availableRecipes.map(recipe => {
     let matches = 0;
     recipe.ingredients.forEach(req => {
@@ -200,13 +104,10 @@ export const findMatchingRecipes = (
       if (hasItem) matches++;
     });
 
-    // Calculate percentage of matched ingredients
     const score = matches / recipe.ingredients.length;
     return { recipe, score, matches };
   });
 
-  // Filter: Must have at least 1 ingredient match to show up as "suggested"
-  // Sort by highest match score
   return scored
     .filter(s => s.matches > 0)
     .sort((a, b) => b.score - a.score)
