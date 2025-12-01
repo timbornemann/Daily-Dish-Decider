@@ -79,7 +79,9 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
   ];
 
   // Helper to sort and visualize weights
-  const sortedWeights = Object.entries(preferences.tasteProfile || {})
+  const tasteProfileEntries = Object.entries(preferences.tasteProfile ?? {}) as [string, number][];
+
+  const sortedWeights = tasteProfileEntries
     .sort(([, a], [, b]) => Math.abs(b) - Math.abs(a)) // Sort by magnitude (impact)
     .slice(0, 50); // Limit list
 
