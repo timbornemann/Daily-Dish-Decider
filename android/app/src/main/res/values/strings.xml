@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Daily Dish Decider</string>
+    <string name="webview_loading">Lade Daily Dish Decider...</string>
+</resources>
