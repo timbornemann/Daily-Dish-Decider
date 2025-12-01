@@ -72,7 +72,9 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
 
   // --- Grouping Logic ---
 
-  const groupedItems = items.reduce((acc, item) => {
+  type GroupedItem = { name: string; category: string; items: Ingredient[] };
+
+  const groupedItems: Record<string, GroupedItem> = items.reduce((acc, item) => {
     const key = `${item.category}-${item.name.toLowerCase().trim()}`;
     if (!acc[key]) {
         acc[key] = {
@@ -83,7 +85,9 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
     }
     acc[key].items.push(item);
     return acc;
-  }, {} as Record<string, { name: string, category: string, items: Ingredient[] }>);
+  }, {} as Record<string, GroupedItem>);
+
+  const groupedEntries: [string, GroupedItem][] = Object.entries(groupedItems);
 
   const getExpiryStatus = (dateStr?: string) => {
     if (!dateStr) return null;
@@ -337,7 +341,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
                 <p className="text-gray-500 dark:text-gray-400 text-sm">{t.empty_pantry_msg}</p>
             </div>
         ) : (
-            Object.entries(groupedItems)
+            groupedEntries
                 .sort(([, a], [, b]) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name))
                 .map(([key, group]) => renderGroup(key, group))
         )}
