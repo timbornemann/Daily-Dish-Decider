@@ -1,0 +1,66 @@
+#!/usr/bin/env sh
+set -euo pipefail
+
+# Lightweight Gradle wrapper replacement that avoids the bundled JAR dependency.
+# It downloads the Gradle distribution declared in gradle-wrapper.properties
+# and then invokes the embedded Gradle launcher.
+
+# Resolve script directory
+PRG="$0"
+while [ -h "$PRG" ]; do
+  ls_output=$(ls -ld "$PRG")
+  link=$(expr "$ls_output" : '.*-> \(.*\)$')
+  if expr "$link" : '/.*' >/dev/null; then
+    PRG="$link"
+  else
+    PRG=$(dirname "$PRG")/"$link"
+  fi
+done
+APP_HOME=$(cd "$(dirname "$PRG")" >/dev/null && pwd -P)
+
+WRAPPER_PROPS="$APP_HOME/gradle/wrapper/gradle-wrapper.properties"
+if [ ! -f "$WRAPPER_PROPS" ]; then
+  echo "gradle-wrapper.properties not found at $WRAPPER_PROPS" >&2
+  exit 1
+fi
+
+distribution_url=$(grep '^distributionUrl=' "$WRAPPER_PROPS" | cut -d'=' -f2-)
+if [ -z "$distribution_url" ]; then
+  echo "distributionUrl is missing in gradle-wrapper.properties" >&2
+  exit 1
+fi
+
+gradle_user_home="${GRADLE_USER_HOME:-$HOME/.gradle}"
+dists_dir="$gradle_user_home/wrapper/dists"
+dist_key=$(basename "$distribution_url" .zip)
+install_dir="$dists_dir/$dist_key"
+zip_path="$install_dir.zip"
+
+mkdir -p "$dists_dir"
+
+if [ ! -d "$install_dir" ] || [ -z "$(ls -A "$install_dir" 2>/dev/null)" ]; then
+  echo "Downloading Gradle distribution $distribution_url" >&2
+  if command -v curl >/dev/null 2>&1; then
+    curl -L "$distribution_url" -o "$zip_path"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -O "$zip_path" "$distribution_url"
+  else
+    echo "Neither curl nor wget is available to download Gradle." >&2
+    exit 1
+  fi
+
+  mkdir -p "$install_dir"
+  echo "Unpacking Gradle distribution" >&2
+  unzip -q "$zip_path" -d "$install_dir"
+fi
+
+gradle_dir=$(find "$install_dir" -maxdepth 1 -type d -name "gradle-*" | head -n 1)
+if [ -z "$gradle_dir" ]; then
+  echo "Unable to locate Gradle installation in $install_dir" >&2
+  exit 1
+fi
+launcher="$gradle_dir/bin/gradle"
+
+# Default JVM options mirror the official wrapper
+DEFAULT_JVM_OPTS="-Xmx64m -Xms64m"
+exec "$launcher" ${DEFAULT_JVM_OPTS:+"-Dorg.gradle.jvmargs=$DEFAULT_JVM_OPTS"} "$@"
