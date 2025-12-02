@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 set -euo pipefail
 
 # Lightweight Gradle wrapper replacement that avoids the bundled JAR dependency.
