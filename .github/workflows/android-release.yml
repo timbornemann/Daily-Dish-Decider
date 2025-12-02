@@ -9,7 +9,7 @@ on:
 jobs:
   build-android:
     name: Build signed Android APK
-    if: ${{ github.event.workflow_run.conclusion == 'success' && hashFiles('android/**') != '' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
