@@ -54,7 +54,7 @@ if [ ! -d "$install_dir" ] || [ -z "$(ls -A "$install_dir" 2>/dev/null)" ]; then
   unzip -q "$zip_path" -d "$install_dir"
 fi
 
-gradle_dir=$(find "$install_dir" -maxdepth 1 -type d -name "gradle-*" | head -n 1)
+gradle_dir=$(find "$install_dir" -mindepth 1 -maxdepth 1 -type d -name "gradle-*" | head -n 1)
 if [ -z "$gradle_dir" ]; then
   echo "Unable to locate Gradle installation in $install_dir" >&2
   exit 1
