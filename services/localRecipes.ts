@@ -19,18 +19,66 @@ const translateAmount = (amount: string, lang: Language): string => {
         .replace(/\bhead\b/g, 'Kopf');
 };
 
-const calculateDifficulty = (prepTime: string): 'Easy' | 'Medium' | 'Hard' => {
-    // Basic heuristic: check numbers in string
-    const match = prepTime.match(/(\d+)/);
-    if (!match) return 'Medium';
+// Calculate difficulty based on recipe complexity, not just time
+const calculateDifficulty = (recipeId: string, prepTime: string, steps: string[]): 'Easy' | 'Medium' | 'Hard' => {
+    // Hard recipes: Complex techniques, multiple components, precise timing, advanced skills
+    const hardRecipes = [
+        'local-lasagne', // Multiple sauces (bolognese + béchamel), layering, baking
+        'local-risotto-mushroom', // Constant stirring, precise timing, technique critical
+        'local-sauerbraten', // Marinating 12-24hrs, long braising, complex sauce
+        'local-quiche-lorraine', // Pastry making from scratch, multiple components
+        'local-stuffed-peppers', // Multiple steps, stuffing technique, baking
+        'local-ratatouille', // Multiple vegetables, precise timing for each
+        'local-paella', // Multiple proteins, precise rice cooking, saffron technique
+        'local-tiramisu', // Multiple layers, precise technique, no-bake but complex
+        'local-banana-bread', // Baking, precise measurements, timing critical
+        'local-kaiserschmarrn' // Special flipping technique, precise temperature
+    ];
     
-    const mins = parseInt(match[0]);
-    // If it mentions hours/hr, it's hard/long
-    if (prepTime.toLowerCase().includes('hr') || prepTime.toLowerCase().includes('hour')) return 'Hard';
+    // Medium recipes: Moderate complexity, some technique required, multiple steps
+    const mediumRecipes = [
+        'local-pancakes', // 8 steps, mixing technique, timing for flipping
+        'local-carbonara', // Timing critical (eggs can scramble), technique required
+        'local-chili-con-carne', // Multiple steps, simmering, seasoning
+        'local-chicken-curry', // Multiple steps, sauce making, moderate complexity
+        'local-schnitzel', // Breading technique (flour-egg-breadcrumb), frying
+        'local-bratkartoffeln', // Frying technique, timing for crispiness
+        'local-kaesespaetzle', // Multiple components, onion caramelization
+        'local-teriyaki-chicken', // Sauce making, marinating, timing
+        'local-beef-broccoli', // Stir fry technique, high heat, timing
+        'local-pad-thai', // Multiple components, stir fry, balance of flavors
+        'local-summer-rolls', // Assembly technique, rice paper handling
+        'local-tacos', // Multiple components, seasoning meat, assembly
+        'local-shakshuka', // One pot but technique for egg doneness
+        'local-caesar-salad', // Multiple components, croutons, dressing
+        'local-potato-soup', // Multiple steps, vegetable prep, simmering
+        'local-fried-rice', // Technique required, high heat, timing
+        'local-ramen-weeknight', // Multiple components, egg timing, broth
+        'local-lentil-stew', // Multiple steps, vegetable prep, simmering
+        'local-gnocchi-sage', // Simple but butter browning technique
+        'local-fishsticks-mash', // Multiple components, mash technique
+        'local-sheetpan-salmon', // Timing and technique, different cook times
+        'local-tofu-stirfry', // Technique required, high heat, timing
+        'local-poke-bowl', // Multiple components, rice cooking, prep
+        'local-taco-salad', // Multiple components, seasoning, assembly
+        'local-roast-chicken-tray', // Timing and technique, different cook times
+        'local-roasted-veg-feta', // Timing important, vegetable prep
+        'local-scrambled-eggs' // Technique for creamy texture, temperature control
+    ];
     
-    if (mins <= 20) return 'Easy';
-    if (mins <= 45) return 'Medium';
-    return 'Hard';
+    // Check if recipe is in hard list
+    if (hardRecipes.includes(recipeId)) {
+        return 'Hard';
+    }
+    
+    // Check if recipe is in medium list
+    if (mediumRecipes.includes(recipeId)) {
+        return 'Medium';
+    }
+    
+    // Default: Easy for simple recipes
+    // Most breakfast items, simple pasta, grilled cheese, etc.
+    return 'Easy';
 };
 
 const RECIPE_DEFINITIONS = [
@@ -98,7 +146,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'parmesan', amount: '100g' },
       { id: 'pepper_spice', amount: '1 tbsp' }
     ],
-    prepTime: '20 mins',
+    prepTime: '25 mins',
     tags: ['Dinner', 'Italian', 'Comfort Food', 'Pasta', 'Bacon', 'Egg', 'Creamy', 'Quick'],
     basePortions: 4
   },
@@ -112,7 +160,7 @@ const RECIPE_DEFINITIONS = [
         { id: 'onion', amount: '1' },
         { id: 'chili_flakes', amount: '1 tbsp' }
     ],
-    prepTime: '45 mins',
+    prepTime: '50 mins',
     tags: ['Dinner', 'Spicy', 'Hearty', 'Beef', 'Bean', 'One Pot', 'Mexican', 'Tomato'],
     basePortions: 4
   },
@@ -256,7 +304,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'chicken_broth', amount: '1 liter' }, // or veg broth
       { id: 'butter', amount: '50g' }
     ],
-    prepTime: '40 mins',
+    prepTime: '45 mins',
     tags: ['Dinner', 'Italian', 'Vegetarian', 'Rice', 'Mushroom', 'Creamy', 'Risotto', 'One Pot'],
     basePortions: 4
   },
@@ -299,7 +347,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'cookie', amount: '200g (Ladyfingers)' },
       { id: 'chocolate', amount: '2 tbsp (Cocoa)' }
     ],
-    prepTime: '20 mins',
+    prepTime: '30 mins',
     tags: ['Dessert', 'Italian', 'Sweet', 'Coffee', 'Cheese', 'Chocolate', 'No Bake', 'Creamy'],
     basePortions: 6
   },
@@ -359,7 +407,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'carrot', amount: '1' },
       { id: 'peanut_butter', amount: '2 tbsp' }
     ],
-    prepTime: '30 mins',
+    prepTime: '35 mins',
     tags: ['Lunch', 'Asian', 'Healthy', 'Shrimp', 'Vegetable', 'Fresh', 'Rice Paper', 'Peanut'],
     basePortions: 4
   },
@@ -374,7 +422,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'soy_sauce', amount: '2 tbsp' },
       { id: 'lime', amount: '1' }
     ],
-    prepTime: '25 mins',
+    prepTime: '30 mins',
     tags: ['Dinner', 'Thai', 'Noodles', 'Pasta', 'Tofu', 'Egg', 'Stir Fry', 'Peanut', 'Lime', 'Spicy'],
     basePortions: 2
   },
@@ -490,7 +538,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'butter', amount: '100g' },
       { id: 'egg', amount: '1' }
     ],
-    prepTime: '1 hr 10 mins',
+    prepTime: '1 hr 15 mins',
     tags: ['Baking', 'Sweet', 'Snack', 'Banana', 'Flour', 'Sugar', 'Bread', 'Dessert'],
     basePortions: 8
   },
@@ -577,7 +625,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'carrot', amount: '1' },
       { id: 'beef_broth', amount: '500ml' }
     ],
-    prepTime: '3 hrs',
+    prepTime: '3 hrs (plus 12-24 hrs marinating)',
     tags: ['Dinner', 'German', 'Slow Cook', 'Beef', 'Vinegar', 'One Pot', 'Braised', 'Classic'],
     basePortions: 6
   },
@@ -592,7 +640,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'tomato_paste', amount: '2 tbsp' },
       { id: 'olive_oil', amount: '2 tbsp' }
     ],
-    prepTime: '45 mins',
+    prepTime: '50 mins',
     tags: ['Dinner', 'Spanish', 'Seafood', 'Rice', 'Chicken', 'Shrimp', 'One Pot', 'Saffron'],
     basePortions: 4
   },
@@ -606,7 +654,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'chicken_broth', amount: '1 liter' },
       { id: 'bacon', amount: '80g' }
     ],
-    prepTime: '50 mins',
+    prepTime: '55 mins',
     tags: ['Dinner', 'German', 'One Pot', 'Lentil', 'Vegetable', 'Bacon', 'Soup', 'Hearty'],
     basePortions: 4
   },
@@ -648,7 +696,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'cream', amount: '200ml' },
       { id: 'cheese', amount: '100g' }
     ],
-    prepTime: '1 hr',
+    prepTime: '1 hr 15 mins',
     tags: ['Lunch', 'French', 'Baking', 'Egg', 'Bacon', 'Cream', 'Cheese', 'Pastry', 'Quiche'],
     basePortions: 6
   },
@@ -663,7 +711,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'tomato_paste', amount: '2 tbsp' },
       { id: 'chicken_broth', amount: '300ml' }
     ],
-    prepTime: '1 hr',
+    prepTime: '1 hr 15 mins',
     tags: ['Dinner', 'Comfort Food', 'Baking', 'Pepper', 'Beef', 'Rice', 'Stuffed', 'Oven'],
     basePortions: 4
   },
@@ -678,7 +726,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'olive_oil', amount: '2 tbsp' },
       { id: 'herbs', amount: '1 tsp' }
     ],
-    prepTime: '35 mins',
+    prepTime: '40 mins',
     tags: ['Dinner', 'Vegetarian', 'French', 'Zucchini', 'Pepper', 'Tomato', 'Roasted', 'Stew'],
     basePortions: 4
   },
@@ -751,7 +799,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'sugar', amount: '60g' },
       { id: 'butter', amount: '50g' }
     ],
-    prepTime: '30 mins',
+    prepTime: '35 mins',
     tags: ['Dessert', 'Austrian', 'Sweet', 'Flour', 'Egg', 'Sugar', 'Fried', 'Pancake', 'Classic'],
     basePortions: 4
   },
@@ -765,7 +813,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'olive_oil', amount: '3 tbsp' },
       { id: 'paprika', amount: '1 tbsp' }
     ],
-    prepTime: '50 mins',
+    prepTime: '55 mins',
     tags: ['Dinner', 'Sheet Pan', 'Family', 'Chicken', 'Potato', 'Onion', 'Roasted', 'One Pan'],
     basePortions: 4
   },
@@ -821,7 +869,7 @@ export const getLocalRecipes = (lang: Language): Recipe[] => {
             tags: def.tags,
             basePortions: def.basePortions,
             source: 'local',
-            difficulty: calculateDifficulty(def.prepTime)
+            difficulty: calculateDifficulty(def.id, def.prepTime, content.steps || [])
         };
     }).filter(r => r !== null) as Recipe[];
 };
