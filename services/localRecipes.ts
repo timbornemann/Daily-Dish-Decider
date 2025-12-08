@@ -46,7 +46,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'sugar', amount: '1 tbsp' }
     ],
     prepTime: '20 mins',
-    tags: ['Breakfast', 'Vegetarian', 'Sweet'],
+    tags: ['Breakfast', 'Vegetarian', 'Sweet', 'Baking', 'Quick', 'Egg', 'Flour', 'Milk'],
     basePortions: 4
   },
   {
@@ -60,7 +60,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'herbs', amount: '1 handful' } // parsley ideally
     ],
     prepTime: '15 mins',
-    tags: ['Dinner', 'Italian', 'Vegetarian'],
+    tags: ['Dinner', 'Italian', 'Vegetarian', 'Pasta', 'Quick', 'Garlic', 'One Pot', 'Simple'],
     basePortions: 4
   },
   {
@@ -73,7 +73,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'pepper_spice', amount: '1 pinch' }
     ],
     prepTime: '10 mins',
-    tags: ['Breakfast', 'Quick', 'Vegetarian', 'Keto'],
+    tags: ['Breakfast', 'Quick', 'Vegetarian', 'Keto', 'Egg', 'High Protein', 'Simple', 'Low Carb'],
     basePortions: 2
   },
   {
@@ -85,7 +85,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'butter', amount: '2 tbsp' }
     ],
     prepTime: '10 mins',
-    tags: ['Lunch', 'Comfort Food', 'Vegetarian'],
+    tags: ['Lunch', 'Comfort Food', 'Vegetarian', 'Cheese', 'Bread', 'Quick', 'Simple', 'Grilled'],
     basePortions: 2
   },
   {
@@ -99,7 +99,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'pepper_spice', amount: '1 tbsp' }
     ],
     prepTime: '20 mins',
-    tags: ['Dinner', 'Italian', 'Comfort Food'],
+    tags: ['Dinner', 'Italian', 'Comfort Food', 'Pasta', 'Bacon', 'Egg', 'Creamy', 'Quick'],
     basePortions: 4
   },
   {
@@ -113,7 +113,7 @@ const RECIPE_DEFINITIONS = [
         { id: 'chili_flakes', amount: '1 tbsp' }
     ],
     prepTime: '45 mins',
-    tags: ['Dinner', 'Spicy', 'Hearty'],
+    tags: ['Dinner', 'Spicy', 'Hearty', 'Beef', 'Bean', 'One Pot', 'Mexican', 'Tomato'],
     basePortions: 4
   },
   {
@@ -127,7 +127,7 @@ const RECIPE_DEFINITIONS = [
         { id: 'butter', amount: '1 tbsp' }
     ],
     prepTime: '15 mins',
-    tags: ['Breakfast', 'Sweet', 'Vegetarian'],
+    tags: ['Breakfast', 'Sweet', 'Vegetarian', 'Bread', 'Egg', 'Cinnamon', 'Quick', 'Fried'],
     basePortions: 2
   },
   {
@@ -140,7 +140,7 @@ const RECIPE_DEFINITIONS = [
         { id: 'salt', amount: '1 pinch' }
     ],
     prepTime: '10 mins',
-    tags: ['Breakfast', 'Healthy', 'Vegetarian'],
+    tags: ['Breakfast', 'Healthy', 'Vegetarian', 'Oat', 'Milk', 'Honey', 'Quick', 'Simple', 'Fiber'],
     basePortions: 2
   },
   {
@@ -154,7 +154,7 @@ const RECIPE_DEFINITIONS = [
         { id: 'cream', amount: '100ml' }
     ],
     prepTime: '35 mins',
-    tags: ['Lunch', 'Soup', 'Comfort Food'],
+    tags: ['Lunch', 'Soup', 'Comfort Food', 'Potato', 'Vegetable', 'Cream', 'One Pot', 'Warm'],
     basePortions: 4
   },
   {
@@ -168,7 +168,7 @@ const RECIPE_DEFINITIONS = [
         { id: 'vinegar', amount: '1 tbsp' }
     ],
     prepTime: '10 mins',
-    tags: ['Lunch', 'Salad', 'Vegetarian', 'Italian'],
+    tags: ['Lunch', 'Salad', 'Vegetarian', 'Italian', 'Tomato', 'Mozzarella', 'Fresh', 'Quick', 'Basil'],
     basePortions: 2
   },
   {
@@ -183,7 +183,7 @@ const RECIPE_DEFINITIONS = [
         { id: 'cream', amount: '200ml' }
     ],
     prepTime: '30 mins',
-    tags: ['Dinner', 'Asian Style', 'Spicy'],
+    tags: ['Dinner', 'Asian', 'Spicy', 'Chicken', 'Rice', 'Curry', 'Creamy', 'One Pot'],
     basePortions: 4
   },
 
@@ -200,7 +200,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'butter', amount: '100g' }
     ],
     prepTime: '30 mins',
-    tags: ['Dinner', 'German', 'Meat'],
+    tags: ['Dinner', 'German', 'Meat', 'Pork', 'Fried', 'Breaded', 'Lemon', 'Classic'],
     basePortions: 4
   },
   {
@@ -213,7 +213,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'butter', amount: '2 tbsp' }
     ],
     prepTime: '25 mins',
-    tags: ['Dinner', 'German', 'Comfort Food'],
+    tags: ['Dinner', 'German', 'Comfort Food', 'Potato', 'Bacon', 'Fried', 'Onion', 'Classic'],
     basePortions: 4
   },
   {
@@ -227,7 +227,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'tomato_paste', amount: '1 tbsp' }
     ],
     prepTime: '20 mins',
-    tags: ['Lunch', 'German', 'Street Food'],
+    tags: ['Lunch', 'German', 'Street Food', 'Sausage', 'Quick', 'Spicy', 'Ketchup', 'Curry'],
     basePortions: 2
   },
   {
@@ -240,7 +240,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'butter', amount: '50g' }
     ],
     prepTime: '30 mins',
-    tags: ['Dinner', 'German', 'Vegetarian'],
+    tags: ['Dinner', 'German', 'Vegetarian', 'Pasta', 'Cheese', 'Onion', 'Creamy', 'Comfort Food'],
     basePortions: 4
   },
 
@@ -257,7 +257,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'butter', amount: '50g' }
     ],
     prepTime: '40 mins',
-    tags: ['Dinner', 'Italian', 'Vegetarian Option'],
+    tags: ['Dinner', 'Italian', 'Vegetarian', 'Rice', 'Mushroom', 'Creamy', 'Risotto', 'One Pot'],
     basePortions: 4
   },
   {
@@ -272,7 +272,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'cheese', amount: '200g' }
     ],
     prepTime: '1 hr 15 mins',
-    tags: ['Dinner', 'Italian', 'Family'],
+    tags: ['Dinner', 'Italian', 'Family', 'Pasta', 'Beef', 'Baking', 'Cheese', 'Tomato', 'Comfort Food'],
     basePortions: 6
   },
   {
@@ -286,7 +286,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'olive_oil', amount: '3 tbsp' }
     ],
     prepTime: '15 mins',
-    tags: ['Snack', 'Italian', 'Appetizer'],
+    tags: ['Snack', 'Italian', 'Appetizer', 'Bread', 'Tomato', 'Garlic', 'Basil', 'Quick', 'Fresh'],
     basePortions: 4
   },
   {
@@ -300,7 +300,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'chocolate', amount: '2 tbsp (Cocoa)' }
     ],
     prepTime: '20 mins',
-    tags: ['Dessert', 'Italian', 'Sweet'],
+    tags: ['Dessert', 'Italian', 'Sweet', 'Coffee', 'Cheese', 'Chocolate', 'No Bake', 'Creamy'],
     basePortions: 6
   },
 
@@ -316,7 +316,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'soy_sauce', amount: '2 tbsp' }
     ],
     prepTime: '15 mins',
-    tags: ['Dinner', 'Asian', 'Quick'],
+    tags: ['Dinner', 'Asian', 'Quick', 'Rice', 'Egg', 'Stir Fry', 'Soy Sauce', 'Simple'],
     basePortions: 2
   },
   {
@@ -331,7 +331,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'sugar', amount: '1 tbsp' }
     ],
     prepTime: '20 mins',
-    tags: ['Dinner', 'Asian', 'High Protein'],
+    tags: ['Dinner', 'Asian', 'High Protein', 'Beef', 'Broccoli', 'Stir Fry', 'Soy Sauce', 'Ginger'],
     basePortions: 2
   },
   {
@@ -345,7 +345,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'rice', amount: '200g' }
     ],
     prepTime: '20 mins',
-    tags: ['Dinner', 'Asian', 'Family'],
+    tags: ['Dinner', 'Asian', 'Family', 'Chicken', 'Rice', 'Soy Sauce', 'Sweet', 'Quick'],
     basePortions: 4
   },
   {
@@ -360,7 +360,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'peanut_butter', amount: '2 tbsp' }
     ],
     prepTime: '30 mins',
-    tags: ['Lunch', 'Asian', 'Healthy'],
+    tags: ['Lunch', 'Asian', 'Healthy', 'Shrimp', 'Vegetable', 'Fresh', 'Rice Paper', 'Peanut'],
     basePortions: 4
   },
   {
@@ -375,7 +375,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'lime', amount: '1' }
     ],
     prepTime: '25 mins',
-    tags: ['Dinner', 'Thai', 'Noodles'],
+    tags: ['Dinner', 'Thai', 'Noodles', 'Pasta', 'Tofu', 'Egg', 'Stir Fry', 'Peanut', 'Lime', 'Spicy'],
     basePortions: 2
   },
 
@@ -392,7 +392,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'canned_tomato', amount: '100g (Salsa)' }
     ],
     prepTime: '20 mins',
-    tags: ['Dinner', 'Mexican', 'Fun'],
+    tags: ['Dinner', 'Mexican', 'Fun', 'Beef', 'Tortilla', 'Spicy', 'Cheese', 'Quick', 'Interactive'],
     basePortions: 4
   },
   {
@@ -404,7 +404,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'bean', amount: '100g' } // optional
     ],
     prepTime: '10 mins',
-    tags: ['Lunch', 'Mexican', 'Quick'],
+    tags: ['Lunch', 'Mexican', 'Quick', 'Tortilla', 'Cheese', 'Bean', 'Simple', 'Grilled'],
     basePortions: 2
   },
   {
@@ -418,7 +418,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'chips', amount: '1 bag' }
     ],
     prepTime: '10 mins',
-    tags: ['Snack', 'Mexican', 'Party'],
+    tags: ['Snack', 'Mexican', 'Party', 'Avocado', 'Lime', 'Fresh', 'Dip', 'Quick', 'No Cook'],
     basePortions: 4
   },
 
@@ -434,7 +434,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'lettuce', amount: '4 leaves' }
     ],
     prepTime: '20 mins',
-    tags: ['Dinner', 'American', 'Comfort Food'],
+    tags: ['Dinner', 'American', 'Comfort Food', 'Beef', 'Bread', 'Cheese', 'Grilled', 'Quick'],
     basePortions: 4
   },
   {
@@ -449,7 +449,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'oregano', amount: '1 tsp' }
     ],
     prepTime: '15 mins',
-    tags: ['Lunch', 'Greek', 'Healthy', 'Vegetarian'],
+    tags: ['Lunch', 'Greek', 'Healthy', 'Vegetarian', 'Cucumber', 'Tomato', 'Feta', 'Fresh', 'Olive Oil'],
     basePortions: 2
   },
   {
@@ -463,7 +463,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'bread', amount: 'for serving' }
     ],
     prepTime: '25 mins',
-    tags: ['Breakfast', 'Middle Eastern', 'Vegetarian'],
+    tags: ['Breakfast', 'Middle Eastern', 'Vegetarian', 'Egg', 'Tomato', 'Spicy', 'One Pot', 'Bread'],
     basePortions: 2
   },
   {
@@ -477,7 +477,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'mayo', amount: '2 tbsp' }
     ],
     prepTime: '20 mins',
-    tags: ['Lunch', 'Salad', 'Healthy'],
+    tags: ['Lunch', 'Salad', 'Healthy', 'Chicken', 'Lettuce', 'Bread', 'Parmesan', 'Creamy'],
     basePortions: 2
   },
   {
@@ -491,7 +491,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'egg', amount: '1' }
     ],
     prepTime: '1 hr 10 mins',
-    tags: ['Baking', 'Sweet', 'Snack'],
+    tags: ['Baking', 'Sweet', 'Snack', 'Banana', 'Flour', 'Sugar', 'Bread', 'Dessert'],
     basePortions: 8
   },
   {
@@ -504,7 +504,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'oat', amount: '2 tbsp' }
     ],
     prepTime: '5 mins',
-    tags: ['Breakfast', 'Healthy', 'Quick'],
+    tags: ['Breakfast', 'Healthy', 'Quick', 'Berry', 'Banana', 'Yogurt', 'Oat', 'No Cook', 'Cold'],
     basePortions: 1
   },
 
@@ -519,7 +519,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'herbs', amount: '1 handful' }
     ],
     prepTime: '20 mins',
-    tags: ['Dinner', 'Easy', 'Comfort Food'],
+    tags: ['Dinner', 'Easy', 'Comfort Food', 'Pizza', 'Tomato', 'Mozzarella', 'Quick', 'Simple'],
     basePortions: 2
   },
   {
@@ -534,7 +534,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'lettuce', amount: '4 leaves' }
     ],
     prepTime: '25 mins',
-    tags: ['Dinner', 'Street Food', 'Quick'],
+    tags: ['Dinner', 'Street Food', 'Quick', 'Turkey', 'Pita', 'Yogurt', 'Fresh', 'Middle Eastern'],
     basePortions: 2
   },
   {
@@ -549,7 +549,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'herbs', amount: '1 tsp' }
     ],
     prepTime: '40 mins',
-    tags: ['Dinner', 'Vegetarian', 'Sheet Pan'],
+    tags: ['Dinner', 'Vegetarian', 'Sheet Pan', 'Potato', 'Vegetable', 'Feta', 'Roasted', 'One Pan'],
     basePortions: 4
   },
   {
@@ -564,7 +564,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'egg', amount: '2' }
     ],
     prepTime: '20 mins',
-    tags: ['Dinner', 'Asian', 'Quick'],
+    tags: ['Dinner', 'Asian', 'Quick', 'Pasta', 'Broth', 'Egg', 'Spinach', 'Soup', 'One Pot'],
     basePortions: 2
   },
   {
@@ -578,7 +578,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'beef_broth', amount: '500ml' }
     ],
     prepTime: '3 hrs',
-    tags: ['Dinner', 'German', 'Slow Cook'],
+    tags: ['Dinner', 'German', 'Slow Cook', 'Beef', 'Vinegar', 'One Pot', 'Braised', 'Classic'],
     basePortions: 6
   },
   {
@@ -593,7 +593,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'olive_oil', amount: '2 tbsp' }
     ],
     prepTime: '45 mins',
-    tags: ['Dinner', 'Spanish', 'Seafood'],
+    tags: ['Dinner', 'Spanish', 'Seafood', 'Rice', 'Chicken', 'Shrimp', 'One Pot', 'Saffron'],
     basePortions: 4
   },
   {
@@ -607,7 +607,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'bacon', amount: '80g' }
     ],
     prepTime: '50 mins',
-    tags: ['Dinner', 'German', 'One Pot'],
+    tags: ['Dinner', 'German', 'One Pot', 'Lentil', 'Vegetable', 'Bacon', 'Soup', 'Hearty'],
     basePortions: 4
   },
   {
@@ -620,7 +620,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'parmesan', amount: '50g' }
     ],
     prepTime: '15 mins',
-    tags: ['Dinner', 'Italian', 'Quick'],
+    tags: ['Dinner', 'Italian', 'Quick', 'Pasta', 'Butter', 'Sage', 'Parmesan', 'Simple'],
     basePortions: 4
   },
   {
@@ -634,7 +634,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'frozen_peas', amount: '150g' }
     ],
     prepTime: '30 mins',
-    tags: ['Dinner', 'Family', 'Easy'],
+    tags: ['Dinner', 'Family', 'Easy', 'Fish', 'Potato', 'Peas', 'Simple', 'Comfort Food'],
     basePortions: 4
   },
   {
@@ -649,7 +649,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'cheese', amount: '100g' }
     ],
     prepTime: '1 hr',
-    tags: ['Lunch', 'French', 'Baking'],
+    tags: ['Lunch', 'French', 'Baking', 'Egg', 'Bacon', 'Cream', 'Cheese', 'Pastry', 'Quiche'],
     basePortions: 6
   },
   {
@@ -664,7 +664,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'chicken_broth', amount: '300ml' }
     ],
     prepTime: '1 hr',
-    tags: ['Dinner', 'Comfort Food', 'Baking'],
+    tags: ['Dinner', 'Comfort Food', 'Baking', 'Pepper', 'Beef', 'Rice', 'Stuffed', 'Oven'],
     basePortions: 4
   },
   {
@@ -679,7 +679,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'herbs', amount: '1 tsp' }
     ],
     prepTime: '35 mins',
-    tags: ['Dinner', 'Vegetarian', 'French'],
+    tags: ['Dinner', 'Vegetarian', 'French', 'Zucchini', 'Pepper', 'Tomato', 'Roasted', 'Stew'],
     basePortions: 4
   },
   {
@@ -693,7 +693,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'lemon', amount: '1' }
     ],
     prepTime: '30 mins',
-    tags: ['Dinner', 'Seafood', 'Sheet Pan'],
+    tags: ['Dinner', 'Seafood', 'Sheet Pan', 'Salmon', 'Potato', 'Broccoli', 'Roasted', 'One Pan', 'Lemon'],
     basePortions: 4
   },
   {
@@ -708,7 +708,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'soy_sauce', amount: '3 tbsp' }
     ],
     prepTime: '20 mins',
-    tags: ['Dinner', 'Vegan', 'Stir Fry'],
+    tags: ['Dinner', 'Vegan', 'Stir Fry', 'Tofu', 'Broccoli', 'Carrot', 'Soy Sauce', 'Quick', 'Healthy'],
     basePortions: 3
   },
   {
@@ -723,7 +723,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'lime', amount: '1' }
     ],
     prepTime: '25 mins',
-    tags: ['Lunch', 'Bowl', 'Fresh'],
+    tags: ['Lunch', 'Bowl', 'Fresh', 'Rice', 'Salmon', 'Avocado', 'Cucumber', 'Asian', 'Healthy'],
     basePortions: 2
   },
   {
@@ -738,7 +738,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'cheese', amount: '100g' }
     ],
     prepTime: '20 mins',
-    tags: ['Lunch', 'Salad', 'Mexican'],
+    tags: ['Lunch', 'Salad', 'Mexican', 'Beef', 'Lettuce', 'Bean', 'Cheese', 'Spicy', 'Fresh'],
     basePortions: 3
   },
   {
@@ -752,7 +752,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'butter', amount: '50g' }
     ],
     prepTime: '30 mins',
-    tags: ['Dessert', 'Austrian', 'Sweet'],
+    tags: ['Dessert', 'Austrian', 'Sweet', 'Flour', 'Egg', 'Sugar', 'Fried', 'Pancake', 'Classic'],
     basePortions: 4
   },
   {
@@ -766,7 +766,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'paprika', amount: '1 tbsp' }
     ],
     prepTime: '50 mins',
-    tags: ['Dinner', 'Sheet Pan', 'Family'],
+    tags: ['Dinner', 'Sheet Pan', 'Family', 'Chicken', 'Potato', 'Onion', 'Roasted', 'One Pan'],
     basePortions: 4
   },
   {
@@ -780,7 +780,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'cinnamon', amount: '1 tsp' }
     ],
     prepTime: '5 mins (plus overnight)',
-    tags: ['Breakfast', 'Prep Ahead', 'Healthy'],
+    tags: ['Breakfast', 'Prep Ahead', 'Healthy', 'Oat', 'Yogurt', 'Berry', 'Honey', 'No Cook', 'Cold'],
     basePortions: 2
   },
   {
@@ -795,7 +795,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'tomato', amount: '2' }
     ],
     prepTime: '15 mins',
-    tags: ['Snack', 'Party', 'Sharing'],
+    tags: ['Snack', 'Party', 'Sharing', 'Chips', 'Beef', 'Bean', 'Cheese', 'Spicy', 'Baking', 'Quick'],
     basePortions: 4
   }
 ];
