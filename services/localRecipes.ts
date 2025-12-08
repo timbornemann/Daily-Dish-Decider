@@ -506,6 +506,297 @@ const RECIPE_DEFINITIONS = [
     prepTime: '5 mins',
     tags: ['Breakfast', 'Healthy', 'Quick'],
     basePortions: 1
+  },
+
+  // --- EXTENDED COLLECTION ---
+  {
+    id: 'local-frozen-pizza-upgrade',
+    key: 'frozen_pizza_upgrade',
+    ingredients: [
+      { id: 'frozen_pizza', amount: '1' },
+      { id: 'tomato', amount: '2' },
+      { id: 'mozzarella', amount: '1 ball' },
+      { id: 'herbs', amount: '1 handful' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dinner', 'Easy', 'Comfort Food'],
+    basePortions: 2
+  },
+  {
+    id: 'local-doner-plate',
+    key: 'doner_plate',
+    ingredients: [
+      { id: 'turkey', amount: '300g (strips)' },
+      { id: 'pita', amount: '2' },
+      { id: 'yogurt', amount: '150g' },
+      { id: 'cucumber', amount: '1/2' },
+      { id: 'tomato', amount: '1' },
+      { id: 'lettuce', amount: '4 leaves' }
+    ],
+    prepTime: '25 mins',
+    tags: ['Dinner', 'Street Food', 'Quick'],
+    basePortions: 2
+  },
+  {
+    id: 'local-roasted-veg-feta',
+    key: 'roasted_veg_feta',
+    ingredients: [
+      { id: 'potato', amount: '600g' },
+      { id: 'carrot', amount: '2' },
+      { id: 'zucchini', amount: '1' },
+      { id: 'olive_oil', amount: '3 tbsp' },
+      { id: 'cheese', amount: '150g (Feta)' },
+      { id: 'herbs', amount: '1 tsp' }
+    ],
+    prepTime: '40 mins',
+    tags: ['Dinner', 'Vegetarian', 'Sheet Pan'],
+    basePortions: 4
+  },
+  {
+    id: 'local-ramen-weeknight',
+    key: 'ramen_weeknight',
+    ingredients: [
+      { id: 'chicken_broth', amount: '800ml' },
+      { id: 'soy_sauce', amount: '2 tbsp' },
+      { id: 'pasta', amount: '200g (Noodles)' },
+      { id: 'spinach', amount: '100g' },
+      { id: 'chili_flakes', amount: '1 tsp' },
+      { id: 'egg', amount: '2' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dinner', 'Asian', 'Quick'],
+    basePortions: 2
+  },
+  {
+    id: 'local-sauerbraten',
+    key: 'sauerbraten',
+    ingredients: [
+      { id: 'steak', amount: '800g (roast)' },
+      { id: 'vinegar', amount: '150ml' },
+      { id: 'onion', amount: '1' },
+      { id: 'carrot', amount: '1' },
+      { id: 'beef_broth', amount: '500ml' }
+    ],
+    prepTime: '3 hrs',
+    tags: ['Dinner', 'German', 'Slow Cook'],
+    basePortions: 6
+  },
+  {
+    id: 'local-paella',
+    key: 'paella',
+    ingredients: [
+      { id: 'rice', amount: '400g' },
+      { id: 'chicken_breast', amount: '300g' },
+      { id: 'shrimp', amount: '200g' },
+      { id: 'frozen_peas', amount: '150g' },
+      { id: 'tomato_paste', amount: '2 tbsp' },
+      { id: 'olive_oil', amount: '2 tbsp' }
+    ],
+    prepTime: '45 mins',
+    tags: ['Dinner', 'Spanish', 'Seafood'],
+    basePortions: 4
+  },
+  {
+    id: 'local-lentil-stew',
+    key: 'lentil_stew',
+    ingredients: [
+      { id: 'lentil', amount: '300g' },
+      { id: 'carrot', amount: '1' },
+      { id: 'potato', amount: '2' },
+      { id: 'chicken_broth', amount: '1 liter' },
+      { id: 'bacon', amount: '80g' }
+    ],
+    prepTime: '50 mins',
+    tags: ['Dinner', 'German', 'One Pot'],
+    basePortions: 4
+  },
+  {
+    id: 'local-gnocchi-sage',
+    key: 'gnocchi_sage',
+    ingredients: [
+      { id: 'pasta', amount: '500g (Gnocchi)' },
+      { id: 'butter', amount: '80g' },
+      { id: 'herbs', amount: '1 handful (Sage)' },
+      { id: 'parmesan', amount: '50g' }
+    ],
+    prepTime: '15 mins',
+    tags: ['Dinner', 'Italian', 'Quick'],
+    basePortions: 4
+  },
+  {
+    id: 'local-fishsticks-mash',
+    key: 'fishsticks_mash',
+    ingredients: [
+      { id: 'fish_sticks', amount: '10' },
+      { id: 'potato', amount: '800g' },
+      { id: 'butter', amount: '40g' },
+      { id: 'milk', amount: '150ml' },
+      { id: 'frozen_peas', amount: '150g' }
+    ],
+    prepTime: '30 mins',
+    tags: ['Dinner', 'Family', 'Easy'],
+    basePortions: 4
+  },
+  {
+    id: 'local-quiche-lorraine',
+    key: 'quiche_lorraine',
+    ingredients: [
+      { id: 'flour', amount: '250g' },
+      { id: 'butter', amount: '125g' },
+      { id: 'egg', amount: '4' },
+      { id: 'bacon', amount: '150g' },
+      { id: 'cream', amount: '200ml' },
+      { id: 'cheese', amount: '100g' }
+    ],
+    prepTime: '1 hr',
+    tags: ['Lunch', 'French', 'Baking'],
+    basePortions: 6
+  },
+  {
+    id: 'local-stuffed-peppers',
+    key: 'stuffed_peppers',
+    ingredients: [
+      { id: 'pepper', amount: '4' },
+      { id: 'ground_beef', amount: '400g' },
+      { id: 'rice', amount: '200g (cooked)' },
+      { id: 'onion', amount: '1' },
+      { id: 'tomato_paste', amount: '2 tbsp' },
+      { id: 'chicken_broth', amount: '300ml' }
+    ],
+    prepTime: '1 hr',
+    tags: ['Dinner', 'Comfort Food', 'Baking'],
+    basePortions: 4
+  },
+  {
+    id: 'local-ratatouille',
+    key: 'ratatouille',
+    ingredients: [
+      { id: 'zucchini', amount: '2' },
+      { id: 'pepper', amount: '1' },
+      { id: 'tomato', amount: '3' },
+      { id: 'onion', amount: '1' },
+      { id: 'olive_oil', amount: '2 tbsp' },
+      { id: 'herbs', amount: '1 tsp' }
+    ],
+    prepTime: '35 mins',
+    tags: ['Dinner', 'Vegetarian', 'French'],
+    basePortions: 4
+  },
+  {
+    id: 'local-sheetpan-salmon',
+    key: 'sheetpan_salmon',
+    ingredients: [
+      { id: 'salmon', amount: '4 fillets' },
+      { id: 'potato', amount: '600g' },
+      { id: 'broccoli', amount: '300g' },
+      { id: 'olive_oil', amount: '3 tbsp' },
+      { id: 'lemon', amount: '1' }
+    ],
+    prepTime: '30 mins',
+    tags: ['Dinner', 'Seafood', 'Sheet Pan'],
+    basePortions: 4
+  },
+  {
+    id: 'local-tofu-stirfry',
+    key: 'tofu_stirfry',
+    ingredients: [
+      { id: 'tofu', amount: '300g' },
+      { id: 'broccoli', amount: '200g' },
+      { id: 'carrot', amount: '1' },
+      { id: 'garlic', amount: '2 cloves' },
+      { id: 'ginger', amount: '1 thumb' },
+      { id: 'soy_sauce', amount: '3 tbsp' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dinner', 'Vegan', 'Stir Fry'],
+    basePortions: 3
+  },
+  {
+    id: 'local-poke-bowl',
+    key: 'poke_bowl',
+    ingredients: [
+      { id: 'rice', amount: '300g' },
+      { id: 'salmon', amount: '250g' },
+      { id: 'avocado', amount: '1' },
+      { id: 'cucumber', amount: '1/2' },
+      { id: 'soy_sauce', amount: '2 tbsp' },
+      { id: 'lime', amount: '1' }
+    ],
+    prepTime: '25 mins',
+    tags: ['Lunch', 'Bowl', 'Fresh'],
+    basePortions: 2
+  },
+  {
+    id: 'local-taco-salad',
+    key: 'taco_salad',
+    ingredients: [
+      { id: 'ground_beef', amount: '300g' },
+      { id: 'lettuce', amount: '1 head' },
+      { id: 'tomato', amount: '2' },
+      { id: 'bean', amount: '1 can' },
+      { id: 'pepper', amount: '1' },
+      { id: 'cheese', amount: '100g' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Lunch', 'Salad', 'Mexican'],
+    basePortions: 3
+  },
+  {
+    id: 'local-kaiserschmarrn',
+    key: 'kaiserschmarrn',
+    ingredients: [
+      { id: 'flour', amount: '200g' },
+      { id: 'egg', amount: '4' },
+      { id: 'milk', amount: '250ml' },
+      { id: 'sugar', amount: '60g' },
+      { id: 'butter', amount: '50g' }
+    ],
+    prepTime: '30 mins',
+    tags: ['Dessert', 'Austrian', 'Sweet'],
+    basePortions: 4
+  },
+  {
+    id: 'local-roast-chicken-tray',
+    key: 'roast_chicken_tray',
+    ingredients: [
+      { id: 'chicken_breast', amount: '4' },
+      { id: 'potato', amount: '800g' },
+      { id: 'onion', amount: '2' },
+      { id: 'olive_oil', amount: '3 tbsp' },
+      { id: 'paprika', amount: '1 tbsp' }
+    ],
+    prepTime: '50 mins',
+    tags: ['Dinner', 'Sheet Pan', 'Family'],
+    basePortions: 4
+  },
+  {
+    id: 'local-overnight-oats',
+    key: 'overnight_oats',
+    ingredients: [
+      { id: 'oat', amount: '1 cup' },
+      { id: 'yogurt', amount: '200g' },
+      { id: 'honey', amount: '1 tbsp' },
+      { id: 'berry', amount: '150g (Frozen or fresh)' },
+      { id: 'cinnamon', amount: '1 tsp' }
+    ],
+    prepTime: '5 mins (plus overnight)',
+    tags: ['Breakfast', 'Prep Ahead', 'Healthy'],
+    basePortions: 2
+  },
+  {
+    id: 'local-nachos-supreme',
+    key: 'nachos_supreme',
+    ingredients: [
+      { id: 'chips', amount: '1 large bag' },
+      { id: 'ground_beef', amount: '250g' },
+      { id: 'bean', amount: '1 can' },
+      { id: 'cheese', amount: '200g' },
+      { id: 'pepper', amount: '1' },
+      { id: 'tomato', amount: '2' }
+    ],
+    prepTime: '15 mins',
+    tags: ['Snack', 'Party', 'Sharing'],
+    basePortions: 4
   }
 ];
 
