@@ -2,13 +2,40 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Ingredient, Recipe } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Lazy initialization - only create AI instance if API key is available
+let ai: GoogleGenAI | null = null;
+
+const getAI = (): GoogleGenAI | null => {
+  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+  
+  if (!apiKey) {
+    return null;
+  }
+  
+  if (!ai) {
+    try {
+      ai = new GoogleGenAI({ apiKey });
+    } catch (error) {
+      console.warn("Failed to initialize Google GenAI:", error);
+      return null;
+    }
+  }
+  
+  return ai;
+};
 
 export const generateRecipes = async (
   pantryItems: Ingredient[],
   dietaryRestrictions: string[] = [],
   language: 'en' | 'de' = 'en'
 ): Promise<Recipe[]> => {
+  // Check if API key is available
+  const aiInstance = getAI();
+  if (!aiInstance) {
+    console.warn("Gemini API key not configured. AI recipe generation is disabled.");
+    return [];
+  }
+
   const pantryNames = pantryItems.map(i => i.name).join(', ');
   const restrictions = dietaryRestrictions.length > 0 ? `Dietary restrictions: ${dietaryRestrictions.join(', ')}.` : '';
   
@@ -28,7 +55,7 @@ export const generateRecipes = async (
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await aiInstance.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {

@@ -4,6 +4,7 @@ import { Search, Heart, User, BookOpen, Bot, Clock, BarChart, Trash2, Filter, X,
 import { Recipe } from '../types';
 import { translations, Language } from '../translations';
 import { getLocalRecipes } from '../services/localRecipes';
+import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
 
 interface RecipeBookProps {
   userRecipes: Recipe[];
@@ -196,9 +197,10 @@ export const RecipeBook: React.FC<RecipeBookProps> = ({
                 {/* Image Section */}
                 <div className="h-48 sm:h-full sm:w-40 shrink-0 bg-gray-200 dark:bg-gray-700 relative overflow-hidden">
                   <img 
-                    src={`https://picsum.photos/seed/${recipe.id}/400/400`} 
+                    src={getRecipeImageUrl(recipe)} 
                     alt={recipe.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    onError={handleImageError}
                   />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
                   

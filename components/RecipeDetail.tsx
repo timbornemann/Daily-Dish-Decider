@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { ChevronLeft, Users, Clock, ShoppingBag } from 'lucide-react';
 import { Recipe, Ingredient } from '../types';
 import { translations, Language } from '../translations';
+import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
 
 interface RecipeDetailProps {
   recipe: Recipe;
@@ -42,9 +43,10 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
     <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 overflow-y-auto animate-in slide-in-from-bottom duration-300 transition-colors">
       <div className="relative h-72">
         <img 
-          src={`https://picsum.photos/seed/${recipe.id}/800/600`} 
+          src={getRecipeImageUrl(recipe)} 
           alt={recipe.title}
           className="w-full h-full object-cover"
+          onError={handleImageError}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
         <button 

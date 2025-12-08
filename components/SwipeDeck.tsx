@@ -8,6 +8,7 @@ import { getLocalRecipes, findMatchingRecipes } from '../services/localRecipes';
 import { getRecommendedRecipes } from '../services/recommendation';
 import { translations, Language } from '../translations';
 import { StorageService } from '../services/storage';
+import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
 
 interface SwipeDeckProps {
   pantryItems: Ingredient[];
@@ -290,9 +291,10 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
       {/* Image Placeholder */}
       <div className="h-1/2 bg-gray-200 dark:bg-gray-700 relative">
         <img 
-          src={`https://picsum.photos/seed/${recipe.id}/600/800`} 
+          src={getRecipeImageUrl(recipe)} 
           alt={recipe.title}
           className="w-full h-full object-cover pointer-events-none"
+          onError={handleImageError}
         />
         <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
         

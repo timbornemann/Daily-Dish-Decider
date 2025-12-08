@@ -4,6 +4,7 @@ import { Recipe } from '../types';
 import { Trophy, ArrowRight, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { translations, Language } from '../translations';
+import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
 
 interface SuddenDeathProps {
   recipes: Recipe[];
@@ -108,9 +109,10 @@ const Choice = ({ recipe, position, onClick, t }: { recipe: Recipe, position: 'A
             onClick={onClick}
         >
             <img 
-                src={`https://picsum.photos/seed/${recipe.id}/800/800`} 
+                src={getRecipeImageUrl(recipe)} 
                 alt={recipe.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-80"
+                onError={handleImageError}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
             <div className="absolute bottom-0 inset-x-0 p-8 flex flex-col items-center text-center">
