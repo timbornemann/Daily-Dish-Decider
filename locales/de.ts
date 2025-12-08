@@ -62,7 +62,7 @@ export const de = {
 
   // Cookbook
   cookbook_title: "Rezeptbuch",
-  search_placeholder: "Rezepte oder Zutaten suchen...",
+  search_placeholder: "Rezepte, Zutaten oder Tags suchen...",
   filter_all: "Alle",
   filter_user: "Eigene",
   filter_local: "Sammlung",
@@ -70,6 +70,12 @@ export const de = {
   filter_easy: "Einfach",
   filter_medium: "Mittel",
   filter_hard: "Schwer",
+  filter_tags: "Tags",
+  clear_filters: "Zurücksetzen",
+  view_flat: "Listenansicht",
+  view_categorized: "Kategorienansicht",
+  recipe_singular: "Rezept",
+  recipe_plural: "Rezepte",
 
   // Recipe Source & Difficulty
   source_user: "Mein Rezept",
