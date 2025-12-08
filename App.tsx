@@ -28,6 +28,7 @@ const App: React.FC = () => {
   // View States
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isCreatingRecipe, setIsCreatingRecipe] = useState(false);
+  const [selectedWinner, setSelectedWinner] = useState<Recipe | null>(null);
 
   // Initialize Data
   useEffect(() => {
@@ -140,10 +141,19 @@ const App: React.FC = () => {
   };
 
   const handleWinnerSelected = (recipe: Recipe) => {
+    setSelectedWinner(recipe);
     setSelectedRecipe(recipe);
     // Strong signal that they want to cook this
     const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'COOK_WINNER');
     updatePreferences({ ...preferences, tasteProfile: newProfile });
+  };
+
+  const handleFinishCooking = () => {
+    // Reset winner and favorites, go back to swipe
+    setSelectedWinner(null);
+    setSelectedRecipe(null);
+    updateLikedRecipes([]);
+    setView(AppView.SWIPE);
   };
 
   const handleViewDetail = (recipe: Recipe) => {
@@ -206,7 +216,11 @@ const App: React.FC = () => {
       return (
         <RecipeDetail 
           recipe={selectedRecipe} 
-          onBack={() => setSelectedRecipe(null)}
+          onBack={() => {
+            setSelectedRecipe(null);
+            // If we're in FAVORITES view and have a selectedWinner, keep it
+            // The SuddenDeath component will show the winner view
+          }}
           pantryItems={pantry}
           onAddToShoppingList={handleAddMissingToShopping}
           lang={currentLang}
@@ -242,7 +256,9 @@ const App: React.FC = () => {
         return (
           <SuddenDeath 
             recipes={likedRecipes} 
+            selectedWinner={selectedWinner}
             onWinnerSelected={handleWinnerSelected} 
+            onFinish={handleFinishCooking}
             onRestart={() => setView(AppView.SWIPE)}
             lang={currentLang}
           />

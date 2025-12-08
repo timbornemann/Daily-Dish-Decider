@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Recipe } from '../types';
 import { Trophy, ArrowRight, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,18 +8,40 @@ import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
 
 interface SuddenDeathProps {
   recipes: Recipe[];
+  selectedWinner?: Recipe | null;
   onWinnerSelected: (recipe: Recipe) => void;
+  onFinish?: () => void;
   onRestart: () => void;
   lang: Language;
 }
 
-export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelected, onRestart, lang }) => {
+export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, selectedWinner, onWinnerSelected, onFinish, onRestart, lang }) => {
   // Simple tournament queue state
   const [queue, setQueue] = useState<Recipe[]>([...recipes]);
   const [currentPair, setCurrentPair] = useState<[Recipe, Recipe] | null>(
     recipes.length >= 2 ? [recipes[0], recipes[1]] : null
   );
   const t = translations[lang];
+
+  // Sync queue when recipes prop changes (e.g., when favorites are reset)
+  useEffect(() => {
+    if (!selectedWinner) {
+      setQueue([...recipes]);
+      setCurrentPair(recipes.length >= 2 ? [recipes[0], recipes[1]] : null);
+    }
+  }, [recipes, selectedWinner]);
+
+  // If there's a selected winner, show it directly
+  if (selectedWinner) {
+    return (
+      <WinnerView 
+        recipe={selectedWinner} 
+        onCook={() => onWinnerSelected(selectedWinner)} 
+        onFinish={onFinish}
+        t={t} 
+      />
+    );
+  }
 
   // If only 1 recipe, it is the winner
   if (recipes.length === 0) {
@@ -34,7 +56,7 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelec
   if (recipes.length === 1) {
     // Should auto-select, but let's show UI
     return (
-      <WinnerView recipe={recipes[0]} onAction={() => onWinnerSelected(recipes[0])} t={t} />
+      <WinnerView recipe={recipes[0]} onCook={() => onWinnerSelected(recipes[0])} onFinish={onFinish} t={t} />
     );
   }
 
@@ -55,7 +77,7 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, onWinnerSelec
   };
 
   if (queue.length === 1) {
-      return <WinnerView recipe={queue[0]} onAction={() => onWinnerSelected(queue[0])} t={t} />;
+      return <WinnerView recipe={queue[0]} onCook={() => onWinnerSelected(queue[0])} onFinish={onFinish} t={t} />;
   }
 
   return (
@@ -127,7 +149,7 @@ const Choice = ({ recipe, position, onClick, t }: { recipe: Recipe, position: 'A
     )
 }
 
-const WinnerView = ({ recipe, onAction, t }: { recipe: Recipe, onAction: () => void, t: any }) => (
+const WinnerView = ({ recipe, onCook, onFinish, t }: { recipe: Recipe, onCook: () => void, onFinish?: () => void, t: any }) => (
     <div className="h-full flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-6 text-center transition-colors">
         <motion.div 
             initial={{ scale: 0 }}
@@ -139,11 +161,21 @@ const WinnerView = ({ recipe, onAction, t }: { recipe: Recipe, onAction: () => v
         <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">{t.winner_is}</h2>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">{recipe.title}</h1>
         
-        <button 
-            onClick={onAction}
-            className="bg-brand-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:bg-brand-700 flex items-center gap-2 transition-transform hover:scale-105"
-        >
-            {t.lets_cook} <ArrowRight size={20} />
-        </button>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+            <button 
+                onClick={onCook}
+                className="bg-brand-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:bg-brand-700 flex items-center justify-center gap-2 transition-transform hover:scale-105"
+            >
+                {t.lets_cook} <ArrowRight size={20} />
+            </button>
+            {onFinish && (
+                <button 
+                    onClick={onFinish}
+                    className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-xl font-bold shadow-lg hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center gap-2 transition-transform hover:scale-105"
+                >
+                    {t.finished_cooking} <RefreshCw size={20} />
+                </button>
+            )}
+        </div>
     </div>
 );

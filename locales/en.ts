@@ -112,6 +112,7 @@ export const en = {
   select_this: "Select This",
   winner_is: "The Winner Is",
   lets_cook: "Let's Cook It!",
+  finished_cooking: "Done",
   no_liked_recipes: "No liked recipes yet.",
   start_swiping: "Start Swiping",
 
