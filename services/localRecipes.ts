@@ -1,6 +1,92 @@
 
-import { Recipe, Ingredient } from '../types';
+import { Recipe, Ingredient, MatchMeta } from '../types';
 import { translations, Translation, Language } from '../translations';
+
+// Ingredient normalization helpers
+const INGREDIENT_SYNONYMS: Record<string, string[]> = {
+    tomato: ['canned_tomato', 'tomato_paste', 'tomatoes', 'tomato_sauce'],
+    pasta: ['noodle', 'noodles', 'spaghetti', 'macaroni'],
+    rice: ['risotto', 'rice_noodles'],
+    cheese: ['mozzarella', 'parmesan', 'feta', 'cheddar', 'mascarpone'],
+    beef: ['ground_beef', 'steak', 'minced_beef'],
+    pork: ['bacon', 'sausage'],
+    chicken: ['chicken_breast', 'chicken_thigh'],
+    fish: ['salmon', 'fish_sticks', 'seafood', 'shrimp'],
+    bean: ['beans', 'black_beans'],
+    lettuce: ['salad', 'greens'],
+    bread: ['bun', 'buns', 'toast', 'pita', 'tortilla', 'wrap'],
+    yogurt: ['yoghurt'],
+    oil: ['olive_oil'],
+    pepper: ['bell_pepper', 'paprika']
+};
+
+const DIET_CONFLICT_TAGS: Record<string, string[]> = {
+    vegetarian: ['meat', 'beef', 'pork', 'chicken', 'fish', 'seafood', 'shrimp', 'bacon', 'sausage', 'turkey', 'salmon'],
+    vegan: ['meat', 'beef', 'pork', 'chicken', 'fish', 'seafood', 'shrimp', 'bacon', 'sausage', 'turkey', 'salmon', 'egg', 'cheese', 'butter', 'milk', 'yogurt', 'cream'],
+    'gluten-free': ['pasta', 'bread', 'flour', 'bun', 'tortilla', 'wrap', 'pizza', 'spaghetti', 'noodle', 'noodles']
+};
+
+// Pantry basics we don't want to over-weight for matches
+const LOW_IMPACT_INGREDIENTS = new Set([
+    'salt', 'pepper', 'pepper_spice', 'water', 'oil', 'olive_oil', 'veg_oil',
+    'vinegar', 'herbs', 'spices', 'garlic', 'onion', 'butter', 'sugar', 'flour'
+]);
+
+type DayPeriod = 'morning' | 'midday' | 'afternoon' | 'evening' | 'late_night';
+type WeekSegment = 'weekday' | 'weekend';
+
+interface MatchOptions {
+    dietFilters?: string[];
+    requiredTags?: string[];
+    preferredTags?: string[];
+    timeOfDay?: DayPeriod;
+    weekSegment?: WeekSegment;
+    epsilon?: number;
+}
+
+const normalizeName = (value: string): string => {
+    return value
+        .toLowerCase()
+        .replace(/_/g, ' ')
+        .replace(/-/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/s\b/g, ''); // crude singularization (eg. tomatoes -> tomatoe, beans -> bean)
+};
+
+const canonicalizeName = (value: string): string => {
+    const normalized = normalizeName(value);
+    for (const [canonical, synonyms] of Object.entries(INGREDIENT_SYNONYMS)) {
+        if (canonical === normalized || synonyms.some(s => normalizeName(s) === normalized)) {
+            return canonical;
+        }
+    }
+    return normalized;
+};
+
+const tokenSetSimilarity = (a: string, b: string): number => {
+    const tokensA = new Set(normalizeName(a).split(' '));
+    const tokensB = new Set(normalizeName(b).split(' '));
+    const intersection = Array.from(tokensA).filter(t => tokensB.has(t)).length;
+    const union = new Set([...Array.from(tokensA), ...Array.from(tokensB)]).size;
+    return union === 0 ? 0 : intersection / union;
+};
+
+const fuzzyIngredientMatch = (pantryName: string, requiredName: string, threshold = 0.6): boolean => {
+    const canonicalPantry = canonicalizeName(pantryName);
+    const canonicalRequired = canonicalizeName(requiredName);
+    if (canonicalPantry === canonicalRequired) return true;
+    const sim = tokenSetSimilarity(canonicalPantry, canonicalRequired);
+    return sim >= threshold;
+};
+
+const parsePrepTimeMinutes = (prepTime: string | undefined): number | undefined => {
+    if (!prepTime) return undefined;
+    const numbers = prepTime.match(/\d+/g);
+    if (!numbers || numbers.length === 0) return undefined;
+    const minutes = Number(numbers[0]);
+    return Number.isFinite(minutes) ? minutes : undefined;
+};
 
 // Helper to translate common units
 const translateAmount = (amount: string, lang: Language): string => {
@@ -875,27 +961,135 @@ export const getLocalRecipes = (lang: Language): Recipe[] => {
 };
 
 export const findMatchingRecipes = (
-  pantryItems: Ingredient[], 
-  availableRecipes: Recipe[]
+  pantryItems: Ingredient[],
+  availableRecipes: Recipe[],
+  options: MatchOptions = {}
 ): Recipe[] => {
+  const {
+    dietFilters = [],
+    requiredTags = [],
+    preferredTags = [],
+    timeOfDay,
+    weekSegment,
+    epsilon = 0.05
+  } = options;
+
   if (pantryItems.length === 0) return [];
-  
+
+  const normalizedPantry = pantryItems.map(p => ({
+    raw: p.name,
+    canonical: canonicalizeName(p.name)
+  }));
+
+  const lowerRequired = requiredTags.map(t => t.toLowerCase());
+  const lowerPreferred = preferredTags.map(t => t.toLowerCase());
+
   const scored = availableRecipes.map(recipe => {
-    let matches = 0;
-    recipe.ingredients.forEach(req => {
-      const hasItem = pantryItems.some(
-        p => p.name.toLowerCase().includes(req.name.toLowerCase()) || 
-             req.name.toLowerCase().includes(p.name.toLowerCase())
-      );
-      if (hasItem) matches++;
+    const normalizedIngredients = recipe.ingredients.map(i => ({
+      raw: i.name,
+      canonical: canonicalizeName(i.name)
+    }));
+
+    const matched: string[] = [];
+    const missing: string[] = [];
+    let totalWeight = 0;
+    let matchedWeight = 0;
+
+    normalizedIngredients.forEach(req => {
+      const ingWeight = LOW_IMPACT_INGREDIENTS.has(req.canonical) ? 0.3 : 1;
+      totalWeight += ingWeight;
+      const hasItem = normalizedPantry.some(p => fuzzyIngredientMatch(p.canonical, req.canonical));
+      if (hasItem) {
+        matched.push(req.raw);
+        matchedWeight += ingWeight;
+      } else {
+        missing.push(req.raw);
+      }
     });
 
-    const score = matches / recipe.ingredients.length;
-    return { recipe, score, matches };
+    const baseScore = totalWeight === 0 ? 0 : matchedWeight / totalWeight; // 0..1
+    const ingredientWeighted = baseScore * 0.6; // reduce impact of pure ingredients
+    const missingPenalty = missing.length * 0.12;
+
+    const lowerTags = (recipe.tags || []).map(t => t.toLowerCase());
+    const lowerIngs = normalizedIngredients.map(i => i.canonical);
+
+    let dietPenalty = 0;
+    dietFilters.forEach(diet => {
+      const d = diet.toLowerCase();
+      const conflicts = DIET_CONFLICT_TAGS[d];
+      if (conflicts) {
+        const violates = lowerIngs.some(ing => conflicts.some(c => ing.includes(c))) ||
+          lowerTags.some(tag => conflicts.includes(tag));
+        if (violates) dietPenalty += 0.15;
+      }
+      // Soft penalty if expected diet tag not present
+      if ((d === 'vegetarian' || d === 'vegan') && !lowerTags.includes(d)) {
+        dietPenalty += 0.05;
+      }
+    });
+
+    const lacksRequired = lowerRequired.some(reqTag => !lowerTags.includes(reqTag));
+    if (lacksRequired) {
+      dietPenalty += 0.5; // push down if required tags missing
+    }
+
+    const preferredHit = lowerPreferred.filter(pt => lowerTags.includes(pt));
+    const preferredBoost = Math.min(preferredHit.length * 0.08, 0.24);
+
+    const prepMinutes = parsePrepTimeMinutes(recipe.prepTime);
+    const prepBoost = prepMinutes ? Math.max(0, (60 - prepMinutes) / 600) : 0; // up to +0.1 for very quick meals
+
+    const timeBoost = (() => {
+      if (!timeOfDay) return 0;
+      const breakfastTags = ['breakfast', 'brunch', 'morning'];
+      const dinnerTags = ['dinner', 'supper', 'evening'];
+      if (timeOfDay === 'morning' && lowerTags.some(t => breakfastTags.includes(t))) return 0.05;
+      if ((timeOfDay === 'evening' || timeOfDay === 'late_night') && lowerTags.some(t => dinnerTags.includes(t))) return 0.03;
+      return 0;
+    })();
+
+    const weekBoost = (() => {
+      if (!weekSegment) return 0;
+      const weekdayTags = ['quick', 'lunch', 'light'];
+      const weekendTags = ['family', 'slow cook', 'comfort food', 'brunch'];
+      if (weekSegment === 'weekday' && lowerTags.some(t => weekdayTags.includes(t))) return 0.03;
+      if (weekSegment === 'weekend' && lowerTags.some(t => weekendTags.includes(t))) return 0.03;
+      return 0;
+    })();
+
+    let score = ingredientWeighted + preferredBoost + prepBoost + timeBoost + weekBoost - missingPenalty - dietPenalty;
+    // small exploration jitter to keep variety
+    if (Math.random() < epsilon) {
+      score += Math.random() * 0.05;
+    }
+
+    const reasons: string[] = [];
+    if (matched.length) reasons.push(`gefunden wegen: ${matched.join(', ')}`);
+    if (missing.length) reasons.push(`fehlt: ${missing.join(', ')}`);
+    if (preferredHit.length) reasons.push(`bevorzugte Tags: ${preferredHit.join(', ')}`);
+    if (dietPenalty > 0) reasons.push(`diet Penalty: ${dietPenalty.toFixed(2)}`);
+    if (timeBoost > 0) reasons.push(`zeit Bonus (${timeOfDay})`);
+    if (weekBoost > 0 && weekSegment) reasons.push(`wochentag Bonus (${weekSegment})`);
+    if (prepBoost > 0) reasons.push('kürzere PrepTime Bonus');
+
+    const matchMeta: MatchMeta = {
+      matchedIngredients: matched,
+      missingIngredients: missing,
+      preferredTagHits: preferredHit,
+      dietPenalty,
+      missingPenalty,
+      prepTimeMinutes: prepMinutes,
+      baseScore,
+      score,
+      reasons
+    };
+
+    return { recipe: { ...recipe, matchMeta }, score };
   });
 
   return scored
-    .filter(s => s.matches > 0)
+    .filter(s => s.recipe.matchMeta?.matchedIngredients.length > 0)
     .sort((a, b) => b.score - a.score)
     .map(s => s.recipe);
 };

@@ -153,6 +153,18 @@ export const de = {
   algo_reset_confirm: "Möchtest du den Algorithmus wirklich zurücksetzen? Er vergisst deine Vorlieben.",
   algo_weights_title: "Geschmacks-Gewichtung",
   algo_no_data: "Noch keine Daten. Swipe ein paar Rezepte!",
+  algo_explain_title: "So werden Vorschläge gewichtet",
+  algo_explain_intro: "Mehrere Signale fließen ein. Zutaten sind schwach gewichtet, Basics wie Salz/Pfeffer zählen kaum.",
+  algo_signal_ingredients: "Vorrats-Treffer (geringe Wirkung, Basics abgewertet)",
+  algo_signal_tags: "Tags & deine bevorzugten Tags (mittlere Wirkung)",
+  algo_signal_time: "Tageszeit (kleiner Bonus: Frühstück morgens, Dinner abends)",
+  algo_signal_week: "Wochentag vs. Wochenende (kleiner Bonus: schnell werktags, Comfort am Wochenende)",
+  algo_signal_diet: "Ernährungsfilter (weiche Abzüge bei Verstößen)",
+  algo_signal_feedback: "Likes/Dislikes/Gekocht (stärkster Faktor, jüngere Events zählen mehr)",
+  algo_signal_explore: "Exploration (epsilon-greedy/Bandit sorgt für Vielfalt)",
+  algo_reasons_title: "Was auf Rezeptkarten steht",
+  algo_reasons_examples: "Beispiel: „Gefunden wegen: Tomate, Pasta; fehlt: Basilikum. Bonus durch bevorzugtes Tag: schnell; Morgen-Bonus für Frühstück.“",
+  reason_label: "Warum vorgeschlagen",
 
   // Dietary Options
   dietary: {

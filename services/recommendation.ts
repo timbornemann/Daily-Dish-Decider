@@ -89,9 +89,16 @@ export const updateTasteProfile = (
   return newProfile;
 };
 
+const LOW_IMPACT_INGREDIENTS = new Set([
+  'salt', 'pepper', 'pepper_spice', 'water', 'oil', 'olive_oil', 'veg_oil',
+  'vinegar', 'herbs', 'spices', 'garlic', 'onion', 'butter', 'sugar', 'flour'
+]);
+
 const getNormalizedFeatures = (recipe: Recipe): string[] => {
   const tags = recipe.tags.map(t => t.toLowerCase());
-  const ingredientTags = recipe.ingredients.map(i => i.name.toLowerCase());
+  const ingredientTags = recipe.ingredients
+    .map(i => i.name.toLowerCase())
+    .filter(ing => !LOW_IMPACT_INGREDIENTS.has(ing));
   return [...new Set([...tags, ...ingredientTags])].sort();
 };
 
@@ -266,6 +273,7 @@ export const getRecommendedRecipes = (
 
   const scoredRecipes = availableRecipes.map(recipe => ({
     recipe,
+    matchScore: recipe.matchMeta?.score ?? 0,
     score: scoreRecipe(recipe, profile),
     collaborative: computeCollaborativeScore(recipe, liked, disliked),
     temporal: computeContextualPreference(recipe, feedbackEvents, recipeLookup, currentContext),
@@ -282,15 +290,17 @@ export const getRecommendedRecipes = (
     }
 
     const scoreA =
-      a.score +
-      a.collaborative * 0.7 +
-      a.temporal * 1.1 +
+      a.matchScore * 0.7 + // ingredients softer
+      a.score * 1.1 + // taste profile a bit stronger
+      a.collaborative * 0.9 +
+      a.temporal * 1.2 +
       a.bandit.exploitation * 2 +
       a.bandit.exploration * 0.3;
     const scoreB =
-      b.score +
-      b.collaborative * 0.7 +
-      b.temporal * 1.1 +
+      b.matchScore * 0.7 +
+      b.score * 1.1 +
+      b.collaborative * 0.9 +
+      b.temporal * 1.2 +
       b.bandit.exploitation * 2 +
       b.bandit.exploration * 0.3;
 

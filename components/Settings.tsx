@@ -261,6 +261,24 @@ export const Settings: React.FC<SettingsProps> = ({ preferences, onUpdatePrefere
                 </button>
             </div>
 
+            <section className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
+              <h4 className="text-sm font-bold text-gray-700 dark:text-gray-200">{t.algo_explain_title}</h4>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t.algo_explain_intro}</p>
+              <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
+                <li>• {t.algo_signal_ingredients}</li>
+                <li>• {t.algo_signal_tags}</li>
+                <li>• {t.algo_signal_time}</li>
+                <li>• {t.algo_signal_week}</li>
+                <li>• {t.algo_signal_diet}</li>
+                <li>• {t.algo_signal_feedback}</li>
+                <li>• {t.algo_signal_explore}</li>
+              </ul>
+              <div className="pt-2 text-sm text-gray-600 dark:text-gray-300">
+                <p className="font-semibold">{t.algo_reasons_title}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t.algo_reasons_examples}</p>
+              </div>
+            </section>
+
             <div className="space-y-3">
                 <h4 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">{t.algo_weights_title}</h4>
                 

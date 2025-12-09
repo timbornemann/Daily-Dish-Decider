@@ -154,6 +154,18 @@ export const en = {
   algo_reset_confirm: "Are you sure you want to reset the learning algorithm? It will forget what you like.",
   algo_weights_title: "Taste Weights",
   algo_no_data: "No data yet. Swipe some recipes!",
+  algo_explain_title: "How recommendations are weighted",
+  algo_explain_intro: "We mix multiple signals. Ingredients are a weak signal so salt/pepper don't dominate.",
+  algo_signal_ingredients: "Pantry match (low impact, basics down-weighted)",
+  algo_signal_tags: "Tags & your preferred tags (medium impact)",
+  algo_signal_time: "Time of day (small boost: breakfast in the morning, dinner in the evening)",
+  algo_signal_week: "Weekday vs. weekend (small boost: quick on weekdays, comfort on weekends)",
+  algo_signal_diet: "Diet filters (soft penalty for conflicts)",
+  algo_signal_feedback: "Likes/Dislikes/Cooked (strongest; recency-aware)",
+  algo_signal_explore: "Exploration (epsilon-greedy/Bandit keeps variety)",
+  algo_reasons_title: "What you may see on recipe cards",
+  algo_reasons_examples: "Example: “Found because: tomato, pasta; missing: basil. Boosted by preferred tag: quick; morning boost for breakfast.”",
+  reason_label: "Why suggested",
 
   // Dietary Options
   dietary: {

@@ -26,6 +26,8 @@ export interface Recipe {
   basePortions: number;
   source?: 'ai' | 'local' | 'user';
   difficulty?: 'Easy' | 'Medium' | 'Hard'; // New field
+  // Optional meta data produced by matching/reco pipeline for explainability
+  matchMeta?: MatchMeta;
 }
 
 export type FeedbackAction = 'LIKE' | 'DISLIKE' | 'VIEW_DETAIL' | 'COOK_WINNER';
@@ -66,4 +68,17 @@ export interface UserPreferences {
   measurementSystem: 'metric' | 'imperial';
   notificationsEnabled: boolean;
   tasteProfile: Record<string, number>; // Tag weights: e.g. { "Italian": 5.2, "Spicy": -2.0 }
+}
+
+// Additional metadata to explain pantry/diet matching
+export interface MatchMeta {
+  matchedIngredients: string[];
+  missingIngredients: string[];
+  preferredTagHits: string[];
+  dietPenalty: number;
+  missingPenalty: number;
+  prepTimeMinutes?: number;
+  baseScore: number;
+  score: number;
+  reasons: string[];
 }

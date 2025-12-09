@@ -2,17 +2,40 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo, Variants } from 'framer-motion';
 import { X, Heart, ChefHat, RefreshCw, Info, Plus, User, Bot, BookOpen } from 'lucide-react';
-import { Recipe, Ingredient } from '../types';
+import { Recipe, Ingredient, UserPreferences } from '../types';
 import { generateRecipes } from '../services/gemini';
 import { getLocalRecipes, findMatchingRecipes } from '../services/localRecipes';
 import { getRecommendedRecipes } from '../services/recommendation';
 import { translations, Language } from '../translations';
-import { StorageService } from '../services/storage';
 import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
+
+const derivePreferredTags = (profile: Record<string, number>): string[] => {
+  const sorted = Object.entries(profile)
+    .filter(([, weight]) => weight > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([tag]) => tag);
+  return sorted;
+};
+
+const deriveDayPeriod = (date: Date): 'morning' | 'midday' | 'afternoon' | 'evening' | 'late_night' => {
+  const hour = date.getHours();
+  if (hour < 6) return 'late_night';
+  if (hour < 11) return 'morning';
+  if (hour < 14) return 'midday';
+  if (hour < 18) return 'afternoon';
+  return 'evening';
+};
+
+const deriveWeekSegment = (date: Date): 'weekday' | 'weekend' => {
+  const day = date.getDay();
+  return day === 0 || day === 6 ? 'weekend' : 'weekday';
+};
 
 interface SwipeDeckProps {
   pantryItems: Ingredient[];
   userRecipes: Recipe[];
+  preferences: UserPreferences;
   onLike: (recipe: Recipe) => void;
   onDislike: (recipe: Recipe) => void;
   onViewDetail: (recipe: Recipe) => void;
@@ -23,6 +46,7 @@ interface SwipeDeckProps {
 export const SwipeDeck: React.FC<SwipeDeckProps> = ({ 
   pantryItems, 
   userRecipes,
+  preferences,
   onLike, 
   onDislike, 
   onViewDetail, 
@@ -44,13 +68,21 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
     setLoading(true);
     const localDB = getLocalRecipes(lang);
     const allLocal = [...userRecipes, ...localDB];
+    const preferredTags = derivePreferredTags(preferences.tasteProfile);
+    const timeOfDay = deriveDayPeriod(new Date());
+    const weekSegment = deriveWeekSegment(new Date());
     
     // 1. Filter by Pantry availability (Hard constraint)
-    const pantryMatches = findMatchingRecipes(pantryItems, allLocal);
+    const pantryMatches = findMatchingRecipes(pantryItems, allLocal, {
+      dietFilters: preferences.dietaryRestrictions,
+      preferredTags,
+      timeOfDay,
+      weekSegment,
+      epsilon: 0.1
+    });
     
     // 2. Sort by User Taste Profile (Soft constraint / RL)
-    const currentPrefs = StorageService.getPreferences();
-    const recommended = getRecommendedRecipes(pantryMatches, currentPrefs.tasteProfile);
+    const recommended = getRecommendedRecipes(pantryMatches, preferences.tasteProfile);
     
     setRecipes(recommended);
     setLoading(false);
@@ -325,6 +357,14 @@ const Card: React.FC<CardProps> = ({ recipe, isTop, dragDirection, onDragEnd, on
           <p className="text-gray-600 dark:text-gray-300 line-clamp-4 text-sm leading-relaxed mb-4">
             {recipe.description || t.default_desc}
           </p>
+          {recipe.matchMeta?.reasons?.length ? (
+            <div className="bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 rounded-lg p-2 mb-4">
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">{t.reason_label}</p>
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 line-clamp-2">
+                {recipe.matchMeta.reasons.slice(0, 2).join(' · ')}
+              </p>
+            </div>
+          ) : null}
         </div>
         
         <button 

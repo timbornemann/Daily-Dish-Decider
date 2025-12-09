@@ -278,6 +278,7 @@ const App: React.FC = () => {
           <SwipeDeck 
             pantryItems={pantry}
             userRecipes={userRecipes}
+            preferences={preferences}
             onLike={handleLike} 
             onDislike={handleDislike}
             onViewDetail={handleViewDetail}
