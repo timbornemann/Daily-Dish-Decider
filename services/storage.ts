@@ -1,12 +1,14 @@
 
-import { Ingredient, Recipe, ShoppingItem, UserPreferences } from '../types';
+import { BanditStats, FeedbackEvent, Ingredient, Recipe, ShoppingItem, UserPreferences } from '../types';
 
 const KEYS = {
   PANTRY: 'ddd_pantry',
   SHOPPING: 'ddd_shopping',
   LIKED_RECIPES: 'ddd_liked',
   USER_RECIPES: 'ddd_user_recipes',
-  PREFS: 'ddd_prefs'
+  PREFS: 'ddd_prefs',
+  FEEDBACK: 'ddd_feedback_events',
+  BANDIT: 'ddd_bandit_stats'
 };
 
 const DEFAULT_PREFS: UserPreferences = {
@@ -55,6 +57,22 @@ export const StorageService = {
   savePreferences: (prefs: UserPreferences) => {
     localStorage.setItem(KEYS.PREFS, JSON.stringify(prefs));
   },
+  getFeedbackEvents: (): FeedbackEvent[] => {
+    const data = localStorage.getItem(KEYS.FEEDBACK);
+    return data ? JSON.parse(data) : [];
+  },
+  appendFeedbackEvent: (event: FeedbackEvent) => {
+    const events = StorageService.getFeedbackEvents();
+    const updated = [...events, event].slice(-500); // keep last 500 events to avoid unbounded growth
+    localStorage.setItem(KEYS.FEEDBACK, JSON.stringify(updated));
+  },
+  getBanditStats: (): Record<string, BanditStats> => {
+    const data = localStorage.getItem(KEYS.BANDIT);
+    return data ? JSON.parse(data) : {};
+  },
+  saveBanditStats: (stats: Record<string, BanditStats>) => {
+    localStorage.setItem(KEYS.BANDIT, JSON.stringify(stats));
+  },
   clearAll: () => {
     localStorage.removeItem(KEYS.PANTRY);
     localStorage.removeItem(KEYS.SHOPPING);
@@ -62,5 +80,7 @@ export const StorageService = {
     localStorage.removeItem(KEYS.USER_RECIPES);
     // We usually keep prefs, but for a full reset:
     localStorage.removeItem(KEYS.PREFS);
+    localStorage.removeItem(KEYS.FEEDBACK);
+    localStorage.removeItem(KEYS.BANDIT);
   }
 };
