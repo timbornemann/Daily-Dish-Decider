@@ -14,7 +14,7 @@ import { RecipeCreator } from './components/RecipeCreator';
 import { RecipeBook } from './components/RecipeBook';
 import { translations } from './translations';
 import { checkForExpiry } from './services/notifications';
-import { updateTasteProfile } from './services/recommendation';
+import { logFeedbackEvent } from './services/recommendation';
 
 const App: React.FC = () => {
   // State
@@ -103,14 +103,14 @@ const App: React.FC = () => {
     }
 
     // 2. Update Algorithm
-    const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'LIKE');
-    updatePreferences({ ...preferences, tasteProfile: newProfile });
+    const newProfile = logFeedbackEvent(recipe, 'LIKE', preferences.tasteProfile);
+    setPreferences({ ...preferences, tasteProfile: newProfile });
   };
 
   const handleDislike = (recipe: Recipe) => {
     // Update Algorithm
-    const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'DISLIKE');
-    updatePreferences({ ...preferences, tasteProfile: newProfile });
+    const newProfile = logFeedbackEvent(recipe, 'DISLIKE', preferences.tasteProfile);
+    setPreferences({ ...preferences, tasteProfile: newProfile });
   };
 
   const handleToggleLike = (recipe: Recipe) => {
@@ -121,8 +121,8 @@ const App: React.FC = () => {
       updateLikedRecipes([...likedRecipes, recipe]);
       // Only train positive signal on explicit like from book? Maybe safer not to overtrain here
       // But let's add it for consistency
-      const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'LIKE');
-      updatePreferences({ ...preferences, tasteProfile: newProfile });
+      const newProfile = logFeedbackEvent(recipe, 'LIKE', preferences.tasteProfile);
+      setPreferences({ ...preferences, tasteProfile: newProfile });
     }
   };
 
@@ -144,8 +144,8 @@ const App: React.FC = () => {
     setSelectedWinner(recipe);
     setSelectedRecipe(recipe);
     // Strong signal that they want to cook this
-    const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'COOK_WINNER');
-    updatePreferences({ ...preferences, tasteProfile: newProfile });
+    const newProfile = logFeedbackEvent(recipe, 'COOK_WINNER', preferences.tasteProfile);
+    setPreferences({ ...preferences, tasteProfile: newProfile });
   };
 
   const handleFinishCooking = () => {
@@ -159,8 +159,8 @@ const App: React.FC = () => {
   const handleViewDetail = (recipe: Recipe) => {
       setSelectedRecipe(recipe);
       // Weak signal
-      const newProfile = updateTasteProfile(preferences.tasteProfile, recipe, 'VIEW_DETAIL');
-      updatePreferences({ ...preferences, tasteProfile: newProfile });
+      const newProfile = logFeedbackEvent(recipe, 'VIEW_DETAIL', preferences.tasteProfile);
+      setPreferences({ ...preferences, tasteProfile: newProfile });
   };
 
   const handleSaveNewRecipe = (recipe: Recipe) => {

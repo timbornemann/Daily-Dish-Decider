@@ -28,6 +28,20 @@ export interface Recipe {
   difficulty?: 'Easy' | 'Medium' | 'Hard'; // New field
 }
 
+export type FeedbackAction = 'LIKE' | 'DISLIKE' | 'VIEW_DETAIL' | 'COOK_WINNER';
+
+export interface FeedbackEvent {
+  recipeId: string;
+  action: FeedbackAction;
+  timestamp: number;
+}
+
+export interface BanditStats {
+  impressions: number;
+  successes: number;
+  failures: number;
+}
+
 export interface ShoppingItem {
   id: string;
   name: string;
