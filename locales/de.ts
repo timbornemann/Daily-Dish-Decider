@@ -107,6 +107,13 @@ export const de = {
   servings: "Portionen",
   missing_ingredients: "Fehlende Zutaten",
   add_missing_shopping: "Auf Einkaufsliste setzen",
+  substitution_title: "Alternativen anzeigen",
+  substitution_hint: "Wähle Ersatz-Zutaten und füge sie direkt zur Einkaufsliste hinzu.",
+  show_alternatives: "Alternativen für",
+  use_alternative: "Alternative übernehmen",
+  optional_amount: "Menge (optional)",
+  amount_placeholder: "z.B. 200ml",
+  original_amount: "Original",
   ingredients_title: "Zutaten",
   instructions_title: "Zubereitung",
 

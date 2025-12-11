@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "../.tmp-tests",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": false
+  },
+  "include": [
+    "../services/substitutions.ts",
+    "./substitutions.test.ts",
+    "../translations.ts",
+    "../locales/**/*.ts"
+  ]
+}
