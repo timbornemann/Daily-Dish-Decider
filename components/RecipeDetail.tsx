@@ -37,10 +37,23 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
     return match ? scale(match.amount) : '';
   };
 
-  const getSubstitutionAmount = (ingredientId: string, ratio?: number) => {
+  const getSubstitutionAmount = (ingredientId: string, option?: SubstitutionOption) => {
     const match = recipe.ingredients.find(ing => ing.id === ingredientId);
     if (!match) return '';
-    return ratio ? scaleAmount(match.amount, ratio) : scale(match.amount);
+
+    // Explicit Unit Override (e.g. Egg -> 60g Applesauce)
+    if (option?.unit) {
+      // Scale numerical amount by ratio
+      const numeric = parseFloat(match.amount);
+      if (isNaN(numeric)) return scale(match.amount); // Fallback
+
+      const scaledOriginal = portions / (recipe.basePortions || 2) * numeric;
+      const subValue = scaledOriginal * (option.ratio || 1);
+      return `${subValue.toFixed(0)}${option.unit}`;
+    }
+
+    // Default: Scale existing amount string by ratio
+    return option?.ratio ? scaleAmount(match.amount, option.ratio) : scale(match.amount);
   };
 
   const getMissingIngredients = () => {
@@ -108,7 +121,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
           {alternatives.map((alt, idx) => {
             const altName = getIngredientName(alt.id);
             const key = `${ingredientId}-${alt.id}-${idx}`;
-            const defaultAmount = getSubstitutionAmount(ingredientId, alt.ratio);
+            const defaultAmount = getSubstitutionAmount(ingredientId, alt);
             const amount = substitutionAmounts[key] ?? defaultAmount;
 
             return (
@@ -284,10 +297,15 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
                 const textSubs: Record<string, string> = {};
 
                 // Helper to calculate amount string based on ratio (ignoring portion scaling for text consistency)
-                const getBaseSubAmount = (amountStr: string, ratio: number) => {
+                const getBaseSubAmount = (amountStr: string, ratio: number, newUnit?: string) => {
                   const numericPart = parseFloat(amountStr);
                   if (isNaN(numericPart)) return amountStr; // Fallback
                   const newVal = numericPart * ratio;
+
+                  if (newUnit) {
+                    return newVal % 1 === 0 ? `${newVal.toFixed(0)}${newUnit}` : `${newVal.toFixed(1)}${newUnit}`;
+                  }
+
                   const suffix = amountStr.replace(/[\d\s.]/g, '');
                   // Format nicely
                   return newVal % 1 === 0 ? `${newVal.toFixed(0)}${suffix}` : `${newVal.toFixed(1)}${suffix}`;
@@ -308,7 +326,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
                       if (originalIng && originalIng.amount) {
                         const oldAmount = originalIng.amount; // e.g. "80g" or "1 tsp"
                         const ratio = subOption.ratio || 1;
-                        const newAmount = getBaseSubAmount(oldAmount, ratio);
+                        const newAmount = getBaseSubAmount(oldAmount, ratio, subOption.unit);
 
                         // Add combinations to the map
                         // Case A: "80g Sugar" (Space)

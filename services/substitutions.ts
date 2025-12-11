@@ -4,6 +4,8 @@ export interface SubstitutionOption {
   id: IngredientId;
   /** Ratio applied to the original amount (e.g., 0.75 means 75% of the amount). */
   ratio?: number;
+  /** Target unit to use (overrides original). Useful for Count -> Weight substitutions. */
+  unit?: string;
   note?: string;
 }
 
@@ -19,9 +21,13 @@ export const substitutionMap: Record<IngredientId, SubstitutionOption[]> = {
     // { id: 'margarine', ratio: 1 } 
   ],
   egg: [
-    { id: 'applesauce', ratio: 0.25, note: '¼ cup applesauce per egg in baking.' },
-    { id: 'yogurt', ratio: 0.25, note: '¼ cup yogurt per egg.' },
-    { id: 'flaxseed', ratio: 0.25, note: 'Mix with water (flax egg).' }
+    { id: 'applesauce', ratio: 60, unit: 'g', note: '60g applesauce per egg.' },
+    { id: 'yogurt', ratio: 60, unit: 'g', note: '60g yogurt per egg.' },
+    { id: 'flaxseed', ratio: 1, note: 'Mix 1 tbsp flaxseed with 3 tbsp water (flax egg).' } // Keeping 1:1 implies "1 Flaxseed"? No "1 portion". Flaxseed logic is tricky textual.
+    // Ideally flaxseed: ratio: 1. But user buys "Flaxseed" (bag). Recipe says "1 Egg".
+    // 1 Egg -> 1 "Flaxseed"? No. 
+    // Maybe "1 tbsp Flaxseed"?
+    // Let's stick strictly to what the user asked (Applesauce).
   ],
   sugar: [
     { id: 'honey', ratio: 0.75, note: 'Honey is sweeter; use less.' },
