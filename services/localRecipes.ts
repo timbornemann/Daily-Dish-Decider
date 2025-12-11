@@ -4,167 +4,167 @@ import { translations, Translation, Language } from '../translations';
 
 // Ingredient normalization helpers
 const INGREDIENT_SYNONYMS: Record<string, string[]> = {
-    tomato: ['canned_tomato', 'tomato_paste', 'tomatoes', 'tomato_sauce'],
-    pasta: ['noodle', 'noodles', 'spaghetti', 'macaroni'],
-    rice: ['risotto', 'rice_noodles'],
-    cheese: ['mozzarella', 'parmesan', 'feta', 'cheddar', 'mascarpone'],
-    beef: ['ground_beef', 'steak', 'minced_beef'],
-    pork: ['bacon', 'sausage'],
-    chicken: ['chicken_breast', 'chicken_thigh'],
-    fish: ['salmon', 'fish_sticks', 'seafood', 'shrimp'],
-    bean: ['beans', 'black_beans'],
-    lettuce: ['salad', 'greens'],
-    bread: ['bun', 'buns', 'toast', 'pita', 'tortilla', 'wrap'],
-    yogurt: ['yoghurt'],
-    oil: ['olive_oil'],
-    pepper: ['bell_pepper', 'paprika']
+  tomato: ['canned_tomato', 'tomato_paste', 'tomatoes', 'tomato_sauce'],
+  pasta: ['noodle', 'noodles', 'spaghetti', 'macaroni'],
+  rice: ['risotto', 'rice_noodles'],
+  cheese: ['mozzarella', 'parmesan', 'feta', 'cheddar', 'mascarpone'],
+  beef: ['ground_beef', 'steak', 'minced_beef'],
+  pork: ['bacon', 'sausage'],
+  chicken: ['chicken_breast', 'chicken_thigh'],
+  fish: ['salmon', 'fish_sticks', 'seafood', 'shrimp'],
+  bean: ['beans', 'black_beans'],
+  lettuce: ['salad', 'greens'],
+  bread: ['bun', 'buns', 'toast', 'pita', 'tortilla', 'wrap'],
+  yogurt: ['yoghurt'],
+  oil: ['olive_oil'],
+  pepper: ['bell_pepper', 'paprika']
 };
 
 const DIET_CONFLICT_TAGS: Record<string, string[]> = {
-    vegetarian: ['meat', 'beef', 'pork', 'chicken', 'fish', 'seafood', 'shrimp', 'bacon', 'sausage', 'turkey', 'salmon'],
-    vegan: ['meat', 'beef', 'pork', 'chicken', 'fish', 'seafood', 'shrimp', 'bacon', 'sausage', 'turkey', 'salmon', 'egg', 'cheese', 'butter', 'milk', 'yogurt', 'cream'],
-    'gluten-free': ['pasta', 'bread', 'flour', 'bun', 'tortilla', 'wrap', 'pizza', 'spaghetti', 'noodle', 'noodles']
+  vegetarian: ['meat', 'beef', 'pork', 'chicken', 'fish', 'seafood', 'shrimp', 'bacon', 'sausage', 'turkey', 'salmon'],
+  vegan: ['meat', 'beef', 'pork', 'chicken', 'fish', 'seafood', 'shrimp', 'bacon', 'sausage', 'turkey', 'salmon', 'egg', 'cheese', 'butter', 'milk', 'yogurt', 'cream'],
+  'gluten-free': ['pasta', 'bread', 'flour', 'bun', 'tortilla', 'wrap', 'pizza', 'spaghetti', 'noodle', 'noodles']
 };
 
 // Pantry basics we don't want to over-weight for matches
 const LOW_IMPACT_INGREDIENTS = new Set([
-    'salt', 'pepper', 'pepper_spice', 'water', 'oil', 'olive_oil', 'veg_oil',
-    'vinegar', 'herbs', 'spices', 'garlic', 'onion', 'butter', 'sugar', 'flour'
+  'salt', 'pepper', 'pepper_spice', 'water', 'oil', 'olive_oil', 'veg_oil',
+  'vinegar', 'herbs', 'spices', 'garlic', 'onion', 'butter', 'sugar', 'flour'
 ]);
 
 type DayPeriod = 'morning' | 'midday' | 'afternoon' | 'evening' | 'late_night';
 type WeekSegment = 'weekday' | 'weekend';
 
 interface MatchOptions {
-    dietFilters?: string[];
-    requiredTags?: string[];
-    preferredTags?: string[];
-    timeOfDay?: DayPeriod;
-    weekSegment?: WeekSegment;
-    epsilon?: number;
+  dietFilters?: string[];
+  requiredTags?: string[];
+  preferredTags?: string[];
+  timeOfDay?: DayPeriod;
+  weekSegment?: WeekSegment;
+  epsilon?: number;
 }
 
 const normalizeName = (value: string): string => {
-    return value
-        .toLowerCase()
-        .replace(/_/g, ' ')
-        .replace(/-/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .replace(/s\b/g, ''); // crude singularization (eg. tomatoes -> tomatoe, beans -> bean)
+  return value
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/-/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/s\b/g, ''); // crude singularization (eg. tomatoes -> tomatoe, beans -> bean)
 };
 
 const canonicalizeName = (value: string): string => {
-    const normalized = normalizeName(value);
-    for (const [canonical, synonyms] of Object.entries(INGREDIENT_SYNONYMS)) {
-        if (canonical === normalized || synonyms.some(s => normalizeName(s) === normalized)) {
-            return canonical;
-        }
+  const normalized = normalizeName(value);
+  for (const [canonical, synonyms] of Object.entries(INGREDIENT_SYNONYMS)) {
+    if (canonical === normalized || synonyms.some(s => normalizeName(s) === normalized)) {
+      return canonical;
     }
-    return normalized;
+  }
+  return normalized;
 };
 
 const tokenSetSimilarity = (a: string, b: string): number => {
-    const tokensA = new Set(normalizeName(a).split(' '));
-    const tokensB = new Set(normalizeName(b).split(' '));
-    const intersection = Array.from(tokensA).filter(t => tokensB.has(t)).length;
-    const union = new Set([...Array.from(tokensA), ...Array.from(tokensB)]).size;
-    return union === 0 ? 0 : intersection / union;
+  const tokensA = new Set(normalizeName(a).split(' '));
+  const tokensB = new Set(normalizeName(b).split(' '));
+  const intersection = Array.from(tokensA).filter(t => tokensB.has(t)).length;
+  const union = new Set([...Array.from(tokensA), ...Array.from(tokensB)]).size;
+  return union === 0 ? 0 : intersection / union;
 };
 
 const fuzzyIngredientMatch = (pantryName: string, requiredName: string, threshold = 0.6): boolean => {
-    const canonicalPantry = canonicalizeName(pantryName);
-    const canonicalRequired = canonicalizeName(requiredName);
-    if (canonicalPantry === canonicalRequired) return true;
-    const sim = tokenSetSimilarity(canonicalPantry, canonicalRequired);
-    return sim >= threshold;
+  const canonicalPantry = canonicalizeName(pantryName);
+  const canonicalRequired = canonicalizeName(requiredName);
+  if (canonicalPantry === canonicalRequired) return true;
+  const sim = tokenSetSimilarity(canonicalPantry, canonicalRequired);
+  return sim >= threshold;
 };
 
 const parsePrepTimeMinutes = (prepTime: string | undefined): number | undefined => {
-    if (!prepTime) return undefined;
-    const numbers = prepTime.match(/\d+/g);
-    if (!numbers || numbers.length === 0) return undefined;
-    const minutes = Number(numbers[0]);
-    return Number.isFinite(minutes) ? minutes : undefined;
+  if (!prepTime) return undefined;
+  const numbers = prepTime.match(/\d+/g);
+  if (!numbers || numbers.length === 0) return undefined;
+  const minutes = Number(numbers[0]);
+  return Number.isFinite(minutes) ? minutes : undefined;
 };
 
 // Helper to translate common units
 const translateAmount = (amount: string, lang: Language): string => {
-    if (lang !== 'de') return amount;
-    return amount
-        .replace(/\btbsp\b/g, 'EL')
-        .replace(/\btsp\b/g, 'TL')
-        .replace(/\bcup\b/g, 'Tasse')
-        .replace(/\bcups\b/g, 'Tassen')
-        .replace(/\bhandful\b/g, 'Handvoll')
-        .replace(/\bpinch\b/g, 'Prise')
-        .replace(/\bslices\b/g, 'Scheiben')
-        .replace(/\bcloves\b/g, 'Zehen')
-        .replace(/\bcan\b/g, 'Dose')
-        .replace(/\bblock\b/g, 'Block')
-        .replace(/\bhead\b/g, 'Kopf');
+  if (lang !== 'de') return amount;
+  return amount
+    .replace(/\btbsp\b/g, 'EL')
+    .replace(/\btsp\b/g, 'TL')
+    .replace(/\bcup\b/g, 'Tasse')
+    .replace(/\bcups\b/g, 'Tassen')
+    .replace(/\bhandful\b/g, 'Handvoll')
+    .replace(/\bpinch\b/g, 'Prise')
+    .replace(/\bslices\b/g, 'Scheiben')
+    .replace(/\bcloves\b/g, 'Zehen')
+    .replace(/\bcan\b/g, 'Dose')
+    .replace(/\bblock\b/g, 'Block')
+    .replace(/\bhead\b/g, 'Kopf');
 };
 
 // Calculate difficulty based on recipe complexity, not just time
 const calculateDifficulty = (recipeId: string, prepTime: string, steps: string[]): 'Easy' | 'Medium' | 'Hard' => {
-    // Hard recipes: Complex techniques, multiple components, precise timing, advanced skills
-    const hardRecipes = [
-        'local-lasagne', // Multiple sauces (bolognese + béchamel), layering, baking
-        'local-risotto-mushroom', // Constant stirring, precise timing, technique critical
-        'local-sauerbraten', // Marinating 12-24hrs, long braising, complex sauce
-        'local-quiche-lorraine', // Pastry making from scratch, multiple components
-        'local-stuffed-peppers', // Multiple steps, stuffing technique, baking
-        'local-ratatouille', // Multiple vegetables, precise timing for each
-        'local-paella', // Multiple proteins, precise rice cooking, saffron technique
-        'local-tiramisu', // Multiple layers, precise technique, no-bake but complex
-        'local-banana-bread', // Baking, precise measurements, timing critical
-        'local-kaiserschmarrn' // Special flipping technique, precise temperature
-    ];
-    
-    // Medium recipes: Moderate complexity, some technique required, multiple steps
-    const mediumRecipes = [
-        'local-pancakes', // 8 steps, mixing technique, timing for flipping
-        'local-carbonara', // Timing critical (eggs can scramble), technique required
-        'local-chili-con-carne', // Multiple steps, simmering, seasoning
-        'local-chicken-curry', // Multiple steps, sauce making, moderate complexity
-        'local-schnitzel', // Breading technique (flour-egg-breadcrumb), frying
-        'local-bratkartoffeln', // Frying technique, timing for crispiness
-        'local-kaesespaetzle', // Multiple components, onion caramelization
-        'local-teriyaki-chicken', // Sauce making, marinating, timing
-        'local-beef-broccoli', // Stir fry technique, high heat, timing
-        'local-pad-thai', // Multiple components, stir fry, balance of flavors
-        'local-summer-rolls', // Assembly technique, rice paper handling
-        'local-tacos', // Multiple components, seasoning meat, assembly
-        'local-shakshuka', // One pot but technique for egg doneness
-        'local-caesar-salad', // Multiple components, croutons, dressing
-        'local-potato-soup', // Multiple steps, vegetable prep, simmering
-        'local-fried-rice', // Technique required, high heat, timing
-        'local-ramen-weeknight', // Multiple components, egg timing, broth
-        'local-lentil-stew', // Multiple steps, vegetable prep, simmering
-        'local-gnocchi-sage', // Simple but butter browning technique
-        'local-fishsticks-mash', // Multiple components, mash technique
-        'local-sheetpan-salmon', // Timing and technique, different cook times
-        'local-tofu-stirfry', // Technique required, high heat, timing
-        'local-poke-bowl', // Multiple components, rice cooking, prep
-        'local-taco-salad', // Multiple components, seasoning, assembly
-        'local-roast-chicken-tray', // Timing and technique, different cook times
-        'local-roasted-veg-feta', // Timing important, vegetable prep
-        'local-scrambled-eggs' // Technique for creamy texture, temperature control
-    ];
-    
-    // Check if recipe is in hard list
-    if (hardRecipes.includes(recipeId)) {
-        return 'Hard';
-    }
-    
-    // Check if recipe is in medium list
-    if (mediumRecipes.includes(recipeId)) {
-        return 'Medium';
-    }
-    
-    // Default: Easy for simple recipes
-    // Most breakfast items, simple pasta, grilled cheese, etc.
-    return 'Easy';
+  // Hard recipes: Complex techniques, multiple components, precise timing, advanced skills
+  const hardRecipes = [
+    'local-lasagne', // Multiple sauces (bolognese + béchamel), layering, baking
+    'local-risotto-mushroom', // Constant stirring, precise timing, technique critical
+    'local-sauerbraten', // Marinating 12-24hrs, long braising, complex sauce
+    'local-quiche-lorraine', // Pastry making from scratch, multiple components
+    'local-stuffed-peppers', // Multiple steps, stuffing technique, baking
+    'local-ratatouille', // Multiple vegetables, precise timing for each
+    'local-paella', // Multiple proteins, precise rice cooking, saffron technique
+    'local-tiramisu', // Multiple layers, precise technique, no-bake but complex
+    'local-banana-bread', // Baking, precise measurements, timing critical
+    'local-kaiserschmarrn' // Special flipping technique, precise temperature
+  ];
+
+  // Medium recipes: Moderate complexity, some technique required, multiple steps
+  const mediumRecipes = [
+    'local-pancakes', // 8 steps, mixing technique, timing for flipping
+    'local-carbonara', // Timing critical (eggs can scramble), technique required
+    'local-chili-con-carne', // Multiple steps, simmering, seasoning
+    'local-chicken-curry', // Multiple steps, sauce making, moderate complexity
+    'local-schnitzel', // Breading technique (flour-egg-breadcrumb), frying
+    'local-bratkartoffeln', // Frying technique, timing for crispiness
+    'local-kaesespaetzle', // Multiple components, onion caramelization
+    'local-teriyaki-chicken', // Sauce making, marinating, timing
+    'local-beef-broccoli', // Stir fry technique, high heat, timing
+    'local-pad-thai', // Multiple components, stir fry, balance of flavors
+    'local-summer-rolls', // Assembly technique, rice paper handling
+    'local-tacos', // Multiple components, seasoning meat, assembly
+    'local-shakshuka', // One pot but technique for egg doneness
+    'local-caesar-salad', // Multiple components, croutons, dressing
+    'local-potato-soup', // Multiple steps, vegetable prep, simmering
+    'local-fried-rice', // Technique required, high heat, timing
+    'local-ramen-weeknight', // Multiple components, egg timing, broth
+    'local-lentil-stew', // Multiple steps, vegetable prep, simmering
+    'local-gnocchi-sage', // Simple but butter browning technique
+    'local-fishsticks-mash', // Multiple components, mash technique
+    'local-sheetpan-salmon', // Timing and technique, different cook times
+    'local-tofu-stirfry', // Technique required, high heat, timing
+    'local-poke-bowl', // Multiple components, rice cooking, prep
+    'local-taco-salad', // Multiple components, seasoning, assembly
+    'local-roast-chicken-tray', // Timing and technique, different cook times
+    'local-roasted-veg-feta', // Timing important, vegetable prep
+    'local-scrambled-eggs' // Technique for creamy texture, temperature control
+  ];
+
+  // Check if recipe is in hard list
+  if (hardRecipes.includes(recipeId)) {
+    return 'Hard';
+  }
+
+  // Check if recipe is in medium list
+  if (mediumRecipes.includes(recipeId)) {
+    return 'Medium';
+  }
+
+  // Default: Easy for simple recipes
+  // Most breakfast items, simple pasta, grilled cheese, etc.
+  return 'Easy';
 };
 
 const RECIPE_DEFINITIONS = [
@@ -240,11 +240,11 @@ const RECIPE_DEFINITIONS = [
     id: 'local-chili-con-carne',
     key: 'chili_con_carne',
     ingredients: [
-        { id: 'ground_beef', amount: '500g' },
-        { id: 'bean', amount: '1 can' },
-        { id: 'canned_tomato', amount: '1 can' },
-        { id: 'onion', amount: '1' },
-        { id: 'chili_flakes', amount: '1 tbsp' }
+      { id: 'ground_beef', amount: '500g' },
+      { id: 'bean', amount: '1 can' },
+      { id: 'canned_tomato', amount: '1 can' },
+      { id: 'onion', amount: '1' },
+      { id: 'chili_flakes', amount: '1 tbsp' }
     ],
     prepTime: '50 mins',
     tags: ['Dinner', 'Spicy', 'Hearty', 'Beef', 'Bean', 'One Pot', 'Mexican', 'Tomato'],
@@ -254,11 +254,11 @@ const RECIPE_DEFINITIONS = [
     id: 'local-french-toast',
     key: 'french_toast',
     ingredients: [
-        { id: 'bread', amount: '4 slices' },
-        { id: 'egg', amount: '2' },
-        { id: 'milk', amount: '100ml' },
-        { id: 'cinnamon', amount: '1 tsp' },
-        { id: 'butter', amount: '1 tbsp' }
+      { id: 'bread', amount: '4 slices' },
+      { id: 'egg', amount: '2' },
+      { id: 'milk', amount: '100ml' },
+      { id: 'cinnamon', amount: '1 tsp' },
+      { id: 'butter', amount: '1 tbsp' }
     ],
     prepTime: '15 mins',
     tags: ['Breakfast', 'Sweet', 'Vegetarian', 'Bread', 'Egg', 'Cinnamon', 'Quick', 'Fried'],
@@ -268,10 +268,10 @@ const RECIPE_DEFINITIONS = [
     id: 'local-oatmeal',
     key: 'oatmeal',
     ingredients: [
-        { id: 'oat', amount: '1 cup' },
-        { id: 'milk', amount: '2 cups' },
-        { id: 'honey', amount: '1 tbsp' },
-        { id: 'salt', amount: '1 pinch' }
+      { id: 'oat', amount: '1 cup' },
+      { id: 'milk', amount: '2 cups' },
+      { id: 'honey', amount: '1 tbsp' },
+      { id: 'salt', amount: '1 pinch' }
     ],
     prepTime: '10 mins',
     tags: ['Breakfast', 'Healthy', 'Vegetarian', 'Oat', 'Milk', 'Honey', 'Quick', 'Simple', 'Fiber'],
@@ -281,11 +281,11 @@ const RECIPE_DEFINITIONS = [
     id: 'local-potato-soup',
     key: 'potato_soup',
     ingredients: [
-        { id: 'potato', amount: '500g' },
-        { id: 'carrot', amount: '2' },
-        { id: 'onion', amount: '1' },
-        { id: 'chicken_broth', amount: '1 liter' },
-        { id: 'cream', amount: '100ml' }
+      { id: 'potato', amount: '500g' },
+      { id: 'carrot', amount: '2' },
+      { id: 'onion', amount: '1' },
+      { id: 'chicken_broth', amount: '1 liter' },
+      { id: 'cream', amount: '100ml' }
     ],
     prepTime: '35 mins',
     tags: ['Lunch', 'Soup', 'Comfort Food', 'Potato', 'Vegetable', 'Cream', 'One Pot', 'Warm'],
@@ -295,11 +295,11 @@ const RECIPE_DEFINITIONS = [
     id: 'local-caprese',
     key: 'caprese',
     ingredients: [
-        { id: 'tomato', amount: '3' },
-        { id: 'mozzarella', amount: '2 balls' },
-        { id: 'basil', amount: '1 handful' },
-        { id: 'olive_oil', amount: '2 tbsp' },
-        { id: 'vinegar', amount: '1 tbsp' }
+      { id: 'tomato', amount: '3' },
+      { id: 'mozzarella', amount: '2 balls' },
+      { id: 'basil', amount: '1 handful' },
+      { id: 'olive_oil', amount: '2 tbsp' },
+      { id: 'vinegar', amount: '1 tbsp' }
     ],
     prepTime: '10 mins',
     tags: ['Lunch', 'Salad', 'Vegetarian', 'Italian', 'Tomato', 'Mozzarella', 'Fresh', 'Quick', 'Basil'],
@@ -309,12 +309,12 @@ const RECIPE_DEFINITIONS = [
     id: 'local-chicken-curry',
     key: 'chicken_curry',
     ingredients: [
-        { id: 'chicken_breast', amount: '500g' },
-        { id: 'rice', amount: '200g' },
-        { id: 'onion', amount: '1' },
-        { id: 'garlic', amount: '2 cloves' },
-        { id: 'curry_powder', amount: '2 tbsp' },
-        { id: 'cream', amount: '200ml' }
+      { id: 'chicken_breast', amount: '500g' },
+      { id: 'rice', amount: '200g' },
+      { id: 'onion', amount: '1' },
+      { id: 'garlic', amount: '2 cloves' },
+      { id: 'curry_powder', amount: '2 tbsp' },
+      { id: 'cream', amount: '200ml' }
     ],
     prepTime: '30 mins',
     tags: ['Dinner', 'Asian', 'Spicy', 'Chicken', 'Rice', 'Curry', 'Creamy', 'One Pot'],
@@ -329,7 +329,7 @@ const RECIPE_DEFINITIONS = [
       { id: 'pork_chop', amount: '4' },
       { id: 'flour', amount: '100g' },
       { id: 'egg', amount: '2' },
-      { id: 'bread', amount: '200g (Crumbs)' }, 
+      { id: 'bread', amount: '200g (Crumbs)' },
       { id: 'lemon', amount: '1' },
       { id: 'butter', amount: '100g' }
     ],
@@ -931,33 +931,101 @@ const RECIPE_DEFINITIONS = [
     prepTime: '15 mins',
     tags: ['Snack', 'Party', 'Sharing', 'Chips', 'Beef', 'Bean', 'Cheese', 'Spicy', 'Baking', 'Quick'],
     basePortions: 4
+  },
+  // --- NEW: Pasta Variations ---
+  {
+    id: 'local-nudeln-pesto',
+    key: 'nudeln_pesto',
+    ingredients: [
+      { id: 'pasta', amount: '400g' },
+      { id: 'parmesan', amount: '50g' },
+      { id: 'tomato', amount: '6 (cherry)' }
+    ],
+    prepTime: '15 mins',
+    tags: ['Dinner', 'Vegetarian', 'Quick', 'Pasta', 'Pesto', 'Tomato', 'Parmesan', 'Italian'],
+    basePortions: 2
+  },
+  {
+    id: 'local-nudeln-tomatensauce',
+    key: 'nudeln_tomatensauce',
+    ingredients: [
+      { id: 'pasta', amount: '400g' },
+      { id: 'canned_tomato', amount: '1 can (Passata)' },
+      { id: 'onion', amount: '1' },
+      { id: 'garlic', amount: '2 cloves' },
+      { id: 'basil', amount: 'handful' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dinner', 'Vegetarian', 'Classic', 'Pasta', 'Tomato', 'Italian', 'Simple'],
+    basePortions: 2
+  },
+  {
+    id: 'local-nudeln-kaesesauce',
+    key: 'nudeln_kaesesauce',
+    ingredients: [
+      { id: 'pasta', amount: '400g' },
+      { id: 'cream', amount: '200ml' },
+      { id: 'butter', amount: '30g' },
+      { id: 'cheese', amount: '150g' }
+    ],
+    prepTime: '15 mins',
+    tags: ['Dinner', 'Vegetarian', 'Comfort Food', 'Pasta', 'Cheese', 'Cream', 'Quick'],
+    basePortions: 2
+  },
+  {
+    id: 'local-nudeln-auflauf',
+    key: 'nudeln_auflauf',
+    ingredients: [
+      { id: 'pasta', amount: '500g' },
+      { id: 'ham', amount: '100g' },
+      { id: 'frozen_peas', amount: '100g' },
+      { id: 'cream', amount: '200ml' },
+      { id: 'cheese', amount: '200g' }
+    ],
+    prepTime: '45 mins',
+    tags: ['Dinner', 'Oven', 'Baking', 'Pasta', 'Cheese', 'Family', 'Casserole'],
+    basePortions: 4
+  },
+  {
+    id: 'local-nudeln-salat',
+    key: 'nudeln_salat',
+    ingredients: [
+      { id: 'pasta', amount: '500g' },
+      { id: 'mayo', amount: '100ml' },
+      { id: 'frozen_peas', amount: '150g' },
+      { id: 'sausage', amount: '2 (Wieners)' },
+      { id: 'cucumber', amount: '4 (pickles)' }
+    ],
+    prepTime: '30 mins',
+    tags: ['Lunch', 'Dinner', 'Cold', 'Pasta', 'Salad', 'Party', 'Mayonnaise'],
+    basePortions: 4
   }
 ];
 
 export const getLocalRecipes = (lang: Language): Recipe[] => {
-    const t = translations[lang];
+  const t = translations[lang];
 
-    return RECIPE_DEFINITIONS.map(def => {
-        const content = (t.recipes as any)[def.key]; 
-        
-        if (!content) return null;
+  return RECIPE_DEFINITIONS.map(def => {
+    const content = (t.recipes as any)[def.key];
 
-        return {
-            id: def.id,
-            title: content.title,
-            description: content.description,
-            steps: content.steps,
-            ingredients: def.ingredients.map(ing => ({
-                name: (t.ingredients as any)[ing.id] || ing.id, 
-                amount: translateAmount(ing.amount, lang)
-            })),
-            prepTime: def.prepTime,
-            tags: def.tags,
-            basePortions: def.basePortions,
-            source: 'local',
-            difficulty: calculateDifficulty(def.id, def.prepTime, content.steps || [])
-        };
-    }).filter(r => r !== null) as Recipe[];
+    if (!content) return null;
+
+    return {
+      id: def.id,
+      title: content.title,
+      description: content.description,
+      steps: content.steps,
+      ingredients: def.ingredients.map(ing => ({
+        name: (t.ingredients as any)[ing.id] || ing.id,
+        amount: translateAmount(ing.amount, lang)
+      })),
+      prepTime: def.prepTime,
+      tags: def.tags,
+      basePortions: def.basePortions,
+      source: 'local',
+      difficulty: calculateDifficulty(def.id, def.prepTime, content.steps || [])
+    };
+  }).filter(r => r !== null) as Recipe[];
 };
 
 export const findMatchingRecipes = (
