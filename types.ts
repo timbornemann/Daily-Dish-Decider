@@ -82,3 +82,15 @@ export interface MatchMeta {
   score: number;
   reasons: string[];
 }
+
+export interface RecipeDefinition {
+  id: string;
+  prepTime: string;
+  tags: string[];
+  basePortions: number;
+  ingredients: { id: string; amount: string }[];
+  content: {
+    en: { title: string; description: string; steps: string[] };
+    de: { title: string; description: string; steps: string[] };
+  };
+}
