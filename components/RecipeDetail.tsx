@@ -4,6 +4,7 @@ import { Recipe, Ingredient } from '../types';
 import { translations, Language } from '../translations';
 import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
 import { getSubstitutions, SubstitutionOption } from '../services/substitutions';
+import { applySubstitutionsToText } from '../utils/textUtils';
 
 interface RecipeDetailProps {
   recipe: Recipe;
@@ -278,14 +279,37 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
           <div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t.instructions_title}</h3>
             <div className="space-y-6">
-              {recipe.steps.map((step, idx) => (
-                <div key={idx} className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-600 dark:text-brand-300 font-bold flex items-center justify-center text-sm">
-                    {idx + 1}
+              {recipe.steps.map((step, idx) => {
+                // Prepare substitutions map for this view
+                const textSubs: Record<string, string> = {};
+                Object.entries(activeSubs).forEach(([id, subOption]: [string, SubstitutionOption | null]) => {
+                  if (subOption) {
+                    const oldName = getIngredientName(id);
+                    const newName = getIngredientName(subOption.id);
+                    if (oldName && newName && oldName !== id && newName !== subOption.id) {
+                      // Only subtitle if we have valid names (not just IDs)
+                      textSubs[oldName] = newName;
+                    } else {
+                      // Fallback if names aren't found? Usually getIngredientName returns ID if not found.
+                      // We try to substitute anyway.
+                      textSubs[oldName] = newName;
+                    }
+                  }
+                });
+
+                const displayStep = applySubstitutionsToText(step, textSubs);
+
+                return (
+                  <div key={idx} className="flex gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-600 dark:text-brand-300 font-bold flex items-center justify-center text-sm">
+                      {idx + 1}
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed mt-1">
+                      {displayStep}
+                    </p>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed mt-1">{step}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
