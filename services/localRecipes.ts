@@ -999,6 +999,76 @@ const RECIPE_DEFINITIONS = [
     prepTime: '30 mins',
     tags: ['Lunch', 'Dinner', 'Cold', 'Pasta', 'Salad', 'Party', 'Mayonnaise'],
     basePortions: 4
+  },
+  // --- NEW: Diverse Specialties ---
+  {
+    id: 'local-apple-crumble',
+    key: 'apple_crumble',
+    ingredients: [
+      { id: 'apple', amount: '4' },
+      { id: 'flour', amount: '100g' },
+      { id: 'sugar', amount: '80g' },
+      { id: 'butter', amount: '80g' },
+      { id: 'cinnamon', amount: '1 tsp' }
+    ],
+    prepTime: '45 mins',
+    tags: ['Dessert', 'Baking', 'Fruit', 'Apple', 'Sweet', 'Comfort Food', 'Vegetarian'],
+    basePortions: 4
+  },
+  {
+    id: 'local-mousse-chocolat',
+    key: 'mousse_chocolat',
+    ingredients: [
+      { id: 'chocolate', amount: '200g (Dark)' },
+      { id: 'egg', amount: '3' },
+      { id: 'cream', amount: '200ml' },
+      { id: 'sugar', amount: '1 tbsp' }
+    ],
+    prepTime: '20 mins (plus chilling)',
+    tags: ['Dessert', 'French', 'Chocolate', 'Sweet', 'Indulgent', 'No Bake', 'Vegetarian'],
+    basePortions: 4
+  },
+  {
+    id: 'local-tomato-soup',
+    key: 'tomato_soup',
+    ingredients: [
+      { id: 'canned_tomato', amount: '2 cans' },
+      { id: 'onion', amount: '1' },
+      { id: 'garlic', amount: '1 clove' },
+      { id: 'olive_oil', amount: '2 tbsp' },
+      { id: 'basil', amount: 'handful' }
+    ],
+    prepTime: '25 mins',
+    tags: ['Lunch', 'Dinner', 'Soup', 'Vegetarian', 'Vegan', 'Tomato', 'Quick', 'Comfort Food', 'One Pot'],
+    basePortions: 2
+  },
+  {
+    id: 'local-flammkuchen',
+    key: 'flammkuchen',
+    ingredients: [
+      { id: 'flour', amount: '250g (or Dough)' },
+      { id: 'sour_cream', amount: '200g (Creme Fraiche)' }, // Mapping to sour_cream or cream_cheese
+      { id: 'bacon', amount: '100g' },
+      { id: 'onion', amount: '1' }
+    ],
+    prepTime: '20 mins',
+    tags: ['Dinner', 'French', 'German', 'Baking', 'Crispy', 'Bacon', 'Onion', 'Comfort Food'],
+    basePortions: 2
+  },
+  {
+    id: 'local-couscous-salad',
+    key: 'couscous_salad',
+    ingredients: [
+      { id: 'couscous', amount: '200g' },
+      { id: 'cucumber', amount: '1' },
+      { id: 'tomato', amount: '2' },
+      { id: 'olive_oil', amount: '3 tbsp' },
+      { id: 'lemon', amount: '1' },
+      { id: 'herbs', amount: '1 bunch (Parsley/Mint)' }
+    ],
+    prepTime: '15 mins',
+    tags: ['Lunch', 'Salad', 'Healthy', 'Vegetarian', 'Vegan', 'Quick', 'No Cook', 'Fresh'],
+    basePortions: 2
   }
 ];
 

@@ -867,6 +867,48 @@ export const en = {
         "Sauce: Mix 100ml mayo (or yogurt mix) with a little pickle juice, salt, and pepper.",
         "Mix: Combine pasta, peas (thawed), corn, pickles, and sausage with the sauce in a large bowl. Let sit for at least 30 mins."
       ]
+    },
+
+    // --- NEW: Diverse Specialties ---
+    apple_crumble: {
+      title: "Apple Crumble", description: "Warm apple dessert.", steps: [
+        "Prep Apples: Peel, core, and dice 4 apples. Toss with 1 tsp cinnamon and 1 tbsp sugar. Place in a baking dish.",
+        "Make Crumble: Rub 100g flour, 80g sugar, and 80g cold butter (cubed) together with your fingertips until it resembles breadcrumbs.",
+        "Bake: Scatter crumble topping over apples. Bake at 180°C/350°F for 30 mins until topping is golden.",
+        "Serve: Serve warm, preferably with vanilla ice cream or custard."
+      ]
+    },
+    mousse_chocolat: {
+      title: "Chocolate Mousse", description: "Airy chocolate dessert.", steps: [
+        "Melt: Melt 200g dark chocolate in a water bath. Let cool slightly.",
+        "Separate Eggs: Separate 3 eggs. Whisk yolks into the melted chocolate. Whip whites until stiff. Whip 200ml cream until stiff.",
+        "Fold: Gently fold cream, then egg whites into the chocolate mixture (do not overmix, keep it airy!).",
+        "Chill: Spoon into glasses and refrigerate for at least 2 hours."
+      ]
+    },
+    tomato_soup: {
+      title: "Tomato Soup", description: "Simple and warming.", steps: [
+        "Sauté: Dice 1 onion and 1 garlic clove. Sauté in olive oil until translucent.",
+        "Simmer: Add 2 cans of tomatoes (800g) and some veggie broth. Simmer for 15 mins. Season with salt, pepper, and sugar.",
+        "Blend: Blend soup until smooth.",
+        "Serve: Serve with a dollop of cream or creme fraiche and basil."
+      ]
+    },
+    flammkuchen: {
+      title: "Alsatian Flammkuchen", description: "Thin and crispy.", steps: [
+        "Prep: Preheat oven to 220°C/430°F. Roll out dough (or use store-bought).",
+        "Top: Spread 200g creme fraiche on dough. Season with salt and pepper.",
+        "Garnish: Slice 1 onion into thin rings. Scatter onions and 100g bacon bits on top.",
+        "Bake: Bake for 10-15 mins until edges are crispy and brown."
+      ]
+    },
+    couscous_salad: {
+      title: "Couscous Salad", description: "Fresh and healthy.", steps: [
+        "Soak Couscous: Pour 250ml boiling veggie broth over 200g couscous. Cover and let sit for 5 mins. Fluff with fork.",
+        "Veggies: Dice 1 cucumber and 2 tomatoes. Chop parsley and mint.",
+        "Dressing: Whisk olive oil, lemon juice, salt, pepper, and (optional) cumin.",
+        "Mix: Combine everything. Optional: fold in feta or chickpeas. Let sit briefly."
+      ]
     }
   }
 };

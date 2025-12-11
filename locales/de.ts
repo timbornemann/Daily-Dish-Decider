@@ -866,6 +866,48 @@ export const de = {
         "Sauce: 100ml Mayo (oder Joghurt-Mix) mit etwas Gurkenwasser, Salz und Pfeffer verrühren.",
         "Mischen: Nudeln, Erbsen (aufgetaut), Mais, Gurken und Wurst mit der Sauce in einer großen Schüssel mischen. Mindestens 30 Min ziehen lassen."
       ]
+    },
+
+    // --- NEU: Diverse Spezialitäten ---
+    apple_crumble: {
+      title: "Apfel-Crumble", description: "Warmer Apfelauflauf mit Streuseln.", steps: [
+        "Äpfel vorbereiten: 4 Äpfel schälen, entkernen und würfeln. Mit 1 TL Zimt und 1 EL Zucker mischen. In eine Auflaufform geben.",
+        "Streusel machen: 100g Mehl, 80g Zucker und 80g kalte Butter (in Stücken) mit den Händen zu Krümeln verkneten.",
+        "Backen: Streusel über den Äpfeln verteilen. Bei 180°C ca. 30 Min backen, bis die Streusel goldbraun sind.",
+        "Servieren: Warm servieren, am besten mit Vanilleeis oder Sahne."
+      ]
+    },
+    mousse_chocolat: {
+      title: "Mousse au Chocolat", description: "Luftiges Schokoladendessert.", steps: [
+        "Schmelzen: 200g Zartbitterschokolade im Wasserbad schmelzen. Etwas abkühlen lassen.",
+        "Eier trennen: 3 Eier trennen. Eigelb mit der geschmolzenen Schokolade verrühren. Eiweiß steif schlagen. Sahne (200ml) separat steif schlagen.",
+        "Unterheben: Vorsichtig erst die Sahne, dann den Eischnee unter die Schokomasse heben (nicht rühren, damit Luft bleibt!).",
+        "Kühlen: In Gläser füllen und mindestens 2 Stunden kalt stellen."
+      ]
+    },
+    tomato_soup: {
+      title: "Tomatensuppe", description: "Einfach und wärmend.", steps: [
+        "Anbraten: 1 Zwiebel und 1 Knoblauchzehe würfeln und in Olivenöl glasig dünsten.",
+        "Köcheln: 2 Dosen Tomaten (800g) und etwas Gemüsebrühe hinzugeben. 15 Min köcheln lassen. Mit Salz, Pfeffer und Zucker abschmecken.",
+        "Pürieren: Suppe fein pürieren.",
+        "Servieren: Mit einem Klecks Sahne oder Creme Fraiche und Basilikum servieren."
+      ]
+    },
+    flammkuchen: {
+      title: "Elsässer Flammkuchen", description: "Hauchdünn und knusprig.", steps: [
+        "Vorbereiten: Ofen auf 220°C (Ober-/Unterhitze) vorheizen. Teig ausrollen (oder Fertigteig nehmen).",
+        "Belegen: Teig mit 200g Creme Fraiche bestreichen. Mit Salz und Pfeffer würzen.",
+        "Topping: 1 Zwiebel in feine Ringe schneiden. 100g Speckwürfel darauf verteilen.",
+        "Backen: Im heißen Ofen 10-15 Min backen, bis der Rand knusprig braun ist."
+      ]
+    },
+    couscous_salad: {
+      title: "Couscous Salat", description: "Frisch und gesund.", steps: [
+        "Couscous quellen: 200g Couscous mit 250ml kochender Gemüsebrühe übergießen. Abgedeckt 5 Min ziehen lassen. Mit Gabel auflockern.",
+        "Gemüse: 1 Gurke und 2 Tomaten fein würfeln. Petersilie und Minze hacken.",
+        "Dressing: Aus Olivenöl, Zitronensaft, Salz, Pfeffer und (optional) Kreuzkümmel ein Dressing rühren.",
+        "Mischen: Alles vermengen. Optional Feta oder Kichererbsen unterheben. Kurz durchziehen lassen."
+      ]
     }
   }
 };
