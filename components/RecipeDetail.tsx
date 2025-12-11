@@ -4,7 +4,7 @@ import { Recipe, Ingredient } from '../types';
 import { translations, Language } from '../translations';
 import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
 import { getSubstitutions, SubstitutionOption } from '../services/substitutions';
-import { applySubstitutionsToText } from '../utils/textUtils';
+import { applySubstitutionsToText, parseSubstitutionsInText } from '../utils/textUtils';
 
 interface RecipeDetailProps {
   recipe: Recipe;
@@ -255,7 +255,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
                       <div className="flex flex-col">
                         <span className="text-green-700 dark:text-green-300 font-medium">{subName}</span>
                         <span className="text-xs text-green-600/70 dark:text-green-400/70 strike-through line-through decoration-green-500/50">
-                          Anstatt {getIngredientName(ing.id)}
+                          {t.instead_of} {getIngredientName(ing.id)}
                         </span>
                       </div>
                       <span className="font-semibold text-green-900 dark:text-green-100 bg-green-100 dark:bg-green-800 px-2 py-1 rounded text-sm">
@@ -282,22 +282,56 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
               {recipe.steps.map((step, idx) => {
                 // Prepare substitutions map for this view
                 const textSubs: Record<string, string> = {};
+
+                // Helper to calculate amount string based on ratio (ignoring portion scaling for text consistency)
+                const getBaseSubAmount = (amountStr: string, ratio: number) => {
+                  const numericPart = parseFloat(amountStr);
+                  if (isNaN(numericPart)) return amountStr; // Fallback
+                  const newVal = numericPart * ratio;
+                  const suffix = amountStr.replace(/[\d\s.]/g, '');
+                  // Format nicely
+                  return newVal % 1 === 0 ? `${newVal.toFixed(0)}${suffix}` : `${newVal.toFixed(1)}${suffix}`;
+                };
+
                 Object.entries(activeSubs).forEach(([id, subOption]: [string, SubstitutionOption | null]) => {
                   if (subOption) {
                     const oldName = getIngredientName(id);
                     const newName = getIngredientName(subOption.id);
-                    if (oldName && newName && oldName !== id && newName !== subOption.id) {
-                      // Only subtitle if we have valid names (not just IDs)
+
+                    if (oldName && newName) {
+                      // 1. Basic Name Replacement
                       textSubs[oldName] = newName;
-                    } else {
-                      // Fallback if names aren't found? Usually getIngredientName returns ID if not found.
-                      // We try to substitute anyway.
-                      textSubs[oldName] = newName;
+
+                      // 2. Amount + Name Replacement (Contextual)
+                      // Find the original ingredient definition to get the base amount text
+                      const originalIng = recipe.ingredients.find(i => i.id === id);
+                      if (originalIng && originalIng.amount) {
+                        const oldAmount = originalIng.amount; // e.g. "80g" or "1 tsp"
+                        const ratio = subOption.ratio || 1;
+                        const newAmount = getBaseSubAmount(oldAmount, ratio);
+
+                        // Add combinations to the map
+                        // Case A: "80g Sugar" (Space)
+                        textSubs[`${oldAmount} ${oldName}`] = `${newAmount} ${newName}`;
+                        // Case B: "80gSugar" (No Space - likely for ml/l)
+                        textSubs[`${oldAmount}${oldName}`] = `${newAmount} ${newName}`;
+
+                        // Handle Variants (Singular/Plural)
+                        const variants = (t as any).ingredient_variants?.[id] as string[] || [];
+                        variants.forEach(variant => {
+                          // Add pure name replacement for variant
+                          textSubs[variant] = newName;
+
+                          // Add amount + variant replacement
+                          textSubs[`${oldAmount} ${variant}`] = `${newAmount} ${newName}`;
+                          textSubs[`${oldAmount}${variant}`] = `${newAmount} ${newName}`;
+                        });
+                      }
                     }
                   }
                 });
 
-                const displayStep = applySubstitutionsToText(step, textSubs);
+                const segments = parseSubstitutionsInText(step, textSubs);
 
                 return (
                   <div key={idx} className="flex gap-4">
@@ -305,7 +339,21 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
                       {idx + 1}
                     </div>
                     <p className="text-gray-600 dark:text-gray-300 leading-relaxed mt-1">
-                      {displayStep}
+                      {segments.map((seg, i) => (
+                        seg.isSubstitution ? (
+                          <span key={i} className="text-green-600 dark:text-green-400 font-bold relative group cursor-help">
+                            {seg.text}
+                            <span className="hidden group-hover:inline absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap z-10">
+                              {t.instead_of ? `${t.instead_of}: ` : 'Was: '}{seg.originalName}
+                            </span>
+                            <span className="text-[10px] text-green-500/70 font-normal ml-1">
+                              ({t.instead_of || 'was'} {seg.originalName})
+                            </span>
+                          </span>
+                        ) : (
+                          <span key={i}>{seg.text}</span>
+                        )
+                      ))}
                     </p>
                   </div>
                 );

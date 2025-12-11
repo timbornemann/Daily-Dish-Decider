@@ -116,6 +116,7 @@ export const de = {
   original_amount: "Original",
   ingredients_title: "Zutaten",
   instructions_title: "Zubereitung",
+  instead_of: "ehemals",
 
   // Sudden Death
   sudden_death_title: "Entscheidung",
@@ -252,4 +253,18 @@ export const de = {
     paper_towel: "Küchenrolle", toilet_paper: "Toilettenpapier", dish_soap: "Spülmittel",
     sponge: "Schwamm", foil: "Alufolie"
   },
+
+  // Singular Variants (ID -> [Variant1, Variant2...])
+  // Used for text substitution matching when the plural is the main label
+  ingredient_variants: {
+    egg: ["Ei"],
+    apple: ["Apfel"],
+    onion: ["Zwiebel"], // Singular is same as plural in some contexts or if main label is plural? 
+    // Actually "Zwiebel" (Sg) -> "Zwiebeln" (Pl). Main label is "Zwiebel" so likely fine.
+    // But "Eier" -> "Ei" is critical.
+    mushroom: ["Pilz"],
+    potato: ["Kartoffeln"], // Main is "Kartoffel", Text might say "Kartoffeln".
+    carrot: ["Karotten"],   // Main is "Karotte", Text might say "Karotten".
+    tomato: ["Tomaten"]
+  }
 };

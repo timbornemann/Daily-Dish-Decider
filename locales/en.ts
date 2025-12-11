@@ -117,6 +117,7 @@ export const en = {
   original_amount: "Original",
   ingredients_title: "Ingredients",
   instructions_title: "Instructions",
+  instead_of: "was",
 
   // Sudden Death
   sudden_death_title: "Sudden Death",
@@ -253,4 +254,15 @@ export const en = {
     paper_towel: "Paper Towels", toilet_paper: "Toilet Paper", dish_soap: "Dish Soap",
     sponge: "Sponge", foil: "Foil"
   },
+
+  // Singular/Plural Variants (ID -> [Variant1, Variant2...])
+  ingredient_variants: {
+    egg: ["Eggs"], // Main is "Egg"
+    apple: ["Apples"],
+    onion: ["Onions"],
+    mushroom: ["Mushrooms"],
+    potato: ["Potatoes"],
+    carrot: ["Carrots"],
+    tomato: ["Tomatoes"]
+  }
 };
