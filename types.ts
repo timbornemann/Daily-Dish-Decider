@@ -1,7 +1,9 @@
+import { IngredientId } from './data/ingredients';
 
 export interface Ingredient {
-  id: string;
-  name: string;
+  id: string; // Instance ID (GUID)
+  ingredientId: IngredientId | string; // Reference to canonical ingredient (or custom string)
+  name?: string; // Optional display name override
   quantity: string;
   category: string;
   expiryDate?: string;
@@ -10,7 +12,7 @@ export interface Ingredient {
 }
 
 export interface RecipeIngredient {
-  name: string;
+  id: IngredientId;
   amount: string;
 }
 
@@ -88,7 +90,7 @@ export interface RecipeDefinition {
   prepTime: string;
   tags: string[];
   basePortions: number;
-  ingredients: { id: string; amount: string }[];
+  ingredients: { id: IngredientId; amount: string }[];
   content: {
     en: { title: string; description: string; steps: string[] };
     de: { title: string; description: string; steps: string[] };

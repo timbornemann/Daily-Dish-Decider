@@ -196,18 +196,22 @@ export const en = {
     orange: "Orange", berry: "Berries", avocado: "Avocado", mushroom: "Mushroom",
     ginger: "Ginger", chili: "Chili", broccoli: "Broccoli", cauliflower: "Cauliflower",
     sweet_potato: "Sweet Potato", herbs: "Fresh Herbs",
+    shallot: "Shallot", leek: "Leek", spring_onion: "Spring Onion", zucchini_noodles: "Zucchini Noodles",
 
     // Dairy
     milk: "Milk", egg: "Egg", butter: "Butter", cheese: "Cheese", yogurt: "Yogurt",
     cream: "Cream", parmesan: "Parmesan", mozzarella: "Mozzarella", cheddar: "Cheddar",
     sour_cream: "Sour Cream", cottage_cheese: "Cottage Cheese", almond_milk: "Almond Milk",
     oat_milk: "Oat Milk", cream_cheese: "Cream Cheese",
+    buttermilk: "Buttermilk", creme_fraiche: "Crème Fraîche", pecorino: "Pecorino",
+    grana_padano: "Grana Padano", gouda: "Gouda", feta: "Feta",
 
     // Meat
     chicken_breast: "Chicken Breast", ground_beef: "Ground Beef", bacon: "Bacon",
     salmon: "Salmon", sausage: "Sausage", tofu: "Tofu", steak: "Steak",
     pork_chop: "Pork Chop", turkey: "Turkey", ham: "Ham", salami: "Salami",
     prosciutto: "Prosciutto", shrimp: "Shrimp", tuna: "Tuna",
+    ground_turkey: "Ground Turkey",
 
     // Bakery
     bread: "Bread", toast: "Toast", bagel: "Bagel", tortilla: "Tortilla",
@@ -220,6 +224,9 @@ export const en = {
     cereal: "Cereal", chicken_broth: "Chicken Broth", beef_broth: "Beef Broth",
     tomato_paste: "Tomato Paste", honey: "Honey", maple_syrup: "Maple Syrup",
     peanut_butter: "Peanut Butter", jam: "Jam", baking_powder: "Baking Powder", yeast: "Yeast",
+    brown_sugar: "Brown Sugar", cornstarch: "Cornstarch", vegetable_broth: "Vegetable Broth",
+    bouillon: "Bouillon", coconut_oil: "Coconut Oil", applesauce: "Applesauce",
+    flaxseed: "Flaxseed", rice_noodles: "Rice Noodles", gnocchi: "Gnocchi", tomato_sauce: "Tomato Sauce",
 
     // Spices
     salt: "Salt", pepper_spice: "Black Pepper", cumin: "Cumin", paprika: "Paprika",

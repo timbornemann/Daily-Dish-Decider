@@ -187,7 +187,7 @@ export const getLocalRecipes = (lang: Language): Recipe[] => {
       description: content.description,
       steps: content.steps,
       ingredients: def.ingredients.map(ing => ({
-        name: (t.ingredients as any)[ing.id] || ing.id,
+        id: ing.id as any, // ID is now the source of truth
         amount: translateAmount(ing.amount, lang)
       })),
       prepTime: def.prepTime,
@@ -225,8 +225,8 @@ export const findMatchingRecipes = (
 
   const scored = availableRecipes.map(recipe => {
     const normalizedIngredients = recipe.ingredients.map(i => ({
-      raw: i.name,
-      canonical: canonicalizeName(i.name)
+      raw: i.id,
+      canonical: i.id // IDs are already canonical keys
     }));
 
     const matched: string[] = [];

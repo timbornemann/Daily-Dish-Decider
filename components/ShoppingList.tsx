@@ -28,7 +28,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
   };
 
   const toggleCheck = (id: string) => {
-    onUpdate(items.map(item => 
+    onUpdate(items.map(item =>
       item.id === id ? { ...item, checked: !item.checked } : item
     ));
   };
@@ -44,6 +44,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
     // Convert to pantry items
     const pantryItems: Ingredient[] = purchased.map(i => ({
       id: `pantry-${Date.now()}-${i.id}`,
+      ingredientId: i.name, // Best effort mapping for now
       name: i.name,
       quantity: '1',
       category: i.category,
@@ -59,7 +60,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t.shopping_title}</h2>
         {items.filter(i => i.checked).length > 0 && (
-          <button 
+          <button
             onClick={handleCheckout}
             className="text-sm bg-green-500 text-white px-3 py-1 rounded-full flex items-center gap-1 shadow-sm hover:bg-green-600 transition"
           >
@@ -77,7 +78,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
           placeholder={t.add_item_placeholder}
           className="flex-1 px-4 py-2 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none"
         />
-        <button 
+        <button
           onClick={handleAddItem}
           className="bg-gray-900 dark:bg-gray-700 text-white p-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
         >
@@ -93,22 +94,20 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
       ) : (
         <div className="space-y-2">
           {items.map(item => (
-            <div 
-              key={item.id} 
-              className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                item.checked 
-                  ? 'bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800 opacity-60' 
+            <div
+              key={item.id}
+              className={`flex items-center justify-between p-3 rounded-lg border transition-all ${item.checked
+                  ? 'bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800 opacity-60'
                   : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 shadow-sm'
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <button
                   onClick={() => toggleCheck(item.id)}
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                    item.checked 
-                      ? 'bg-brand-500 border-brand-500 text-white' 
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${item.checked
+                      ? 'bg-brand-500 border-brand-500 text-white'
                       : 'border-gray-300 dark:border-gray-600 hover:border-brand-400 dark:hover:border-brand-400'
-                  }`}
+                    }`}
                 >
                   {item.checked && <Check size={14} />}
                 </button>
@@ -116,7 +115,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({ items, onUpdate, onM
                   {item.name}
                 </span>
               </div>
-              <button 
+              <button
                 onClick={() => deleteItem(item.id)}
                 className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 p-1"
               >
