@@ -108,6 +108,13 @@ export const en = {
   servings: "Servings",
   missing_ingredients: "Missing Ingredients",
   add_missing_shopping: "Add Missing to Shopping List",
+  substitution_title: "Show Alternatives",
+  substitution_hint: "Pick substitutes and add them directly to your shopping list.",
+  show_alternatives: "Alternatives for",
+  use_alternative: "Use alternative",
+  optional_amount: "Optional amount",
+  amount_placeholder: "e.g. 200ml",
+  original_amount: "Original",
   ingredients_title: "Ingredients",
   instructions_title: "Instructions",
 
