@@ -132,11 +132,14 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
     const ingredientName = getIngredientName(ingredientId);
 
     return (
-      <details className="bg-white/60 dark:bg-gray-800/60 rounded-lg border border-orange-100 dark:border-orange-900/40 p-3" open>
-        <summary className="cursor-pointer font-semibold text-orange-800 dark:text-orange-200 text-sm flex items-center justify-between">
-          <span>{t.show_alternatives} {ingredientName}</span>
+      <details className="group bg-orange-50/50 dark:bg-orange-900/10 rounded-lg border border-orange-100 dark:border-orange-900/40 overflow-hidden">
+        <summary className="cursor-pointer font-medium text-orange-800 dark:text-orange-200 text-xs py-2 px-3 flex items-center justify-between hover:bg-orange-100/50 dark:hover:bg-orange-900/30 transition-colors select-none">
+          <span className="flex items-center gap-2">
+			<ChevronLeft size={14} className="transition-transform group-open:-rotate-90 rotate-0" />
+			{t.show_alternatives} {ingredientName}
+		  </span>
         </summary>
-        <div className="mt-3 space-y-3">
+        <div className="p-2 space-y-2 border-t border-orange-100 dark:border-orange-900/40">
           {alternatives.map((alt, idx) => {
             const altName = getIngredientName(alt.id);
             const key = `${ingredientId}-${alt.id}-${idx}`;
@@ -146,26 +149,24 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
             return (
               <div
                 key={key}
-                className="flex flex-col gap-2 rounded-md bg-orange-50 dark:bg-orange-900/30 p-3 border border-orange-100 dark:border-orange-900/60"
+                className="flex flex-col gap-1.5 rounded bg-white dark:bg-black/20 p-2 border border-orange-100 dark:border-orange-900/30"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-semibold text-orange-900 dark:text-orange-100 text-sm">{altName}</p>
+                <div className="flex items-center justify-between gap-2">
+                    <p className="font-semibold text-orange-900 dark:text-orange-100 text-xs">{altName}</p>
                     {alt.note && (
-                      <p className="text-xs text-orange-700 dark:text-orange-300">{alt.note}</p>
+                      <p className="text-[10px] text-orange-700 dark:text-orange-300 italic">{alt.note}</p>
                     )}
-                  </div>
                 </div>
                 <div className="flex gap-2 items-center">
                   <input
                     value={amount}
                     onChange={(e) => setSubstitutionAmounts(prev => ({ ...prev, [key]: e.target.value }))}
                     placeholder={defaultAmount || t.amount_placeholder}
-                    className="flex-1 text-sm px-3 py-2 rounded-lg border border-orange-200 dark:border-orange-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100"
+                    className="flex-1 text-xs px-2 py-1.5 rounded border border-orange-200 dark:border-orange-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100"
                   />
                   <button
                     onClick={() => handleApplySubstitution(ingredientId, alt, amount)}
-                    className="text-xs font-bold bg-orange-200 dark:bg-orange-700 dark:text-orange-50 text-orange-900 px-3 py-2 rounded-lg hover:bg-orange-300 dark:hover:bg-orange-600 transition-colors"
+                    className="text-[10px] font-bold bg-orange-200 dark:bg-orange-700 dark:text-orange-50 text-orange-900 px-2 py-1.5 rounded hover:bg-orange-300 dark:hover:bg-orange-600 transition-colors whitespace-nowrap"
                   >
                     {t.use_alternative}
                   </button>
@@ -255,44 +256,91 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
           </div>
         </div>
 
-        {missingItems.length > 0 && (
-          <div className="mb-8 p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/50 rounded-xl transition-colors">
-            <h3 className="text-orange-800 dark:text-orange-300 font-bold mb-2 flex items-center gap-2">
-              <ShoppingBag size={18} /> {t.missing_ingredients}
-            </h3>
-            <ul className="list-disc list-inside text-sm text-orange-700 dark:text-orange-400 mb-3 ml-1">
-              {missingItems.map(m => <li key={m}>{m}</li>)}
-            </ul>
-            <button
-              onClick={() => onAddToShoppingList(missingItems)}
-              className="text-xs font-bold bg-orange-200 dark:bg-orange-800 dark:text-orange-100 text-orange-800 px-3 py-2 rounded-lg hover:bg-orange-300 dark:hover:bg-orange-700 w-full transition-colors"
-            >
-              {t.add_missing_shopping}
-            </button>
-            <div className="mt-4 space-y-3">
-              <p className="text-xs text-orange-700 dark:text-orange-300 font-semibold uppercase tracking-wide">{t.substitution_title}</p>
-              <p className="text-xs text-orange-700 dark:text-orange-400">{t.substitution_hint}</p>
-              <div className="space-y-3">
+        {missingIds.size > 0 && ( /* Use missingIds.size check */
+          <div className="mb-8 overflow-hidden rounded-xl border border-orange-100 dark:border-orange-900/50 bg-orange-50/50 dark:bg-orange-900/10">
+             <div className="flex items-center justify-between px-4 py-3 bg-orange-100/50 dark:bg-orange-900/30 border-b border-orange-100 dark:border-orange-900/50">
+               <h3 className="text-sm font-bold text-orange-900 dark:text-orange-100 flex items-center gap-2">
+                 <ShoppingBag size={16} /> {t.missing_ingredients}
+               </h3>
+               <button
+                  onClick={() => onAddToShoppingList(Array.from(missingIds).map(id => getIngredientName(id)))}
+                  className="text-[10px] font-bold uppercase tracking-wider bg-orange-200 dark:bg-orange-800 dark:text-orange-100 text-orange-800 px-3 py-1.5 rounded-full hover:bg-orange-300 dark:hover:bg-orange-700 transition-colors"
+               >
+                  {t.add_missing_shopping}
+               </button>
+             </div>
+             
+             <div className="divide-y divide-orange-100 dark:divide-orange-900/30">
                 {recipe.ingredients
-                  .filter(ing => missingIds.has(ing.id))
-                  .map(ing => {
-                    const ingName = getIngredientName(ing.id);
-                    return (
-                      <div key={ing.id} className="space-y-2">
-                        <p className="font-semibold text-sm text-orange-900 dark:text-orange-100 flex items-center justify-between">
-                          <span>{ingName}</span>
-                          {getIngredientAmount(ing.id) && (
-                            <span className="text-[11px] text-orange-700 dark:text-orange-300 bg-white/60 dark:bg-orange-900/40 px-2 py-1 rounded-full border border-orange-200 dark:border-orange-800">
-                              {t.original_amount}: {getIngredientAmount(ing.id)}
-                            </span>
+                   .filter(ing => missingIds.has(ing.id))
+                   .map(ing => {
+                     const ingName = getIngredientName(ing.id);
+                     const alternatives = getSubstitutions(ing.id);
+                     const hasAlternatives = alternatives.length > 0;
+                     
+                     return (
+                       <details key={ing.id} className="group open:bg-orange-50 dark:open:bg-orange-900/20 transition-colors">
+                          <summary className={`list-none cursor-pointer p-3 flex items-center justify-between hover:bg-orange-100/30 dark:hover:bg-orange-900/20 transition-colors ${!hasAlternatives ? 'cursor-default' : ''}`}>
+                             <div className="flex items-center gap-3">
+                                <div className="w-1.5 h-1.5 rounded-full bg-orange-400 dark:bg-orange-600 shrink-0" />
+                                <span className="text-sm text-gray-800 dark:text-gray-200 font-medium">{ingName}</span>
+                             </div>
+                             
+                             <div className="flex items-center gap-3">
+                                {getIngredientAmount(ing.id) && (
+                                   <span className="text-xs font-semibold text-orange-800 dark:text-orange-200 bg-white/50 dark:bg-black/20 px-2 py-0.5 rounded border border-orange-100 dark:border-orange-900/30">
+                                      {getIngredientAmount(ing.id)}
+                                   </span>
+                                )}
+                                {hasAlternatives && (
+                                   <ChevronLeft size={16} className="text-orange-400 transition-transform group-open:-rotate-90" />
+                                )}
+                             </div>
+                          </summary>
+                          
+                          {hasAlternatives && (
+                             <div className="px-4 pb-3 pt-1 border-t border-orange-100/50 dark:border-orange-900/30">
+                                <p className="text-[10px] uppercase tracking-wider font-bold text-orange-400 mb-2">{t.substitution_title}</p>
+                                <div className="space-y-2 pl-2 border-l-2 border-orange-200 dark:border-orange-800 ml-1">
+                                   {alternatives.map((alt, idx) => {
+                                      const altName = getIngredientName(alt.id);
+                                      const key = `${ing.id}-${alt.id}-${idx}`;
+                                      const defaultAmount = getSubstitutionAmount(ing.id, alt);
+                                      const amount = substitutionAmounts[key] ?? defaultAmount;
+                                      
+                                      return (
+                                         <div key={key} className="flex items-center gap-2">
+                                            <div className="flex-1 min-w-0">
+                                               <div className="flex items-baseline justify-between">
+                                                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 truncate mr-2">{altName}</span>
+                                                  {alt.note && <span className="text-[10px] text-gray-500 italic truncate max-w-[50%]">{alt.note}</span>}
+                                               </div>
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-1.5 shrink-0">
+                                                <input
+                                                  value={amount}
+                                                  onChange={(e) => setSubstitutionAmounts(prev => ({ ...prev, [key]: e.target.value }))}
+                                                  placeholder={defaultAmount}
+                                                  className="w-16 text-[10px] px-1.5 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-black/20 text-center"
+                                                />
+                                                <button
+                                                  onClick={() => handleApplySubstitution(ing.id, alt, amount)}
+                                                  className="text-[10px] font-bold bg-orange-100 text-orange-700 dark:bg-orange-800 dark:text-orange-100 px-2 py-1 rounded hover:bg-orange-200 dark:hover:bg-orange-700 transition-colors"
+                                                >
+                                                   {t.use_alternative}
+                                                </button>
+                                            </div>
+                                         </div>
+                                      )
+                                   })}
+                                </div>
+                             </div>
                           )}
-                        </p>
-                        {renderSubstitutions(ing.id)}
-                      </div>
-                    )
-                  })}
-              </div>
-            </div>
+                       </details>
+                     );
+                   })}
+             </div>
           </div>
         )}
 
