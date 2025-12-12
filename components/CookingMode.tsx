@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, ChevronLeft, ChevronRight, Play, Pause, RotateCcw, Check, Clock, Volume2, VolumeX, Maximize2, Minimize2, Plus, Minus } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Play, Pause, RotateCcw, Check, Clock, Volume2, VolumeX, Maximize2, Minimize2, Plus, Minus, ChevronDown } from 'lucide-react';
 import { Recipe, RecipeStep } from '../types';
 import { translations, Language } from '../translations'; // Assuming we'll add translations later or use hardcoded/prop
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { extractDurationFromText } from '../utils/textUtils';
+import { getInstructionImage } from '../utils/instructionImages';
 
 // --- Types ---
 
@@ -62,6 +63,17 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepInd
     };
 
     // --- Timer Logic ---
+    const contentRef = useRef<HTMLDivElement>(null);
+    const [showScrollArrow, setShowScrollArrow] = useState(false);
+
+    // Reset scroll on step change
+    useEffect(() => {
+        if (contentRef.current) {
+            contentRef.current.scrollTop = 0;
+            // Check if we need to show the arrow initially
+            setShowScrollArrow(contentRef.current.scrollHeight > contentRef.current.clientHeight);
+        }
+    }, [currentStepIndex]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -191,54 +203,141 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepInd
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 overflow-y-auto p-6 md:p-12 flex flex-col items-center justify-center relative">
+            <div 
+                ref={contentRef as any}
+                className="flex-1 overflow-y-auto p-6 md:p-12 flex flex-col items-center justify-start md:justify-center relative scroll-smooth"
+                onScroll={(e) => {
+                    const target = e.currentTarget;
+                    if (target.scrollTop > 20) {
+                        setShowScrollArrow(false);
+                    } else if (target.scrollHeight > target.clientHeight) {
+                         setShowScrollArrow(true);
+                    }
+                }}
+            >
                 
-                {/* Previous overlay for gesture area could go here */}
+                {/* Scroll Indicator Arrow (Mobile Only - visible loop) */}
+                <AnimatePresence>
+                    {showScrollArrow && (
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="md:hidden absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none z-20"
+                        >
+                            <div className="animate-bounce bg-black/20 dark:bg-white/10 p-2 rounded-full backdrop-blur-sm">
+                                <ChevronDown className="text-gray-900 dark:text-white opacity-70" size={24} />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
 
                 <AnimatePresence mode='wait'>
+
+
                     <motion.div
                         key={currentStepIndex}
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.2 }}
-                        className="max-w-2xl w-full flex flex-col gap-8"
+                        className="w-full max-w-6xl flex flex-col md:flex-row gap-8 md:gap-16 items-start justify-center pt-8 md:pt-0" 
                     >
-                        {/* Big Step Number */}
-                        <div className="text-6xl font-black text-gray-100 dark:text-gray-800 absolute top-10 left-6 select-none -z-10">
-                            {currentStepIndex + 1}
-                        </div>
+                         {/* LEFT COLUMN: Image & Step Number (Desktop) */}
+                         {(() => {
+                            const imgSrc = getInstructionImage(stepDetails.text);
+                            
+                            return (
+                                <>
+                                    {/* Image Column */}
+                                    {imgSrc ? (
+                                        <div className="w-full md:w-1/3 flex flex-col gap-4 relative shrink-0">
+                                             {/* Big Step Number (Desktop) */}
+                                             <div className="hidden md:block text-8xl font-black text-gray-100 dark:text-gray-800 absolute -top-12 -left-8 select-none -z-10 opacity-50">
+                                                {currentStepIndex + 1}
+                                            </div>
 
-                        {/* Text */}
-                        <div className="text-xl md:text-3xl font-medium leading-relaxed">
-                            {stepDetails.text}
-                        </div>
+                                            {/* Image Container - Masked Fade (True Vignette) */}
+                                            <div className="w-full aspect-[4/3] md:aspect-[3/4] lg:aspect-square rounded-[2.5rem] overflow-hidden relative group shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
+                                                {/* Dark background for chalk style */}
+                                                <div className="absolute inset-0 bg-[#1a1a1a]" />
+                                                
+                                                <img 
+                                                    src={imgSrc} 
+                                                    alt="Instruction" 
+                                                    className="w-full h-full object-contain p-2 opacity-90" 
+                                                    style={{
+                                                        maskImage: 'radial-gradient(circle closest-side at center, black 30%, transparent 100%)',
+                                                        WebkitMaskImage: 'radial-gradient(circle closest-side at center, black 30%, transparent 100%)'
+                                                    }}
+                                                />
+                                                
+                                                {/* Optional: Subtle grain or noise could go here */}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="hidden md:flex w-1/3 justify-end pr-8">
+                                             <div className="text-9xl font-black text-gray-100 dark:text-gray-800 select-none opacity-50">
+                                                {currentStepIndex + 1}
+                                            </div>
+                                        </div>
+                                    )}
 
-                        {/* Step Timer Check */}
-                        {stepDetails.duration > 0 && (
-                            <div className="mt-4 p-6 bg-brand-50 dark:bg-brand-900/10 rounded-2xl border border-brand-100 dark:border-brand-900/30 flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <Clock size={24} className="text-brand-500" />
-                                    <div>
-                                        <div className="font-bold">{(t as any).recommended_timer}</div>
-                                        <div className="text-sm opacity-70">{stepDetails.duration} {(t as any).timer_min}</div>
+                                    {/* Right Column: Text & Content */}
+                                    <div className={`w-full ${imgSrc ? 'md:w-2/3' : 'md:w-2/3 md:mx-auto'} flex flex-col gap-6 Pb-8`}>
+                                        
+                                        {/* Mobile Step Number */}
+                                        <div className="md:hidden flex items-center gap-4 mb-2">
+                                            <span className="text-5xl font-black text-brand-500/20 dark:text-brand-400/20">
+                                                {(currentStepIndex + 1).toString().padStart(2, '0')}
+                                            </span>
+                                            <div className="h-px bg-gray-100 dark:bg-gray-800 flex-1" />
+                                        </div>
+
+                                        <div className="text-xl md:text-3xl font-medium leading-relaxed text-gray-800 dark:text-gray-100">
+                                            {stepDetails.text}
+                                        </div>
+
+                                        {/* Step Timer Check */}
+                                        {stepDetails.duration > 0 && (
+                                            <div className="mt-4 p-6 bg-brand-50 dark:bg-brand-900/10 rounded-3xl border border-brand-100 dark:border-brand-900/30 flex items-center justify-between max-w-md shadow-sm">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="p-3 bg-white dark:bg-brand-900/20 rounded-full text-brand-500">
+                                                        <Clock size={24} />
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-bold text-gray-900 dark:text-gray-100">{(t as any).recommended_timer}</div>
+                                                        <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                                                            {stepDetails.duration} {(t as any).timer_min}
+                                                        </div>
+                                                        {/* Mobile Scroll Hint: If this renders, user might need to scroll. 
+                                                            We can add a tiny text '▼ Scroll down' if we really want to be explicit, 
+                                                            but the layout usually shows partial content. 
+                                                        */}
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => addTimer(`Step ${currentStepIndex + 1}`, stepDetails.duration)}
+                                                    className="bg-brand-500 text-white px-5 py-3 rounded-xl font-bold hover:bg-brand-600 transition-colors shadow-lg shadow-brand-500/20"
+                                                >
+                                                    {(t as any).timer_start}
+                                                </button>
+                                            </div>
+                                        )}
+                                        
+                                        {/* Spacer for bottom scrolling */}
+                                        <div className="h-24 md:h-0" />
                                     </div>
-                                </div>
-                                <button
-                                    onClick={() => addTimer(`Step ${currentStepIndex + 1}`, stepDetails.duration)}
-                                    className="bg-brand-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-brand-600 transition-colors shadow-sm"
-                                >
-                                    {(t as any).timer_start}
-                                </button>
-                            </div>
-                        )}
+                                </>
+                            );
+                        })()}
                     </motion.div>
                 </AnimatePresence>
             </div>
 
-            {/* Timers Area (Floating or Bottom Sheet) */}
-            <div className="absolute bottom-28 left-4 right-4 flex flex-col gap-2 pointer-events-none">
-                 {/* Only direct children pointer events */}
+            {/* Timers Area (Floating above footer) */}
+            <div className="absolute bottom-36 md:bottom-32 left-4 right-4 flex flex-col gap-2 pointer-events-none z-50">
                  <div className="flex flex-col-reverse gap-2 pointer-events-auto">
                     {timers.map(timer => (
                         <motion.div
@@ -246,26 +345,26 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepInd
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            className={`p-3 rounded-xl shadow-lg border flex items-center justify-between max-w-sm ml-auto
-                                ${timer.status === 'finished' ? 'bg-red-500 text-white border-red-600' : 'bg-white dark:bg-gray-800 dark:border-gray-700'}
+                            className={`p-4 rounded-2xl shadow-xl border flex items-center justify-between max-w-sm ml-auto w-full md:w-auto
+                                ${timer.status === 'finished' ? 'bg-red-500 text-white border-red-600' : 'bg-white/95 dark:bg-gray-800/95 backdrop-blur border-gray-100 dark:border-gray-700'}
                             `}
                         >
                             <div className="flex items-center gap-3">
-                                <button onClick={() => removeTimer(timer.id)} className="opacity-60 hover:opacity-100">
+                                <button onClick={() => removeTimer(timer.id)} className="opacity-60 hover:opacity-100 p-1 hover:bg-black/5 rounded-full">
                                     <X size={16} />
                                 </button>
                                 <div className="flex flex-col">
-                                    <span className="text-xs font-bold uppercase tracking-wide opacity-80">{timer.label}</span>
-                                    <span className="text-xl font-mono font-bold">{formatTime(timer.remaining)}</span>
+                                    <span className="text-xs font-bold uppercase tracking-wide opacity-70">{timer.label}</span>
+                                    <span className="text-2xl font-mono font-bold tracking-tight">{formatTime(timer.remaining)}</span>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
                                 {timer.status !== 'finished' && (
-                                    <button onClick={() => toggleTimer(timer.id)} className="p-2 rounded-full hover:bg-black/10">
+                                    <button onClick={() => toggleTimer(timer.id)} className="p-3 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                                         {timer.status === 'running' ? <Pause size={20} /> : <Play size={20} />}
                                     </button>
                                 )}
-                                <button onClick={() => resetTimer(timer.id)} className="p-2 rounded-full hover:bg-black/10">
+                                <button onClick={() => resetTimer(timer.id)} className="p-3 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                                     <RotateCcw size={20} />
                                 </button>
                             </div>
