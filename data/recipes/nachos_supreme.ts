@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const NACHOS_SUPREME: RecipeDefinition = {
   id: 'local-nachos-supreme',

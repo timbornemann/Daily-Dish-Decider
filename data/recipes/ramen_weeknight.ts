@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const RAMEN_WEEKNIGHT: RecipeDefinition = {
   id: 'local-ramen-weeknight',

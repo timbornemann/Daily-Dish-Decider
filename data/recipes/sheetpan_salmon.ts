@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const SHEETPAN_SALMON: RecipeDefinition = {
   id: 'local-sheetpan-salmon',

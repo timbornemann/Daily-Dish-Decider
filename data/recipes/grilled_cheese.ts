@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const GRILLED_CHEESE: RecipeDefinition = {
   id: 'local-grilled-cheese',

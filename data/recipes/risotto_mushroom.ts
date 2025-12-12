@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const RISOTTO_MUSHROOM: RecipeDefinition = {
   id: 'local-risotto-mushroom',

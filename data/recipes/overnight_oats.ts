@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const OVERNIGHT_OATS: RecipeDefinition = {
   id: 'local-overnight-oats',

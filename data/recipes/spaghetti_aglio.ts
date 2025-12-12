@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const SPAGHETTI_AGLIO: RecipeDefinition = {
   id: 'local-spaghetti-aglio',

@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const CAESAR_SALAD: RecipeDefinition = {
   id: 'local-caesar-salad',

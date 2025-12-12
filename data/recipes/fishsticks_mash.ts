@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const FISHSTICKS_MASH: RecipeDefinition = {
   id: 'local-fishsticks-mash',

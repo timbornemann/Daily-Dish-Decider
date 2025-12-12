@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const SMOOTHIE_BOWL: RecipeDefinition = {
   id: 'local-smoothie-bowl',

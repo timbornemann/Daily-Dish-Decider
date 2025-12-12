@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const FROZEN_PIZZA_UPGRADE: RecipeDefinition = {
   id: 'local-frozen-pizza-upgrade',

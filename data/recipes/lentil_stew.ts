@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const LENTIL_STEW: RecipeDefinition = {
   id: 'local-lentil-stew',

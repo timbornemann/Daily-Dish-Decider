@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const NUDELN_KAESESAUCE: RecipeDefinition = {
   id: 'local-nudeln-kaesesauce',

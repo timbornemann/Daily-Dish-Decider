@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const DONER_PLATE: RecipeDefinition = {
   id: 'local-doner-plate',

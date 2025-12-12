@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const NUDELN_AUFLAUF: RecipeDefinition = {
   id: 'local-nudeln-auflauf',

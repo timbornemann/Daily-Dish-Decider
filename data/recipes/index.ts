@@ -61,6 +61,9 @@ import { MOUSSE_CHOCOLAT } from './mousse_chocolat';
 import { TOMATO_SOUP } from './tomato_soup';
 import { FLAMMKUCHEN } from './flammkuchen';
 import { COUSCOUS_SALAD } from './couscous_salad';
+import { LEMON_CAKE } from './lemon_cake';
+import { CHOCOLATE_COOKIES } from './chocolate_cookies';
+import { BROWNIES } from './brownies';
 
 export const ALL_RECIPES = [
   PANCAKES,
@@ -125,5 +128,8 @@ export const ALL_RECIPES = [
   MOUSSE_CHOCOLAT,
   TOMATO_SOUP,
   FLAMMKUCHEN,
-  COUSCOUS_SALAD
+  COUSCOUS_SALAD,
+  LEMON_CAKE,
+  CHOCOLATE_COOKIES,
+  BROWNIES
 ];

@@ -1,4 +1,4 @@
-import { RecipeDefinition } from '../types';
+import { RecipeDefinition } from '../../types';
 
 export const TOFU_STIRFRY: RecipeDefinition = {
   id: 'local-tofu-stirfry',
