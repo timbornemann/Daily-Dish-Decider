@@ -22,6 +22,7 @@ export const ALL_INGREDIENTS: Record<string, IngredientDef> = {
     apple: { id: 'apple', category: 'Produce' },
     orange: { id: 'orange', category: 'Produce' },
     berry: { id: 'berry', category: 'Produce' },
+    blueberry: { id: 'blueberry', category: 'Produce' },
     avocado: { id: 'avocado', category: 'Produce' },
     mushroom: { id: 'mushroom', category: 'Produce' },
     ginger: { id: 'ginger', category: 'Produce' },
@@ -56,6 +57,7 @@ export const ALL_INGREDIENTS: Record<string, IngredientDef> = {
     grana_padano: { id: 'grana_padano', category: 'Dairy' },
     gouda: { id: 'gouda', category: 'Dairy' },
     feta: { id: 'feta', category: 'Dairy' },
+    vegan_butter: { id: 'vegan_butter', category: 'Dairy' },
 
     // Meat
     chicken_breast: { id: 'chicken_breast', category: 'Meat' },
@@ -112,6 +114,9 @@ export const ALL_INGREDIENTS: Record<string, IngredientDef> = {
     vanilla_extract: { id: 'vanilla_extract', category: 'Pantry' },
     cocoa_powder: { id: 'cocoa_powder', category: 'Pantry' },
     chocolate_chips: { id: 'chocolate_chips', category: 'Pantry' },
+    vanilla_sugar: { id: 'vanilla_sugar', category: 'Pantry' },
+    apple_sauce: { id: 'apple_sauce', category: 'Pantry' },
+    powdered_sugar: { id: 'powdered_sugar', category: 'Pantry' },
     brown_sugar: { id: 'brown_sugar', category: 'Pantry' },
     cornstarch: { id: 'cornstarch', category: 'Pantry' },
     vegetable_broth: { id: 'vegetable_broth', category: 'Pantry' },

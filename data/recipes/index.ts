@@ -64,6 +64,9 @@ import { COUSCOUS_SALAD } from './couscous_salad';
 import { LEMON_CAKE } from './lemon_cake';
 import { CHOCOLATE_COOKIES } from './chocolate_cookies';
 import { BROWNIES } from './brownies';
+import { VEGAN_CHOCOLATE_COOKIES } from './vegan_chocolate_cookies';
+import { CINNAMON_ROLLS } from './cinnamon_rolls';
+import { BLUEBERRY_MUFFINS } from './blueberry_muffins';
 
 export const ALL_RECIPES = [
   PANCAKES,
@@ -131,5 +134,8 @@ export const ALL_RECIPES = [
   COUSCOUS_SALAD,
   LEMON_CAKE,
   CHOCOLATE_COOKIES,
-  BROWNIES
+  BROWNIES,
+  VEGAN_CHOCOLATE_COOKIES,
+  CINNAMON_ROLLS,
+  BLUEBERRY_MUFFINS
 ];
