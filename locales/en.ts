@@ -61,6 +61,24 @@ export const en = {
   no_matches: "No matching recipes found.",
   or_create: "Or create your own",
 
+  // Discover Filters
+  filter_meal_type: "Meal",
+  filter_meal_breakfast: "Breakfast",
+  filter_meal_lunch: "Lunch",
+  filter_meal_dinner: "Dinner",
+  
+  filter_temp: "Temp",
+  filter_temp_warm: "Warm",
+  filter_temp_cold: "Cold",
+  
+  filter_diet: "Diet",
+  filter_diet_all: "All",
+  filter_diet_vegan: "Vegan",
+  filter_diet_vegetarian: "Veggie",
+  
+  filter_ignore_pantry: "Ignore Pantry",
+
+
   // Cookbook
   cookbook_title: "Recipe Book",
   search_placeholder: "Search recipes, ingredients, or tags...",

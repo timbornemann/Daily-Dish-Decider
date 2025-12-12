@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo, Variants } from 'framer-motion';
-import { X, Heart, ChefHat, RefreshCw, Info, Plus, User, Bot, BookOpen } from 'lucide-react';
+import { X, Heart, ChefHat, RefreshCw, Info, Plus, User, Bot, BookOpen, Filter, Utensils, Thermometer, Leaf, Layers, Check } from 'lucide-react';
 import { Recipe, Ingredient, UserPreferences } from '../types';
 import { generateRecipes } from '../services/gemini';
 import { getLocalRecipes, findMatchingRecipes } from '../services/localRecipes';
@@ -56,13 +56,15 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [exitDirection, setExitDirection] = useState<number>(0); 
-  const t = translations[lang];
+  
+  // Filters State
+  const [filterMeal, setFilterMeal] = useState<'breakfast' | 'lunch' | 'dinner' | undefined>(undefined);
+  const [filterTemp, setFilterTemp] = useState<'warm' | 'cold' | undefined>(undefined);
+  const [filterDiet, setFilterDiet] = useState<'vegan' | 'vegetarian' | 'all'>('all'); // Default to 'all' (respects user prefs only)
+  const [ignorePantry, setIgnorePantry] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
-  // Initial Fetch Logic
-  useEffect(() => {
-    loadRecommendations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pantryItems, userRecipes]);
+  const t = translations[lang];
 
   const loadRecommendations = () => {
     setLoading(true);
@@ -78,7 +80,12 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
       preferredTags,
       timeOfDay,
       weekSegment,
-      epsilon: 0.1
+      epsilon: 0.1,
+      filterMealType: filterMeal,
+      filterTemperature: filterTemp,
+      filterDiet,
+      ignorePantry,
+      lang
     });
     
     // 2. Sort by User Taste Profile (Soft constraint / RL)
@@ -87,6 +94,12 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
     setRecipes(recommended);
     setLoading(false);
   };
+
+  // Initial Fetch & Filter Logic
+  useEffect(() => {
+    loadRecommendations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pantryItems, userRecipes, filterMeal, filterTemp, filterDiet, ignorePantry]);
 
   const forceAiFetch = async () => {
       setLoading(true);
@@ -126,30 +139,20 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
     }
   };
 
-  if (pantryItems.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full p-6 text-center text-gray-500 dark:text-gray-400">
-        <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full mb-4">
-          <ChefHat size={48} className="text-gray-400 dark:text-gray-500" />
-        </div>
-        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t.pantry_empty_title}</h3>
-        <p className="mb-6">{t.pantry_empty_desc}</p>
-        
-        <button 
-             onClick={onCreateRecipe}
-             className="px-6 py-3 bg-brand-500 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-brand-600 transition"
-        >
-            <Plus size={20} /> {t.create_own_button}
-        </button>
-      </div>
-    );
-  }
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (filterMeal) count++;
+    if (filterTemp) count++;
+    if (filterDiet !== 'all') count++;
+    if (ignorePantry) count++;
+    return count;
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-full relative overflow-hidden bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
       
-      {/* Create Button (Top Right) */}
-      <div className="absolute top-4 right-4 z-20">
+      {/* Header Controls (Always Visible) */}
+      <div className="absolute top-4 right-4 z-40 flex flex-col gap-3">
           <button 
             onClick={onCreateRecipe}
             className="bg-white dark:bg-gray-800 p-3 rounded-full shadow-md text-brand-600 dark:text-brand-400 border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform"
@@ -157,16 +160,194 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
           >
               <Plus size={24} />
           </button>
+          
+          <div className="relative">
+            <button 
+              onClick={() => setShowFilters(!showFilters)}
+              className={`p-3 rounded-full shadow-md border hover:scale-105 transition-all duration-200 ${showFilters || getActiveFilterCount() > 0 ? 'bg-brand-500 text-white border-brand-500 ring-2 ring-brand-200 dark:ring-brand-900' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-100 dark:border-gray-700'}`}
+              title="Filters"
+            >
+                <Filter size={24} />
+            </button>
+            {getActiveFilterCount() > 0 && !showFilters && (
+               <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm">
+                 {getActiveFilterCount()}
+               </span>
+            )}
+          </div>
       </div>
 
+      { /* Filter Modal Overlay */ }
+      <AnimatePresence>
+        {showFilters && (
+          <>
+            <motion.div 
+               initial={{ opacity: 0 }} 
+               animate={{ opacity: 1 }} 
+               exit={{ opacity: 0 }}
+               onClick={() => setShowFilters(false)}
+               className="absolute inset-0 bg-black/40 backdrop-blur-sm z-40"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              className="absolute top-16 right-4 left-4 md:left-auto md:w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl z-50 p-5 border border-gray-100 dark:border-gray-700 overflow-hidden"
+            >
+               <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                    <Filter size={18} className="text-brand-500" /> Filter
+                  </h3>
+                  <button onClick={() => setShowFilters(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <X size={20} />
+                  </button>
+               </div>
+
+               <div className="space-y-4">
+                  {/* Meal Type */}
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 block uppercase tracking-wider">{t.filter_meal_type}</label>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { val: undefined, label: t.filter_all || 'Alle' }, // Fallback string if missing in en.ts temporarily
+                        { val: 'breakfast', label: t.filter_meal_breakfast },
+                        { val: 'lunch', label: t.filter_meal_lunch },
+                        { val: 'dinner', label: t.filter_meal_dinner },
+                      ].map((opt) => (
+                        <button
+                          key={String(opt.val)}
+                          onClick={() => setFilterMeal(opt.val as any)}
+                          className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${filterMeal === opt.val 
+                            ? 'bg-brand-100 text-brand-700 border-brand-200 dark:bg-brand-900/30 dark:text-brand-300 dark:border-brand-800' 
+                            : 'bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-700/50 dark:text-gray-400 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Temperature */}
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 block uppercase tracking-wider">{t.filter_temp}</label>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { val: undefined, label: t.filter_all || 'Alle' },
+                        { val: 'warm', label: t.filter_temp_warm },
+                        { val: 'cold', label: t.filter_temp_cold },
+                      ].map((opt) => (
+                        <button
+                          key={String(opt.val)}
+                          onClick={() => setFilterTemp(opt.val as any)}
+                          className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${filterTemp === opt.val 
+                             ? 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800' 
+                             : 'bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-700/50 dark:text-gray-400 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Diet */}
+                  <div>
+                     <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 block uppercase tracking-wider">{t.filter_diet}</label>
+                     <div className="flex flex-wrap gap-2">
+                        {[
+                          { val: 'all', label: t.filter_diet_all },
+                          { val: 'vegetarian', label: t.filter_diet_vegetarian },
+                          { val: 'vegan', label: t.filter_diet_vegan },
+                        ].map((opt) => (
+                          <button
+                            key={opt.val}
+                            onClick={() => setFilterDiet(opt.val as any)}
+                            className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${filterDiet === opt.val 
+                               ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' 
+                               : 'bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-700/50 dark:text-gray-400 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                     </div>
+                  </div>
+
+                  <hr className="border-gray-100 dark:border-gray-700" />
+
+                  {/* Ignore Pantry Toggle */}
+                  <div className="flex items-center justify-between">
+                     <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t.filter_ignore_pantry}</span>
+                     <button 
+                        onClick={() => setIgnorePantry(!ignorePantry)}
+                        className={`w-12 h-7 flex items-center rounded-full p-1 duration-300 shadow-inner ${ignorePantry ? 'bg-brand-500' : 'bg-gray-200 dark:bg-gray-700'}`}
+                      >
+                        <motion.div 
+                          layout 
+                          className="w-5 h-5 bg-white rounded-full shadow-md"
+                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                         />
+                      </button>
+                  </div>
+               </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       {loading && recipes.length === 0 && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
-          <RefreshCw className="animate-spin text-brand-500 mb-4" size={40} />
-          <p className="text-brand-900 dark:text-brand-400 font-medium animate-pulse">{t.loading_chef}</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-30 pointer-events-none">
+          <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 flex flex-col items-center">
+             <RefreshCw className="animate-spin text-brand-500 mb-4" size={40} />
+             <p className="text-brand-900 dark:text-brand-400 font-medium animate-pulse">{t.loading_chef}</p>
+          </div>
         </div>
       )}
 
-      <div className="relative w-full max-w-sm h-[65vh] md:h-[600px] perspective-1000">
+      {/* Main Content Area */}
+      <div className="relative w-full max-w-sm h-[65vh] md:h-[600px] perspective-1000 z-10 flex items-center justify-center">
+        
+        {/* Empty Pantry / No Results State */}
+        {recipes.length === 0 && !loading && (
+             <div className="flex flex-col items-center justify-center text-center px-6">
+                <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4 text-gray-400 shadow-inner">
+                   {pantryItems.length === 0 && !ignorePantry ? <ChefHat size={32} /> : <BookOpen size={32} />}
+                </div>
+                
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+                   {pantryItems.length === 0 && !ignorePantry ? t.pantry_empty_title : t.no_matches}
+                </h3>
+                
+                <p className="mb-6 text-gray-500 dark:text-gray-400 max-w-[260px]">
+                   {pantryItems.length === 0 && !ignorePantry ? t.pantry_empty_desc : "Versuche, die Filter zu ändern oder den Vorrat zu ignorieren."}
+                </p>
+                
+                <div className="flex flex-col gap-3 w-full max-w-[200px]">
+                   {pantryItems.length === 0 && !ignorePantry ? (
+                      <button 
+                         onClick={onCreateRecipe}
+                         className="px-6 py-3 bg-brand-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-brand-600 transition shadow-lg shadow-brand-500/20 active:scale-95"
+                      >
+                         <Plus size={20} /> {t.create_own_button}
+                      </button>
+                   ) : (
+                      <>
+                        <button 
+                           onClick={() => forceAiFetch()}
+                           className="bg-white dark:bg-gray-800 px-6 py-3 rounded-xl shadow-lg text-brand-500 font-bold flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-100 dark:border-gray-700 active:scale-95"
+                        >
+                           <RefreshCw size={20} /> {t.generate_ai_button}
+                        </button>
+                        <button 
+                           onClick={onCreateRecipe}
+                           className="text-gray-400 text-sm font-medium hover:text-brand-500 underline pt-2"
+                        >
+                           {t.or_create}
+                        </button>
+                      </>
+                   )}
+                </div>
+             </div>
+        )}
+
         <AnimatePresence custom={exitDirection}>
           {recipes.map((recipe, index) => {
              // Only render the top 2 cards for performance
@@ -187,35 +368,10 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
              );
           })}
         </AnimatePresence>
-        
-        {/* Empty State / Trigger AI State */}
-        {recipes.length === 0 && !loading && (
-          <div className="absolute inset-0 flex items-center justify-center flex-col gap-4 text-center px-6">
-             <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-2 text-gray-400">
-                <BookOpen size={24} />
-             </div>
-             <p className="text-gray-500 dark:text-gray-400 max-w-[250px]">{t.no_matches}</p>
-             
-             {/* Explicit AI Trigger Button */}
-            <button 
-              onClick={() => forceAiFetch()}
-              className="bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg text-brand-500 font-bold flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-100 dark:border-gray-700"
-            >
-              <RefreshCw size={20} /> {t.generate_ai_button}
-            </button>
-            
-            <button 
-              onClick={onCreateRecipe}
-              className="text-gray-400 text-sm font-medium hover:text-brand-500 underline mt-2"
-            >
-              {t.or_create}
-            </button>
-          </div>
-        )}
       </div>
 
       {recipes.length > 0 && (
-        <div className="flex gap-6 mt-8 z-10">
+        <div className="flex gap-6 mt-8 z-10 w-full max-w-sm justify-center">
           <button 
             onClick={() => handleSwipe('left', recipes[0])}
             className="w-16 h-16 bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-full shadow-lg flex items-center justify-center hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400 transition-colors border border-gray-100 dark:border-gray-700 active:scale-95 duration-200"

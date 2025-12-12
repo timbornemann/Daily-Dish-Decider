@@ -42,6 +42,11 @@ interface MatchOptions {
   timeOfDay?: DayPeriod;
   weekSegment?: WeekSegment;
   epsilon?: number;
+  filterMealType?: 'breakfast' | 'lunch' | 'dinner';
+  filterTemperature?: 'warm' | 'cold';
+  filterDiet?: 'vegan' | 'vegetarian' | 'all';
+  ignorePantry?: boolean;
+  lang?: Language;
 }
 
 const normalizeName = (value: string): string => {
@@ -210,10 +215,22 @@ export const findMatchingRecipes = (
     preferredTags = [],
     timeOfDay,
     weekSegment,
-    epsilon = 0.05
+    epsilon = 0.05,
+    filterMealType,
+    filterTemperature,
+    filterDiet,
+    ignorePantry = false,
+    lang = 'de'
   } = options;
 
-  if (pantryItems.length === 0) return [];
+  const t = translations[lang];
+
+
+  // If ignorePantry is true, we simply pass all recipes (unless filtered by other criteria) 
+  // and pretend they are fully matched.
+  // match logic below needs to handle this.
+
+  if (pantryItems.length === 0 && !ignorePantry) return [];
 
   const normalizedPantry = pantryItems.map(p => ({
     raw: p.name,
@@ -246,6 +263,28 @@ export const findMatchingRecipes = (
       }
     });
 
+    // --- LOGIC CHANGE FOR IGNORE PANTRY ---
+    if (ignorePantry) {
+        // If ignoring pantry, we treat everything as if we have it, 
+        // OR we just calculate the score based on other factors and give a base match score.
+        // Let's say: baseScore = 1.0 (as if we have everything), missing = empty
+        // But we want to keep the "matched" list empty or full? 
+        // Let's fill "matched" with all ingredients to make the UI happy (showing them as available/green matches)
+        // OR we just leave them as is but don't penalize.
+        
+        // Better UX: Show them as if they are available (matched).
+        // So we override the lists we computed above.
+        
+        // Resetting lists for "ignore pantry" mode
+        matched.length = 0;
+        missing.length = 0;
+        
+        // Put all into matched
+        normalizedIngredients.forEach(req => matched.push(req.raw));
+        matchedWeight = totalWeight; 
+    }
+    // --------------------------------------
+
     const baseScore = totalWeight === 0 ? 0 : matchedWeight / totalWeight; // 0..1
     const ingredientWeighted = baseScore * 0.6; // reduce impact of pure ingredients
     const missingPenalty = missing.length * 0.12;
@@ -267,6 +306,33 @@ export const findMatchingRecipes = (
         dietPenalty += 0.05;
       }
     });
+
+    // --- Strict Filters ---
+    if (filterMealType) {
+        const breakfastTags = ['breakfast', 'brunch', 'morning', 'frühstück'];
+        const lunchTags = ['lunch', 'mittag', 'quick'];
+        const dinnerTags = ['dinner', 'evening', 'supper', 'abendessen', 'main course'];
+        
+        let hasType = false;
+        if (filterMealType === 'breakfast') hasType = lowerTags.some(t => breakfastTags.includes(t));
+        else if (filterMealType === 'lunch') hasType = lowerTags.some(t => lunchTags.includes(t));
+        else if (filterMealType === 'dinner') hasType = lowerTags.some(t => dinnerTags.includes(t));
+        
+        if (!hasType) return null; // Filter out
+    }
+
+    if (filterTemperature) {
+        const coldTags = ['salad', 'cold', 'smoothie', 'no-cook', 'salat', 'kalt'];
+        const isCold = lowerTags.some(t => coldTags.includes(t));
+        
+        if (filterTemperature === 'cold' && !isCold) return null;
+        if (filterTemperature === 'warm' && isCold) return null;
+    }
+
+    if (filterDiet && filterDiet !== 'all') {
+         if (!lowerTags.includes(filterDiet)) return null;
+    }
+    // ----------------------
 
     const lacksRequired = lowerRequired.some(reqTag => !lowerTags.includes(reqTag));
     if (lacksRequired) {
@@ -304,7 +370,11 @@ export const findMatchingRecipes = (
     }
 
     const reasons: string[] = [];
-    if (matched.length) reasons.push(`gefunden wegen: ${matched.join(', ')}`);
+    if (ignorePantry) {
+        reasons.push(t.filter_ignore_pantry || "Vorrat ignoriert");
+    } else if (matched.length) {
+        reasons.push(`gefunden wegen: ${matched.join(', ')}`);
+    }
     if (missing.length) reasons.push(`fehlt: ${missing.join(', ')}`);
     if (preferredHit.length) reasons.push(`bevorzugte Tags: ${preferredHit.join(', ')}`);
     if (dietPenalty > 0) reasons.push(`diet Penalty: ${dietPenalty.toFixed(2)}`);
@@ -328,7 +398,8 @@ export const findMatchingRecipes = (
   });
 
   return scored
-    .filter(s => s.recipe.matchMeta?.matchedIngredients.length > 0)
+    .filter(s => s !== null) // remove filtered out recipes
+    .filter(s => ignorePantry ? true : s.recipe.matchMeta?.matchedIngredients.length > 0)
     .sort((a, b) => b.score - a.score)
     .map(s => s.recipe);
 };

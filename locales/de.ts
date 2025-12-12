@@ -60,6 +60,24 @@ export const de = {
   no_matches: "Keine passenden Rezepte gefunden.",
   or_create: "Oder erstelle dein eigenes",
 
+  // Discover Filters
+  filter_meal_type: "Mahlzeit",
+  filter_meal_breakfast: "Frühstück",
+  filter_meal_lunch: "Mittag",
+  filter_meal_dinner: "Abend",
+  
+  filter_temp: "Temp",
+  filter_temp_warm: "Warm",
+  filter_temp_cold: "Kalt",
+  
+  filter_diet: "Ernährung",
+  filter_diet_all: "Alles",
+  filter_diet_vegan: "Vegan",
+  filter_diet_vegetarian: "Veggie",
+  
+  filter_ignore_pantry: "Vorrat ignorieren",
+
+
   // Cookbook
   cookbook_title: "Rezeptbuch",
   search_placeholder: "Rezepte, Zutaten oder Tags suchen...",
