@@ -147,6 +147,7 @@ export const en = {
   finished_cooking: "Done",
   no_liked_recipes: "No liked recipes yet.",
   start_swiping: "Start Swiping",
+  continue_swiping: "Continue Swiping",
 
   // Settings
   settings_title: "Settings",
@@ -253,7 +254,7 @@ export const en = {
     flaxseed: "Flaxseed", rice_noodles: "Rice Noodles", gnocchi: "Gnocchi", tomato_sauce: "Tomato Sauce",
     vanilla_extract: "Vanilla Extract", baking_soda: "Baking Soda", cocoa_powder: "Cocoa Powder",
     chocolate_chips: "Chocolate Chips", vanilla_sugar: "Vanilla Sugar", powdered_sugar: "Powdered Sugar",
-    apple_sauce: "Apple Sauce",
+    apple_sauce: "Apple Sauce", pesto: "Pesto",
 
     // Spices
     salt: "Salt", pepper_spice: "Black Pepper", cumin: "Cumin", paprika: "Paprika",

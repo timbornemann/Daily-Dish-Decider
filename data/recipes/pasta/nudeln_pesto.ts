@@ -15,6 +15,10 @@ export const NUDELN_PESTO: RecipeDefinition = {
     amount: '50g'
   },
   {
+    id: 'pesto',
+    amount: '1 Glas (150-190g)'
+  },
+  {
     id: 'tomato',
     amount: '6 (cherry)'
   }

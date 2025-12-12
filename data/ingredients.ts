@@ -131,6 +131,7 @@ export const ALL_INGREDIENTS: Record<string, IngredientDef> = {
     rice_noodles: { id: 'rice_noodles', category: 'Pantry' },
     gnocchi: { id: 'gnocchi', category: 'Pantry' },
     tomato_sauce: { id: 'tomato_sauce', category: 'Pantry' },
+    pesto: { id: 'pesto', category: 'Pantry' },
 
     // Spices
     salt: { id: 'salt', category: 'Spices' },

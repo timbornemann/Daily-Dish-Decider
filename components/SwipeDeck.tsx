@@ -36,6 +36,7 @@ interface SwipeDeckProps {
   pantryItems: Ingredient[];
   userRecipes: Recipe[];
   preferences: UserPreferences;
+  sessionHistory?: Set<string>;
   onLike: (recipe: Recipe) => void;
   onDislike: (recipe: Recipe) => void;
   onViewDetail: (recipe: Recipe) => void;
@@ -47,6 +48,7 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
   pantryItems, 
   userRecipes,
   preferences,
+  sessionHistory, 
   onLike, 
   onDislike, 
   onViewDetail, 
@@ -54,28 +56,38 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
   lang 
 }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [exitDirection, setExitDirection] = useState<number>(0); 
   
-  // Filters State
-  const [filterMeal, setFilterMeal] = useState<'breakfast' | 'lunch' | 'dinner' | undefined>(undefined);
-  const [filterTemp, setFilterTemp] = useState<'warm' | 'cold' | undefined>(undefined);
-  const [filterDiet, setFilterDiet] = useState<'vegan' | 'vegetarian' | 'all'>('all'); // Default to 'all' (respects user prefs only)
+  // Filter States
+  const [filterMeal, setFilterMeal] = useState<'breakfast' | 'lunch' | 'dinner' | undefined>();
+  const [filterTemp, setFilterTemp] = useState<'warm' | 'cold' | undefined>();
+  const [filterDiet, setFilterDiet] = useState<'vegan' | 'vegetarian' | 'all'>('all');
   const [ignorePantry, setIgnorePantry] = useState(false);
+
   const [showFilters, setShowFilters] = useState(false);
 
   const t = translations[lang];
 
+  // Load Recommendations
   const loadRecommendations = () => {
     setLoading(true);
     const localDB = getLocalRecipes(lang);
+    
+    // Combine local DB and User Recipes
     const allLocal = [...userRecipes, ...localDB];
+
+    // Filter out seen recipes if sessionHistory is provided
+    const unseenRecipes = sessionHistory 
+        ? allLocal.filter(r => !sessionHistory.has(r.id))
+        : allLocal;
+
     const preferredTags = derivePreferredTags(preferences.tasteProfile);
     const timeOfDay = deriveDayPeriod(new Date());
     const weekSegment = deriveWeekSegment(new Date());
     
     // 1. Filter by Pantry availability (Hard constraint)
-    const pantryMatches = findMatchingRecipes(pantryItems, allLocal, {
+    const pantryMatches = findMatchingRecipes(pantryItems, unseenRecipes, {
       dietFilters: preferences.dietaryRestrictions,
       preferredTags,
       timeOfDay,
@@ -83,7 +95,7 @@ export const SwipeDeck: React.FC<SwipeDeckProps> = ({
       epsilon: 0.1,
       filterMealType: filterMeal,
       filterTemperature: filterTemp,
-      filterDiet,
+      filterDiet: filterDiet,
       ignorePantry,
       lang
     });

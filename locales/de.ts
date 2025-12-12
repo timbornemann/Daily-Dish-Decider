@@ -146,6 +146,7 @@ export const de = {
   finished_cooking: "Fertig",
   no_liked_recipes: "Noch keine Favoriten.",
   start_swiping: "Rezepte suchen",
+  continue_swiping: "Weiter suchen",
 
   // Settings
   settings_title: "Einstellungen",
@@ -252,7 +253,7 @@ export const de = {
     flaxseed: "Leinsamen", rice_noodles: "Reisnudeln", gnocchi: "Gnocchi", tomato_sauce: "Tomatensoße",
     vanilla_extract: "Vanilleextrakt", baking_soda: "Natron", cocoa_powder: "Kakaopulver",
     chocolate_chips: "Schokodrops", vanilla_sugar: "Vanillezucker", powdered_sugar: "Puderzucker",
-    apple_sauce: "Apfelmus",
+    apple_sauce: "Apfelmus", pesto: "Pesto",
 
     // Spices
     salt: "Salz", pepper_spice: "Pfeffer", cumin: "Kreuzkümmel", paprika: "Paprika",

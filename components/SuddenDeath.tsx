@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Recipe } from '../types';
-import { Trophy, ArrowRight, RefreshCw } from 'lucide-react';
+import { Trophy, ArrowRight, RefreshCw, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { translations, Language } from '../translations';
 import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
@@ -11,11 +11,13 @@ interface SuddenDeathProps {
   selectedWinner?: Recipe | null;
   onWinnerSelected: (recipe: Recipe) => void;
   onFinish?: () => void;
+  onContinueSwiping?: () => void;
+  onEliminate?: (recipe: Recipe) => void;
   onRestart: () => void;
   lang: Language;
 }
 
-export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, selectedWinner, onWinnerSelected, onFinish, onRestart, lang }) => {
+export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, selectedWinner, onWinnerSelected, onFinish, onContinueSwiping, onEliminate, onRestart, lang }) => {
   // Simple tournament queue state
   const [queue, setQueue] = useState<Recipe[]>([...recipes]);
   const [currentPair, setCurrentPair] = useState<[Recipe, Recipe] | null>(
@@ -38,6 +40,7 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, selectedWinne
         recipe={selectedWinner} 
         onCook={() => onWinnerSelected(selectedWinner)} 
         onFinish={onFinish}
+        onContinue={onContinueSwiping}
         t={t} 
       />
     );
@@ -56,15 +59,23 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, selectedWinne
   if (recipes.length === 1) {
     // Should auto-select, but let's show UI
     return (
-      <WinnerView recipe={recipes[0]} onCook={() => onWinnerSelected(recipes[0])} onFinish={onFinish} t={t} />
+      <WinnerView 
+        recipe={recipes[0]} 
+        onCook={() => onWinnerSelected(recipes[0])} 
+        onFinish={onFinish} 
+        onContinue={onContinueSwiping}
+        t={t} 
+      />
     );
   }
 
   const handleChoice = (winner: Recipe, loser: Recipe) => {
-    // Remove loser, keep winner in queue (conceptually)
-    // Actually, we can just filter the original list or build a next round queue
-    // Simplified approach: Winner stays in current spot 0, Loser is removed from list completely
-    
+    // Remove loser from PARENT state immediately
+    if (onEliminate) {
+        onEliminate(loser);
+    }
+
+    // Update local queue for animation/flow
     const newQueue = queue.filter(r => r.id !== loser.id);
     setQueue(newQueue);
 
@@ -77,7 +88,15 @@ export const SuddenDeath: React.FC<SuddenDeathProps> = ({ recipes, selectedWinne
   };
 
   if (queue.length === 1) {
-      return <WinnerView recipe={queue[0]} onCook={() => onWinnerSelected(queue[0])} onFinish={onFinish} t={t} />;
+      return (
+        <WinnerView 
+          recipe={queue[0]} 
+          onCook={() => onWinnerSelected(queue[0])} 
+          onFinish={onFinish} 
+          onContinue={onContinueSwiping}
+          t={t} 
+        />
+      );
   }
 
   return (
@@ -149,7 +168,7 @@ const Choice = ({ recipe, position, onClick, t }: { recipe: Recipe, position: 'A
     )
 }
 
-const WinnerView = ({ recipe, onCook, onFinish, t }: { recipe: Recipe, onCook: () => void, onFinish?: () => void, t: any }) => (
+const WinnerView = ({ recipe, onCook, onFinish, onContinue, t }: { recipe: Recipe, onCook: () => void, onFinish?: () => void, onContinue?: () => void, t: any }) => (
     <div className="h-full flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-6 text-center transition-colors">
         <motion.div 
             initial={{ scale: 0 }}
@@ -168,6 +187,16 @@ const WinnerView = ({ recipe, onCook, onFinish, t }: { recipe: Recipe, onCook: (
             >
                 {t.lets_cook} <ArrowRight size={20} />
             </button>
+            
+            {onContinue && (
+                <button 
+                    onClick={onContinue}
+                    className="bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400 border-2 border-brand-100 dark:border-brand-900 px-8 py-4 rounded-xl font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center gap-2 transition-transform hover:scale-105"
+                >
+                    {t.continue_swiping || "Weiter suchen"} <Search size={20} />
+                </button>
+            )}
+
             {onFinish && (
                 <button 
                     onClick={onFinish}

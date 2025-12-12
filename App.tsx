@@ -29,6 +29,8 @@ const App: React.FC = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isCreatingRecipe, setIsCreatingRecipe] = useState(false);
   const [selectedWinner, setSelectedWinner] = useState<Recipe | null>(null);
+  // Session History (seen recipes in this session)
+  const [sessionHistory, setSessionHistory] = useState<Set<string>>(new Set());
 
   // Initialize Data
   useEffect(() => {
@@ -96,18 +98,34 @@ const App: React.FC = () => {
 
   // Logic Helpers
   const handleLike = (recipe: Recipe) => {
-    // 1. Save to favorites
-    // Avoid duplicates
+    // 1. Add to session history
+    const newHistory = new Set(sessionHistory);
+    newHistory.add(recipe.id);
+    setSessionHistory(newHistory);
+
+    // 2. Save to favorites (Avoid duplicates)
+    let currentLiked = likedRecipes;
     if (!likedRecipes.find(r => r.id === recipe.id)) {
-      updateLikedRecipes([...likedRecipes, recipe]);
+      currentLiked = [...likedRecipes, recipe];
+      updateLikedRecipes(currentLiked);
     }
 
-    // 2. Update Algorithm
+    // 3. Update Algorithm
     const newProfile = logFeedbackEvent(recipe, 'LIKE', preferences.tasteProfile);
     setPreferences({ ...preferences, tasteProfile: newProfile });
+
+    // 4. Check Threshold for Sudden Death
+    if (currentLiked.length >= 4) {
+        setView(AppView.FAVORITES);
+    }
   };
 
   const handleDislike = (recipe: Recipe) => {
+    // Add to session history
+    const newHistory = new Set(sessionHistory);
+    newHistory.add(recipe.id);
+    setSessionHistory(newHistory);
+    
     // Update Algorithm
     const newProfile = logFeedbackEvent(recipe, 'DISLIKE', preferences.tasteProfile);
     setPreferences({ ...preferences, tasteProfile: newProfile });
@@ -149,11 +167,25 @@ const App: React.FC = () => {
   };
 
   const handleFinishCooking = () => {
-    // Reset winner and favorites, go back to swipe
+    // Reset winner, favorites AND session history
     setSelectedWinner(null);
     setSelectedRecipe(null);
     updateLikedRecipes([]);
+    setSessionHistory(new Set()); 
     setView(AppView.SWIPE);
+  };
+
+  const handleContinueSwiping = () => {
+      // Go back to swiping, keeping likes and history intact
+      setView(AppView.SWIPE);
+  };
+
+  const handleEliminate = (recipe: Recipe) => {
+      // Remove from favorites immediately
+      const updatedLikes = likedRecipes.filter(r => r.id !== recipe.id);
+      updateLikedRecipes(updatedLikes);
+      
+      // Also ensure it stays in history so it doesn't reappear in swipe (already there from the like event)
   };
 
   const handleViewDetail = (recipe: Recipe) => {
@@ -170,11 +202,12 @@ const App: React.FC = () => {
       // Check if ingredients exist in pantry, if not add them? 
       const newIngredients: Ingredient[] = [];
       recipe.ingredients.forEach(ing => {
-          const exists = pantry.some(p => p.name.toLowerCase() === ing.name.toLowerCase());
+          const exists = pantry.some(p => p.name.toLowerCase() === ing.id.toLowerCase());
           if (!exists) {
               newIngredients.push({
                   id: `pantry-auto-${Date.now()}-${Math.random()}`,
-                  name: ing.name,
+                  name: ing.id,
+                  ingredientId: ing.id, // Ensure strict typing if Ingredient requires it
                   category: 'General', 
                   quantity: '1',
               });
@@ -259,6 +292,8 @@ const App: React.FC = () => {
             selectedWinner={selectedWinner}
             onWinnerSelected={handleWinnerSelected} 
             onFinish={handleFinishCooking}
+            onContinueSwiping={handleContinueSwiping}
+            onEliminate={handleEliminate}
             onRestart={() => setView(AppView.SWIPE)}
             lang={currentLang}
           />
@@ -279,6 +314,7 @@ const App: React.FC = () => {
             pantryItems={pantry}
             userRecipes={userRecipes}
             preferences={preferences}
+            sessionHistory={sessionHistory}
             onLike={handleLike} 
             onDislike={handleDislike}
             onViewDetail={handleViewDetail}

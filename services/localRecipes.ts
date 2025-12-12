@@ -4,20 +4,29 @@ import { translations, Translation, Language } from '../translations';
 
 // Ingredient normalization helpers
 const INGREDIENT_SYNONYMS: Record<string, string[]> = {
-  tomato: ['canned_tomato', 'tomato_paste', 'tomatoes', 'tomato_sauce'],
-  pasta: ['noodle', 'noodles', 'spaghetti', 'macaroni'],
-  rice: ['risotto', 'rice_noodles'],
-  cheese: ['mozzarella', 'parmesan', 'feta', 'cheddar', 'mascarpone'],
-  beef: ['ground_beef', 'steak', 'minced_beef'],
-  pork: ['bacon', 'sausage'],
-  chicken: ['chicken_breast', 'chicken_thigh'],
-  fish: ['salmon', 'fish_sticks', 'seafood', 'shrimp'],
-  bean: ['beans', 'black_beans'],
-  lettuce: ['salad', 'greens'],
-  bread: ['bun', 'buns', 'toast', 'pita', 'tortilla', 'wrap'],
-  yogurt: ['yoghurt'],
-  oil: ['olive_oil'],
-  pepper: ['bell_pepper', 'paprika']
+  tomato: ['canned_tomato', 'tomato_paste', 'tomatoes', 'tomato_sauce', 'tomaten', 'tomate'],
+  pasta: ['noodle', 'noodles', 'spaghetti', 'macaroni', 'fusilli', 'penne', 'nudeln', 'nudel'],
+  rice: ['risotto', 'rice_noodles', 'reis'],
+  cheese: ['mozzarella', 'parmesan', 'feta', 'cheddar', 'mascarpone', 'gorgonzola', 'gouda', 'käse', 'kaese'],
+  beef: ['ground_beef', 'steak', 'minced_beef', 'rind', 'rindfleisch', 'hackfleisch'],
+  pork: ['bacon', 'sausage', 'schwein', 'schweinefleisch', 'speck', 'wurst'],
+  chicken: ['chicken_breast', 'chicken_thigh', 'hähnchen', 'hühnchen', 'hähnchenbrust'],
+  fish: ['salmon', 'fish_sticks', 'seafood', 'shrimp', 'fisch', 'lachs', 'fischstäbchen', 'garnelen'],
+  bean: ['beans', 'black_beans', 'bohnen', 'kidneybohnen'],
+  lettuce: ['salad', 'greens', 'salat', 'eisbergsalat'],
+  bread: ['bun', 'buns', 'toast', 'pita', 'tortilla', 'wrap', 'brot', 'brötchen'],
+  yogurt: ['yoghurt', 'joghurt'],
+  oil: ['olive_oil', 'öl', 'olivenöl'],
+  pepper: ['bell_pepper', 'paprika'],
+  egg: ['eggs', 'ei', 'eier'],
+  onion: ['zwiebel', 'zwiebeln'],
+  garlic: ['knoblauch'],
+  potato: ['potatoes', 'kartoffel', 'kartoffeln'],
+  milk: ['milch'],
+  butter: ['butter'],
+  cream: ['sahne', 'rahm'],
+  ham: ['ham', 'schinken', 'kochschinken'],
+  peas: ['peas', 'frozen_peas', 'erbsen', 'tk_erbsen']
 };
 
 const DIET_CONFLICT_TAGS: Record<string, string[]> = {
@@ -254,7 +263,11 @@ export const findMatchingRecipes = (
     normalizedIngredients.forEach(req => {
       const ingWeight = LOW_IMPACT_INGREDIENTS.has(req.canonical) ? 0.3 : 1;
       totalWeight += ingWeight;
+      
+      // Fuzzy match against pantry
+      // We check if ANY pantry item fuzzy matches this required ingredient
       const hasItem = normalizedPantry.some(p => fuzzyIngredientMatch(p.canonical, req.canonical));
+      
       if (hasItem) {
         matched.push(req.raw);
         matchedWeight += ingWeight;
