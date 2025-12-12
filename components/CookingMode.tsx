@@ -4,13 +4,17 @@ import { Recipe, RecipeStep } from '../types';
 import { translations, Language } from '../translations'; // Assuming we'll add translations later or use hardcoded/prop
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { extractDurationFromText } from '../utils/textUtils';
+
 // --- Types ---
 
 interface CookingModeProps {
     recipe: Recipe;
     initialStepIndex?: number;
     onClose: () => void;
+    onFinish: () => void;
     onStepChange?: (index: number) => void; // For persistence
+    lang: Language;
 }
 
 interface TimerState {
@@ -23,12 +27,14 @@ interface TimerState {
 
 // --- Component ---
 
-export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepIndex = 0, onClose, onStepChange }) => {
+export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepIndex = 0, onClose, onFinish, onStepChange, lang }) => {
     const [currentStepIndex, setCurrentStepIndex] = useState(initialStepIndex);
     const [timers, setTimers] = useState<TimerState[]>([]);
     const [isMuted, setIsMuted] = useState(false);
     const [showTimerModal, setShowTimerModal] = useState(false); // For custom timer creation
     const [customTimerMinutes, setCustomTimerMinutes] = useState(5);
+
+    const t = translations[lang];
 
     const steps = recipe.steps;
     const currentStep = steps[currentStepIndex];
@@ -127,7 +133,7 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepInd
             onStepChange?.(next);
         } else {
              // Finish?
-             onClose();
+             onFinish();
         }
     };
 
@@ -139,10 +145,17 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepInd
         }
     };
 
+
+
+// ... (previous code)
+
     // Helper to get text/duration
     const getStepDetails = (step: RecipeStep) => {
-        if (typeof step === 'string') return { text: step, duration: 0 };
-        return { text: step.text, duration: step.durationMinutes || 0 };
+        if (typeof step === 'string') {
+            const autoDuration = extractDurationFromText(step);
+            return { text: step, duration: autoDuration || 0 };
+        }
+        return { text: step.text, duration: step.durationMinutes || extractDurationFromText(step.text) || 0 };
     };
 
     const stepDetails = getStepDetails(currentStep);
@@ -159,7 +172,7 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepInd
                 <div className="flex-1 text-center mx-4">
                     <h2 className="text-lg font-bold truncate">{recipe.title}</h2>
                     <div className="text-xs text-brand-500 font-medium tracking-wider uppercase">
-                        Step {currentStepIndex + 1} of {totalSteps}
+                        {(t as any).step_count.replace('{{current}}', (currentStepIndex + 1).toString()).replace('{{total}}', totalSteps.toString())}
                     </div>
                 </div>
                 <button onClick={() => setIsMuted(!isMuted)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
@@ -207,15 +220,15 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepInd
                                 <div className="flex items-center gap-3">
                                     <Clock size={24} className="text-brand-500" />
                                     <div>
-                                        <div className="font-bold">Recommended Timer</div>
-                                        <div className="text-sm opacity-70">{stepDetails.duration} minutes</div>
+                                        <div className="font-bold">{(t as any).recommended_timer}</div>
+                                        <div className="text-sm opacity-70">{stepDetails.duration} {(t as any).timer_min}</div>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => addTimer(`Step ${currentStepIndex + 1}`, stepDetails.duration)}
                                     className="bg-brand-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-brand-600 transition-colors shadow-sm"
                                 >
-                                    Start
+                                    {(t as any).timer_start}
                                 </button>
                             </div>
                         )}
@@ -278,7 +291,7 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepInd
                     <div className="p-3 bg-brand-50 dark:bg-brand-900/10 rounded-full text-brand-500 border border-brand-100 dark:border-brand-900/30">
                         <Clock size={24} />
                     </div>
-                    <span>Add Timer</span>
+                    <span>{(t as any).add_timer}</span>
                 </button>
 
                 {currentStepIndex < totalSteps - 1 ? (
@@ -286,14 +299,14 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepInd
                         onClick={goToNext}
                         className="px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl font-bold flex items-center gap-2 hover:opacity-90 transition-opacity shadow-lg"
                     >
-                        Next Step <ChevronRight size={20} />
+                        {(t as any).next_step} <ChevronRight size={20} />
                     </button>
                 ) : (
                     <button
-                        onClick={onClose}
+                        onClick={onFinish}
                         className="px-8 py-4 bg-brand-500 text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-brand-600 transition-colors shadow-lg shadow-brand-500/20"
                     >
-                        Finish Cooking <Check size={20} />
+                        {(t as any).finish_cooking} <Check size={20} />
                     </button>
                 )}
             </div>
@@ -308,20 +321,20 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, initialStepInd
                             exit={{ scale: 0.9, opacity: 0 }}
                             className="bg-white dark:bg-gray-900 p-6 rounded-2xl w-full max-w-sm shadow-xl"
                         >
-                            <h3 className="text-lg font-bold mb-4">Set Custom Timer</h3>
+                            <h3 className="text-lg font-bold mb-4">{(t as any).set_custom_timer}</h3>
                             <div className="flex items-center justify-center gap-4 mb-6">
                                 <button onClick={() => setCustomTimerMinutes(Math.max(1, customTimerMinutes - 1))} className="p-3 rounded-xl bg-gray-100 dark:bg-gray-800"><Minus size={20} /></button>
                                 <span className="text-3xl font-bold w-12 text-center">{customTimerMinutes}</span>
                                 <button onClick={() => setCustomTimerMinutes(customTimerMinutes + 1)} className="p-3 rounded-xl bg-gray-100 dark:bg-gray-800"><Plus size={20} /></button>
-                                <span className="text-sm text-gray-500">min</span>
+                                <span className="text-sm text-gray-500">{(t as any).timer_min}</span>
                             </div>
                             <div className="flex gap-2">
-                                <button onClick={() => setShowTimerModal(false)} className="flex-1 py-3 text-gray-500 font-medium">Cancel</button>
+                                <button onClick={() => setShowTimerModal(false)} className="flex-1 py-3 text-gray-500 font-medium">{(t as any).timer_cancel}</button>
                                 <button
                                     onClick={() => addTimer('Timer', customTimerMinutes)}
                                     className="flex-1 py-3 bg-brand-500 text-white rounded-xl font-bold hover:bg-brand-600"
                                 >
-                                    Start
+                                    {(t as any).timer_start}
                                 </button>
                             </div>
                         </motion.div>

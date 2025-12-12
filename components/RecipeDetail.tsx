@@ -4,7 +4,7 @@ import { Recipe, Ingredient, RecipeStep } from '../types';
 import { translations, Language } from '../translations';
 import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
 import { getSubstitutions, SubstitutionOption } from '../services/substitutions';
-import { applySubstitutionsToText, parseSubstitutionsInText } from '../utils/textUtils';
+import { applySubstitutionsToText, parseSubstitutionsInText, extractDurationFromText } from '../utils/textUtils';
 import { CookingMode } from './CookingMode';
 
 interface RecipeDetailProps {
@@ -39,6 +39,12 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
   const handleStepChange = (index: number) => {
       setSavedStepIndex(index);
       localStorage.setItem(`cookingState_${recipe.id}`, JSON.stringify({ step: index }));
+  };
+
+  const clearProgress = () => {
+      localStorage.removeItem(`cookingState_${recipe.id}`);
+      setSavedStepIndex(0);
+      setIsCookingMode(false);
   };
 
   const getIngredientName = (id: string) => (t.ingredients as any)[id] || id;
@@ -182,7 +188,9 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
               recipe={recipe}
               initialStepIndex={savedStepIndex}
               onClose={() => setIsCookingMode(false)}
+              onFinish={clearProgress}
               onStepChange={handleStepChange}
+              lang={lang}
           />
       );
   }
@@ -217,10 +225,10 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
         <button
             onClick={() => setIsCookingMode(true)}
             className="absolute bottom-6 right-6 bg-brand-500 text-white p-4 rounded-full shadow-lg hover:bg-brand-600 transition-transform active:scale-95 flex items-center justify-center gap-2"
-            title="Start Cooking"
+            title={(t as any).start_cooking}
         >
             <ChefHat size={24} />
-            {savedStepIndex > 0 && <span className="font-bold text-sm bg-white text-brand-500 px-1.5 rounded-md absolute -top-2 -right-2 border border-brand-500">Resume</span>}
+            {savedStepIndex > 0 && <span className="font-bold text-sm bg-white text-brand-500 px-1.5 rounded-md absolute -top-2 -right-2 border border-brand-500">{(t as any).resume_cooking}</span>}
         </button>
       </div>
 
@@ -335,7 +343,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
                     onClick={() => setIsCookingMode(true)}
                     className="w-full py-3 bg-brand-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-brand-600 transition-colors shadow-sm"
                 >
-                    <PlayCircle size={20} /> Start Cooking Mode
+                    <PlayCircle size={20} /> {(t as any).start_cooking}
                 </button>
             </div>
 
@@ -424,12 +432,18 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
                             )
                         ))}
                         </p>
-                        {/* Show timer hint if step object has duration */}
-                        {typeof step === 'object' && step.durationMinutes && (
-                             <div className="flex items-center gap-1.5 text-orange-500 text-xs font-bold mt-1.5">
-                                 <Clock size={12} /> {step.durationMinutes} min timer
-                             </div>
-                        )}
+                        {/* Show timer hint if step object has duration or auto-detected */}
+                        {(() => {
+                           const duration = typeof step === 'object' && step.durationMinutes ? step.durationMinutes : extractDurationFromText(stepText);
+                           if (duration) {
+                             return (
+                               <div className="flex items-center gap-1.5 text-orange-500 text-xs font-bold mt-1.5">
+                                   <Clock size={12} /> {duration} {(t as any).timer_hint}
+                               </div>
+                             );
+                           }
+                           return null;
+                        })()}
                     </div>
                   </div>
                 );

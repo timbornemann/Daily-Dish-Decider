@@ -136,6 +136,20 @@ export const de = {
   instructions_title: "Zubereitung",
   instead_of: "ehemals",
 
+  // Cooking Mode
+  start_cooking: "Kochmodus starten",
+  resume_cooking: "Fortsetzen",
+  step_count: "Schritt {{current}} von {{total}}",
+  recommended_timer: "Empfohlener Timer",
+  add_timer: "Timer hinzufügen",
+  set_custom_timer: "Eigenen Timer setzen",
+  finish_cooking: "Kochen beenden",
+  next_step: "Nächster Schritt",
+  timer_start: "Start",
+  timer_cancel: "Abbrechen",
+  timer_min: "Min",
+  timer_hint: "Min Timer",
+
   // Sudden Death
   sudden_death_title: "Entscheidung",
   choose_winner: "Wähle den Sieger",

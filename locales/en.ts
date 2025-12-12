@@ -137,6 +137,20 @@ export const en = {
   instructions_title: "Instructions",
   instead_of: "was",
 
+  // Cooking Mode
+  start_cooking: "Start Cooking Mode",
+  resume_cooking: "Resume",
+  step_count: "Step {{current}} of {{total}}",
+  recommended_timer: "Recommended Timer",
+  add_timer: "Add Timer",
+  set_custom_timer: "Set Custom Timer",
+  finish_cooking: "Finish Cooking",
+  next_step: "Next Step",
+  timer_start: "Start",
+  timer_cancel: "Cancel",
+  timer_min: "min",
+  timer_hint: "min timer",
+
   // Sudden Death
   sudden_death_title: "Sudden Death",
   choose_winner: "Choose the winner",

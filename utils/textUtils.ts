@@ -114,3 +114,42 @@ export const applySubstitutionsToText = (
     });
     return processingText;
 };
+
+/**
+ * Extracts a duration in minutes from a text string.
+ * Supports "X min", "X-Y min", "X hours", etc.
+ * Returns the first found duration converted to minutes, or null if none found.
+ */
+export const extractDurationFromText = (text: string): number | null => {
+    if (!text) return null;
+
+    // Regex to find patterns like:
+    // 10 mins, 10-12 mins, 1.5 hours, 1 hour 30 mins (complex, maybe just stick to simple first)
+    // Let's support: "number(-number)? (min|hour)"
+    
+    // Pattern: 
+    // (\d+(?:[.,]\d+)?): Number, optionally decimal
+    // (?:\s*-\s*\d+(?:[.,]\d+)?)?: Optional range (ignored, we take first number usually, or maybe we want the larger? Safe is larger for baking)
+    // \s*: Space
+    // (min|std|hour|stunde): Unit
+    
+    // Simplification: Find "N unit".
+    
+    const minutesRegex = /(\d+(?:[.,]\d+)?)\s*(?:-\s*\d+(?:[.,]\d+)?\s*)?(min|m\b)/i;
+    const hoursRegex = /(\d+(?:[.,]\d+)?)\s*(?:-\s*\d+(?:[.,]\d+)?\s*)?(h|hour|std|stunde)/i;
+
+    // Check Hours first (as they might contain "min" if we aren't careful, but regex distinguishes)
+    const hoursMatch = text.match(hoursRegex);
+    if (hoursMatch) {
+        const val = parseFloat(hoursMatch[1].replace(',', '.'));
+        return Math.round(val * 60);
+    }
+
+    const minutesMatch = text.match(minutesRegex);
+    if (minutesMatch) {
+        const val = parseFloat(minutesMatch[1].replace(',', '.'));
+        return Math.round(val);
+    }
+
+    return null;
+};
