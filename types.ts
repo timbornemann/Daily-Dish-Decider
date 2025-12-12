@@ -16,18 +16,20 @@ export interface RecipeIngredient {
   amount: string;
 }
 
+export type RecipeStep = string | { text: string; durationMinutes?: number; };
+
 export interface Recipe {
   id: string;
   title: string;
   description: string;
   ingredients: RecipeIngredient[];
-  steps: string[];
+  steps: RecipeStep[];
   prepTime: string;
   calories?: number;
   tags: string[];
   basePortions: number;
   source?: 'ai' | 'local' | 'user';
-  difficulty?: 'Easy' | 'Medium' | 'Hard'; // New field
+  difficulty?: 'Easy' | 'Medium' | 'Hard';
   // Optional meta data produced by matching/reco pipeline for explainability
   matchMeta?: MatchMeta;
 }
@@ -92,7 +94,7 @@ export interface RecipeDefinition {
   basePortions: number;
   ingredients: { id: IngredientId; amount: string }[];
   content: {
-    en: { title: string; description: string; steps: string[] };
-    de: { title: string; description: string; steps: string[] };
+    en: { title: string; description: string; steps: RecipeStep[] };
+    de: { title: string; description: string; steps: RecipeStep[] };
   };
 }

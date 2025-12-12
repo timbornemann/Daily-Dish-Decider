@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react';
-import { ChevronLeft, Users, Clock, ShoppingBag } from 'lucide-react';
-import { Recipe, Ingredient } from '../types';
+import React, { useMemo, useState, useEffect } from 'react';
+import { ChevronLeft, Users, Clock, ShoppingBag, ChefHat, PlayCircle } from 'lucide-react';
+import { Recipe, Ingredient, RecipeStep } from '../types';
 import { translations, Language } from '../translations';
 import { getRecipeImageUrl, handleImageError } from '../utils/imageUtils';
 import { getSubstitutions, SubstitutionOption } from '../services/substitutions';
 import { applySubstitutionsToText, parseSubstitutionsInText } from '../utils/textUtils';
+import { CookingMode } from './CookingMode';
 
 interface RecipeDetailProps {
   recipe: Recipe;
@@ -17,7 +18,28 @@ interface RecipeDetailProps {
 export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pantryItems, onAddToShoppingList, lang }) => {
   const [portions, setPortions] = useState(recipe.basePortions || 2);
   const [substitutionAmounts, setSubstitutionAmounts] = useState<Record<string, string>>({});
+  const [isCookingMode, setIsCookingMode] = useState(false);
+  const [savedStepIndex, setSavedStepIndex] = useState(0);
+
   const t = translations[lang];
+
+  // Check for saved progress on mount
+  useEffect(() => {
+      const saved = localStorage.getItem(`cookingState_${recipe.id}`);
+      if (saved) {
+          try {
+              const { step } = JSON.parse(saved);
+              setSavedStepIndex(step);
+          } catch (e) {
+              console.error("Failed to parse saved cooking state", e);
+          }
+      }
+  }, [recipe.id]);
+
+  const handleStepChange = (index: number) => {
+      setSavedStepIndex(index);
+      localStorage.setItem(`cookingState_${recipe.id}`, JSON.stringify({ step: index }));
+  };
 
   const getIngredientName = (id: string) => (t.ingredients as any)[id] || id;
 
@@ -91,20 +113,11 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
     onAddToShoppingList([label]);
   };
 
-  // NEW: Apply substitution to View? 
-  // For now, simpler to just add to shopping list as per original behavior, 
-  // OR strictly implement "This refactor shall enable actual replacement".
-  // To enable replacement in view, we'd need local state for the recipe ingredients.
-  // Let's stick to the prompt: "actual exchange of ingredients in the recipe".
-
   // We need state for active substitutions: Record<originalId, selectedOption>
   const [activeSubs, setActiveSubs] = useState<Record<string, SubstitutionOption | null>>({});
 
   const handleApplySubstitution = (originalId: string, option: SubstitutionOption, amount: string) => {
     setActiveSubs(prev => ({ ...prev, [originalId]: option }));
-    // Also potentially modify the 'amount' if user customized it? 
-    // The option doesn't store the amount string, but we can store it.
-    // For now, let's just swap the ingredient display.
   };
 
   const renderSubstitutions = (ingredientId: string) => {
@@ -159,6 +172,21 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
     );
   };
 
+  const getStepText = (step: RecipeStep) => typeof step === 'string' ? step : step.text;
+
+  // --- Render ---
+
+  if (isCookingMode) {
+      return (
+          <CookingMode
+              recipe={recipe}
+              initialStepIndex={savedStepIndex}
+              onClose={() => setIsCookingMode(false)}
+              onStepChange={handleStepChange}
+          />
+      );
+  }
+
   return (
     <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 overflow-y-auto animate-in slide-in-from-bottom duration-300 transition-colors">
       <div className="relative h-72">
@@ -184,6 +212,16 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
             </span>
           </div>
         </div>
+        
+        {/* Floating Start Button if saved progress or general */}
+        <button
+            onClick={() => setIsCookingMode(true)}
+            className="absolute bottom-6 right-6 bg-brand-500 text-white p-4 rounded-full shadow-lg hover:bg-brand-600 transition-transform active:scale-95 flex items-center justify-center gap-2"
+            title="Start Cooking"
+        >
+            <ChefHat size={24} />
+            {savedStepIndex > 0 && <span className="font-bold text-sm bg-white text-brand-500 px-1.5 rounded-md absolute -top-2 -right-2 border border-brand-500">Resume</span>}
+        </button>
       </div>
 
       <div className="p-6 pb-24 max-w-2xl mx-auto">
@@ -291,8 +329,20 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
 
           <div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t.instructions_title}</h3>
+            
+            <div className="mb-6">
+                <button
+                    onClick={() => setIsCookingMode(true)}
+                    className="w-full py-3 bg-brand-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-brand-600 transition-colors shadow-sm"
+                >
+                    <PlayCircle size={20} /> Start Cooking Mode
+                </button>
+            </div>
+
             <div className="space-y-6">
               {recipe.steps.map((step, idx) => {
+                const stepText = getStepText(step);
+
                 // Prepare substitutions map for this view
                 const textSubs: Record<string, string> = {};
 
@@ -349,30 +399,38 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onBack, pant
                   }
                 });
 
-                const segments = parseSubstitutionsInText(step, textSubs);
+                const segments = parseSubstitutionsInText(stepText, textSubs);
 
                 return (
                   <div key={idx} className="flex gap-4">
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-600 dark:text-brand-300 font-bold flex items-center justify-center text-sm">
                       {idx + 1}
                     </div>
-                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed mt-1">
-                      {segments.map((seg, i) => (
-                        seg.isSubstitution ? (
-                          <span key={i} className="text-green-600 dark:text-green-400 font-bold relative group cursor-help">
-                            {seg.text}
-                            <span className="hidden group-hover:inline absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap z-10">
-                              {t.instead_of ? `${t.instead_of}: ` : 'Was: '}{seg.originalName}
+                    <div className="flex flex-col">
+                        <p className="text-gray-600 dark:text-gray-300 leading-relaxed mt-1">
+                        {segments.map((seg, i) => (
+                            seg.isSubstitution ? (
+                            <span key={i} className="text-green-600 dark:text-green-400 font-bold relative group cursor-help">
+                                {seg.text}
+                                <span className="hidden group-hover:inline absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap z-10">
+                                {t.instead_of ? `${t.instead_of}: ` : 'Was: '}{seg.originalName}
+                                </span>
+                                <span className="text-[10px] text-green-500/70 font-normal ml-1">
+                                ({t.instead_of || 'was'} {seg.originalName})
+                                </span>
                             </span>
-                            <span className="text-[10px] text-green-500/70 font-normal ml-1">
-                              ({t.instead_of || 'was'} {seg.originalName})
-                            </span>
-                          </span>
-                        ) : (
-                          <span key={i}>{seg.text}</span>
-                        )
-                      ))}
-                    </p>
+                            ) : (
+                            <span key={i}>{seg.text}</span>
+                            )
+                        ))}
+                        </p>
+                        {/* Show timer hint if step object has duration */}
+                        {typeof step === 'object' && step.durationMinutes && (
+                             <div className="flex items-center gap-1.5 text-orange-500 text-xs font-bold mt-1.5">
+                                 <Clock size={12} /> {step.durationMinutes} min timer
+                             </div>
+                        )}
+                    </div>
                   </div>
                 );
               })}
