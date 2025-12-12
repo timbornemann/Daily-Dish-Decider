@@ -35,6 +35,9 @@ export const ALL_INGREDIENTS: Record<string, IngredientDef> = {
     leek: { id: 'leek', category: 'Produce' },
     spring_onion: { id: 'spring_onion', category: 'Produce' },
     zucchini_noodles: { id: 'zucchini_noodles', category: 'Produce' },
+    chives: { id: 'chives', category: 'Produce' },
+    radish: { id: 'radish', category: 'Produce' },
+    cress: { id: 'cress', category: 'Produce' },
 
     // Dairy
     milk: { id: 'milk', category: 'Dairy' },
@@ -108,6 +111,7 @@ export const ALL_INGREDIENTS: Record<string, IngredientDef> = {
     maple_syrup: { id: 'maple_syrup', category: 'Pantry' },
     peanut_butter: { id: 'peanut_butter', category: 'Pantry' },
     jam: { id: 'jam', category: 'Pantry' },
+    nutella: { id: 'nutella', category: 'Pantry' },
     baking_powder: { id: 'baking_powder', category: 'Pantry' },
     yeast: { id: 'yeast', category: 'Pantry' },
     baking_soda: { id: 'baking_soda', category: 'Pantry' },

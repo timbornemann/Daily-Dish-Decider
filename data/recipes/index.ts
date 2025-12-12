@@ -67,6 +67,11 @@ import { BROWNIES } from './baking/sweet/brownies';
 import { VEGAN_CHOCOLATE_COOKIES } from './baking/sweet/vegan_chocolate_cookies';
 import { CINNAMON_ROLLS } from './baking/sweet/cinnamon_rolls';
 import { BLUEBERRY_MUFFINS } from './baking/sweet/blueberry_muffins';
+import { NUTELLA_BREAD } from './breakfast/nutella_bread';
+import { FRIED_EGG_BREAD } from './breakfast/fried_egg_bread';
+import { CHEESE_BREAD_VEGGIES } from './main/vegetarian/cheese_bread_veggies';
+import { BREAD_SPREAD_VEGGIES } from './snack/bread_spread_veggies';
+import { SANDWICH_SALAMI_CHEESE } from './snack/sandwich_salami_cheese';
 
 export const ALL_RECIPES = [
   PANCAKES,
@@ -137,5 +142,10 @@ export const ALL_RECIPES = [
   BROWNIES,
   VEGAN_CHOCOLATE_COOKIES,
   CINNAMON_ROLLS,
-  BLUEBERRY_MUFFINS
+  BLUEBERRY_MUFFINS,
+  NUTELLA_BREAD,
+  FRIED_EGG_BREAD,
+  CHEESE_BREAD_VEGGIES,
+  BREAD_SPREAD_VEGGIES,
+  SANDWICH_SALAMI_CHEESE
 ];

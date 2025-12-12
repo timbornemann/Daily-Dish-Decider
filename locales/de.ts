@@ -198,6 +198,9 @@ export const de = {
     sweet_potato: "Süßkartoffel", herbs: "Frische Kräuter",
     shallot: "Schalotte", leek: "Lauch", spring_onion: "Frühlingszwiebel", zucchini_noodles: "Zucchini-Nudeln",
     blueberry: "Blaubeere",
+    chives: "Schnittlauch",
+    radish: "Radieschen",
+    cress: "Kresse",
 
     // Dairy
     milk: "Milch", egg: "Eier", butter: "Butter", cheese: "Käse", yogurt: "Joghurt",
@@ -225,7 +228,7 @@ export const de = {
     lentil: "Linsen", quinoa: "Quinoa", couscous: "Couscous", oat: "Haferflocken",
     cereal: "Müsli", chicken_broth: "Hühnerbrühe", beef_broth: "Rinderbrühe",
     tomato_paste: "Tomatenmark", honey: "Honig", maple_syrup: "Ahornsirup",
-    peanut_butter: "Erdnussbutter", jam: "Marmelade", baking_powder: "Backpulver", yeast: "Hefe",
+    peanut_butter: "Erdnussbutter", jam: "Marmelade", nutella: "Nutella", baking_powder: "Backpulver", yeast: "Hefe",
     brown_sugar: "Brauner Zucker", cornstarch: "Speisestärke", vegetable_broth: "Gemüsebrühe",
     bouillon: "Brühe", coconut_oil: "Kokosöl", applesauce: "Apfelmus",
     flaxseed: "Leinsamen", rice_noodles: "Reisnudeln", gnocchi: "Gnocchi", tomato_sauce: "Tomatensoße",
