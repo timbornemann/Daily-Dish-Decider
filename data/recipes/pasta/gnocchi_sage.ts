@@ -7,7 +7,7 @@ export const GNOCCHI_SAGE: RecipeDefinition = {
   basePortions: 4,
   ingredients: [
   {
-    id: 'pasta',
+    id: 'gnocchi',
     amount: '500g (Gnocchi)'
   },
   {

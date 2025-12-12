@@ -7,8 +7,8 @@ export const PAD_THAI: RecipeDefinition = {
   basePortions: 2,
   ingredients: [
   {
-    id: 'pasta',
-    amount: '200g (Rice Noodles)'
+    id: 'rice_noodles',
+    amount: '200g'
   },
   {
     id: 'egg',

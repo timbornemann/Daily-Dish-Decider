@@ -11,20 +11,20 @@ export const TIRAMISU: RecipeDefinition = {
     amount: '1 cup'
   },
   {
-    id: 'cheese',
-    amount: '500g (Mascarpone)'
+    id: 'mascarpone',
+    amount: '500g'
   },
   {
     id: 'sugar',
     amount: '100g'
   },
   {
-    id: 'cookie',
-    amount: '200g (Ladyfingers)'
+    id: 'ladyfingers',
+    amount: '200g'
   },
   {
-    id: 'chocolate',
-    amount: '2 tbsp (Cocoa)'
+    id: 'cocoa_powder',
+    amount: '2 tbsp'
   }
 ],
   content: {

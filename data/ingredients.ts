@@ -60,6 +60,7 @@ export const ALL_INGREDIENTS: Record<string, IngredientDef> = {
     grana_padano: { id: 'grana_padano', category: 'Dairy' },
     gouda: { id: 'gouda', category: 'Dairy' },
     feta: { id: 'feta', category: 'Dairy' },
+    mascarpone: { id: 'mascarpone', category: 'Dairy' },
     vegan_butter: { id: 'vegan_butter', category: 'Dairy' },
 
     // Meat
@@ -89,6 +90,7 @@ export const ALL_INGREDIENTS: Record<string, IngredientDef> = {
     croissant: { id: 'croissant', category: 'Bakery' },
     roll: { id: 'roll', category: 'Bakery' },
     pizza_dough: { id: 'pizza_dough', category: 'Bakery' },
+    ladyfingers: { id: 'ladyfingers', category: 'Bakery' },
 
     // Pantry
     rice: { id: 'rice', category: 'Pantry' },
@@ -132,6 +134,9 @@ export const ALL_INGREDIENTS: Record<string, IngredientDef> = {
     gnocchi: { id: 'gnocchi', category: 'Pantry' },
     tomato_sauce: { id: 'tomato_sauce', category: 'Pantry' },
     pesto: { id: 'pesto', category: 'Pantry' },
+    rice_paper: { id: 'rice_paper', category: 'Pantry' },
+    spaetzle: { id: 'spaetzle', category: 'Pantry' },
+    ramen: { id: 'ramen', category: 'Pantry' },
 
     // Spices
     salt: { id: 'salt', category: 'Spices' },

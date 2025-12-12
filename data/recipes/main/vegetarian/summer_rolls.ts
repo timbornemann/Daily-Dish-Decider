@@ -7,8 +7,8 @@ export const SUMMER_ROLLS: RecipeDefinition = {
   basePortions: 4,
   ingredients: [
   {
-    id: 'tortilla',
-    amount: '8 (Rice Paper)'
+    id: 'rice_paper',
+    amount: '8'
   },
   {
     id: 'shrimp',

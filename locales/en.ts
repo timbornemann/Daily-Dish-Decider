@@ -229,7 +229,7 @@ export const en = {
     oat_milk: "Oat Milk", cream_cheese: "Cream Cheese",
     buttermilk: "Buttermilk", creme_fraiche: "Crème Fraîche", pecorino: "Pecorino",
     grana_padano: "Grana Padano", gouda: "Gouda", feta: "Feta",
-    vegan_butter: "Vegan Butter",
+    vegan_butter: "Vegan Butter", mascarpone: "Mascarpone",
 
     // Meat
     chicken_breast: "Chicken Breast", ground_beef: "Ground Beef", bacon: "Bacon",
@@ -241,6 +241,7 @@ export const en = {
     // Bakery
     bread: "Bread", toast: "Toast", bagel: "Bagel", tortilla: "Tortilla",
     bun: "Bun", pita: "Pita Bread", croissant: "Croissant", roll: "Roll", pizza_dough: "Pizza Dough",
+    ladyfingers: "Ladyfingers",
 
     // Pantry
     rice: "Rice", pasta: "Pasta", flour: "Flour", sugar: "Sugar", olive_oil: "Olive Oil",
@@ -255,6 +256,7 @@ export const en = {
     vanilla_extract: "Vanilla Extract", baking_soda: "Baking Soda", cocoa_powder: "Cocoa Powder",
     chocolate_chips: "Chocolate Chips", vanilla_sugar: "Vanilla Sugar", powdered_sugar: "Powdered Sugar",
     apple_sauce: "Apple Sauce", pesto: "Pesto",
+    rice_paper: "Rice Paper", spaetzle: "Spaetzle", ramen: "Ramen",
 
     // Spices
     salt: "Salt", pepper_spice: "Black Pepper", cumin: "Cumin", paprika: "Paprika",

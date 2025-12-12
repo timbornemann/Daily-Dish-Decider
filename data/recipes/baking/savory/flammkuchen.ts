@@ -11,8 +11,8 @@ export const FLAMMKUCHEN: RecipeDefinition = {
     amount: '250g (or Dough)'
   },
   {
-    id: 'sour_cream',
-    amount: '200g (Creme Fraiche)'
+    id: 'creme_fraiche',
+    amount: '200g'
   },
   {
     id: 'bacon',

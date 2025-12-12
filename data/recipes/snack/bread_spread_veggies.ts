@@ -11,7 +11,7 @@ export const BREAD_SPREAD_VEGGIES: RecipeDefinition = {
       amount: '2 slices'
     },
     {
-      id: 'cream-cheese', // Representing "wählbarer Aufstrich" via a generic spread like cream cheese or hummus.
+      id: 'cream_cheese', // Representing "wählbarer Aufstrich" via a generic spread like cream cheese or hummus.
       amount: '50g'
     },
     {

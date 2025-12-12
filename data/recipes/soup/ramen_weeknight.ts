@@ -15,7 +15,7 @@ export const RAMEN_WEEKNIGHT: RecipeDefinition = {
     amount: '2 tbsp'
   },
   {
-    id: 'pasta',
+    id: 'ramen',
     amount: '200g (Noodles)'
   },
   {

@@ -7,7 +7,7 @@ export const KAESESPAETZLE: RecipeDefinition = {
   basePortions: 4,
   ingredients: [
   {
-    id: 'pasta',
+    id: 'spaetzle',
     amount: '500g (Spaetzle)'
   },
   {
