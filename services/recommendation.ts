@@ -97,7 +97,7 @@ const LOW_IMPACT_INGREDIENTS = new Set([
 const getNormalizedFeatures = (recipe: Recipe): string[] => {
   const tags = recipe.tags.map(t => t.toLowerCase());
   const ingredientTags = recipe.ingredients
-    .map(i => i.name.toLowerCase())
+    .map(i => i.id.toLowerCase())
     .filter(ing => !LOW_IMPACT_INGREDIENTS.has(ing));
   return [...new Set([...tags, ...ingredientTags])].sort();
 };
