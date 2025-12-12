@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Plus, Minus, Trash2, Calendar, Clock, ShoppingBag, ChevronDown, ChevronUp, PackageOpen, LayoutGrid, ShoppingCart, ArrowRight } from 'lucide-react';
 import { Ingredient, ShoppingItem } from '../types';
 import { translations, Language, COMMON_ITEMS_IDS } from '../translations';
+import { ALL_INGREDIENTS } from '../data/ingredients';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface PantryProps {
@@ -20,30 +21,78 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
     const t = translations[lang];
     const categories = Object.keys(COMMON_ITEMS_IDS);
 
+    // --- Data Prep for Search ---
+    // Source from ALL_INGREDIENTS to ensure we have everything (like Gnocchi)
+    const allIngredients = useMemo(() => {
+        return Object.values(ALL_INGREDIENTS).map(ing => ({
+            id: ing.id,
+            label: (t.ingredients as any)[ing.id] || ing.id,
+            category: ing.category
+        }));
+    }, [t.ingredients]);
+
+    // --- Search Logic ---
+    const suggestedItems = useMemo(() => {
+        const trimmed = itemName.trim().toLowerCase();
+        
+        // If empty, show ALL available items for the selected category
+        if (!trimmed) {
+            return allIngredients
+                .filter(item => item.category === selectedCategory)
+                .sort((a, b) => a.label.localeCompare(b.label));
+        }
+
+        // Global Search
+        // Matches label OR id (for cross-language convenience)
+        const matches = allIngredients.filter(item => 
+            item.label.toLowerCase().includes(trimmed) || 
+            item.id.toLowerCase().includes(trimmed)
+        );
+
+        // Ranking
+        return matches.sort((a, b) => {
+            const labelA = a.label.toLowerCase();
+            const labelB = b.label.toLowerCase();
+            
+            // 1. Exact match
+            if (labelA === trimmed && labelB !== trimmed) return -1;
+            if (labelB === trimmed && labelA !== trimmed) return 1;
+
+            // 2. Starts with
+            const startsA = labelA.startsWith(trimmed);
+            const startsB = labelB.startsWith(trimmed);
+            if (startsA && !startsB) return -1;
+            if (!startsA && startsB) return 1;
+
+            // 3. Alphabetical
+            return labelA.localeCompare(labelB);
+        }).slice(0, 20); // Limit to top 20
+    }, [itemName, selectedCategory, allIngredients]);
+
+
     // --- Actions ---
 
     const handleAdd = () => {
         if (!itemName.trim()) return;
 
-        // Check if name matches a registry key directly (e.g. they typed "Onion")
-        // Or just store as custom.
-        // Ideally we reverse map name -> ID. For now, simple.
+        // Try to find if the user typed an exact known ingredient name
+        const knownItem = allIngredients.find(i => i.label.toLowerCase() === itemName.trim().toLowerCase());
 
         const newItem: Ingredient = {
             id: Date.now().toString(),
-            ingredientId: itemName.trim(), // Placeholder, potentially wrong if not in registry
-            name: itemName.trim(),
-            quantity: '1', // Default to 1 unit internally
-            category: selectedCategory,
+            // If known, use the real ID and Category. If not, custom.
+            ingredientId: knownItem ? knownItem.id : itemName.trim(),
+            name: knownItem ? knownItem.label : itemName.trim(), 
+            quantity: '1', 
+            category: knownItem ? knownItem.category : selectedCategory,
         };
 
         onUpdate([...items, newItem]);
         setItemName('');
     };
 
-    const handleQuickAdd = (idOrName: string, category: string) => {
-        // idOrName IS the ingredientId from keys
-        const translatedName = (t.ingredients as any)[idOrName] || idOrName;
+    const handleQuickAdd = (idOrName: string, category: string, label?: string) => {
+        const translatedName = label || (t.ingredients as any)[idOrName] || idOrName;
 
         const newItem: Ingredient = {
             id: Date.now().toString(),
@@ -53,6 +102,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
             category: category,
         };
         onUpdate([...items, newItem]);
+        setItemName(''); // Clear search on add
     };
 
     const updateItemDetails = (id: string, updates: Partial<Ingredient>) => {
@@ -104,8 +154,6 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
         return { color: 'text-green-600 dark:text-green-400', label: t.good, bg: 'bg-green-50 dark:bg-green-900/20' };
     };
 
-    // Get current suggestions based on selected category IDs
-    const currentSuggestionIds = COMMON_ITEMS_IDS[selectedCategory] || [];
 
     // --- Render Helpers ---
 
@@ -119,7 +167,6 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
         });
         const hasOpened = group.items.some(i => i.openedDate);
 
-        // Translate category name for display
         const displayCategory = (t.categories as any)[group.category] || group.category;
 
         return (
@@ -172,7 +219,6 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            // Quick add uses the already translated name from the group title
                                             handleQuickAdd(group.name, group.category);
                                         }}
                                         className="text-xs flex items-center gap-1 bg-brand-500 text-white px-3 py-1.5 rounded-lg hover:bg-brand-600 transition-colors shadow-sm"
@@ -270,7 +316,7 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
             <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700 sticky top-0 z-30">
                 <div className="flex flex-col gap-3">
 
-                    {/* Category Dropdown */}
+                    {/* Category Dropdown (Only relevant if custom adding or empty search) */}
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
                             <LayoutGrid size={18} />
@@ -310,23 +356,26 @@ export const Pantry: React.FC<PantryProps> = ({ items, onUpdate, onAddToShopping
                         </button>
                     </div>
 
-                    {/* Dynamic Suggestions based on Category */}
+                    {/* Dynamic Suggestions */}
                     <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 pt-1 touch-pan-x">
-                        {currentSuggestionIds.length > 0 ? (
-                            currentSuggestionIds.map((id) => {
-                                const displayName = (t.ingredients as any)[id] || id;
-                                return (
-                                    <button
-                                        key={id}
-                                        onClick={() => handleQuickAdd(id, selectedCategory)}
-                                        className="shrink-0 text-xs font-medium px-3 py-2 rounded-full whitespace-nowrap transition-all border bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-brand-500 hover:text-brand-500 dark:hover:text-brand-400 dark:hover:border-brand-400 active:scale-95"
-                                    >
-                                        + {displayName}
-                                    </button>
-                                );
-                            })
+                        {suggestedItems.length > 0 ? (
+                            suggestedItems.map((item) => (
+                                <button
+                                    key={`${item.category}-${item.id}`}
+                                    onClick={() => handleQuickAdd(item.id, item.category, item.label)}
+                                    className="shrink-0 text-xs font-medium px-3 py-2 rounded-full whitespace-nowrap transition-all border bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-brand-500 hover:text-brand-500 dark:hover:text-brand-400 dark:hover:border-brand-400 active:scale-95 flex flex-col items-center"
+                                >
+                                    <span>+ {item.label}</span>
+                                    {/* Show category if searching (input not empty) to clarify where it goes */}
+                                    {itemName.trim() && (
+                                        <span className="text-[9px] opacity-60 uppercase tracking-wider">
+                                            {(t.categories as any)[item.category]}
+                                        </span>
+                                    )}
+                                </button>
+                            ))
                         ) : (
-                            <span className="text-xs text-gray-400 italic px-2 py-1">No suggestions for this category</span>
+                            <span className="text-xs text-gray-400 italic px-2 py-1">{t.no_matches}</span>
                         )}
                     </div>
                 </div>
